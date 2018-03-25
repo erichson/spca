@@ -9,11 +9,11 @@ high-dimensional data setting where the number of variables is greater than the 
 
 This package provides robust and randomized accelerated SPCA routines in R:
  
-* Sparse PCA: ``spca(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=FALSE,...)``.
-* Randomized accelerated sparse PCA: ``rspca(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=FALSE,...)``.
-* Robust sparse PCA: ``robspca(X, k=NULL, alpha=1e-4, beta=1e-4, gamma=100, center=TRUE, scale=FALSE,...)``.
+* Sparse PCA: ``spca()``.
+* Randomized SPCA: ``rspca()``.
+* Robust SPCA: ``robspca()``.
 
-All the implementations are using variable projection as optimization strategy. 
+
 
 
 Installation
@@ -39,5 +39,3 @@ Example
 References
 *************
 * [N. Benjamin Erichson, et al. Randomized Matrix Decompositions using R. (2016)](http://arxiv.org/abs/1608.02148)
-* [Sergey Voronin, Per-Gunnar Martinsson. RSVDPACK: Subroutines for computing partial singular value decompositions via randomized sampling on single core, multi core, and GPU architectures. (2015)](https://arxiv.org/abs/1502.05366)
-* [Nathan Halko, et al. Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions. (2011)](https://arxiv.org/abs/0909.4061)
