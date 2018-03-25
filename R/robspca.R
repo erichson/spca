@@ -1,18 +1,18 @@
 #' @title Robust Sparse Principal Component Analysis (robspca).
 #
-#' @description Implementation of robust SPCA useing variable projection as an optimization strategy.
+#' @description Implementation of robust SPCA, using variable projection as an optimization strategy.
 #
 #' @details
-#' Sparse principal component analysis computes a is a modern variant of PCA for high-dimensional data analysis.
-#' SPCA provides aims to find a parsimonious model to describe the data and to overcome some of the shortcomings of PCA.
-#' Specfically, SPCA attempts to find sparse weight vectors, i.e., a weight vector with only a few `active' (nonzero) values.
-#' This improves the interpretability, because the principal components are formed as a linear combination of
-#' only a few of the original variables. This approach avoids also overfitting in a high-dimensional data setting where the
-#' number of variables \eqn{p} is greater than the number of observations \eqn{n}, i.e., \eqn{p > n}.
+#' Sparse principal component analysis is a modern variant of PCA. Specifically, SPCA attempts to find sparse 
+#' weight vectors (loadings), i.e., a weight vector with only a few `active' (nonzero) values. This approach 
+#' leads to an improved interpretability of the model, because the principal components are formed as a 
+#' linear combination of only a few of the original variables. Further, SCPA avoids overfitting in a 
+#' high-dimensional data setting where the number of variables \eqn{p} is greater than the number of 
+#' observations \eqn{n}.
 #'
-#' The parsimonious model is obtained by introducing prior information such as sparsity promoting regularizers. More concreatly,
-#' given an \eqn{(m,n)} matrix \eqn{X} input matrix, robust SPCA attemps seperate the input matrix into a low-rank component and
-#' a sparse component. The following objective function is minimized:
+#' Such a parsimonious model is obtained by introducing prior information like sparsity promoting regularizers. 
+#' More concreatly,given an \eqn{(m,n)} matrix \eqn{X} input matrix, SPCA attemps to minimize the following 
+#' objective function:
 #'
 #' \deqn{ f(A,B) = \tfrac{1}{2}\fnorm{X - X B A^\top - S}}^2 + \psi(B) + \gamma |S|_1 }
 #'

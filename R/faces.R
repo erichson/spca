@@ -1,4 +1,4 @@
-#'Tiger
+#'Faces
 #'
 #' @description Subsampled extended Yale Face Database B. This smaller dataset has 3000 samples for each
 #' of the faces. Each 84x96 image patch is stored as a flattened row vector.
