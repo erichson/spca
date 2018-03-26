@@ -3,15 +3,15 @@
 #' @description Implementation of SPCA, using variable projection as an optimization strategy.
 #
 #' @details
-#' Sparse principal component analysis is a modern variant of PCA. Specifically, SPCA attempts to find sparse 
-#' weight vectors (loadings), i.e., a weight vector with only a few `active' (nonzero) values. This approach 
-#' leads to an improved interpretability of the model, because the principal components are formed as a 
-#' linear combination of only a few of the original variables. Further, SCPA avoids overfitting in a 
-#' high-dimensional data setting where the number of variables \eqn{p} is greater than the number of 
+#' Sparse principal component analysis is a modern variant of PCA. Specifically, SPCA attempts to find sparse
+#' weight vectors (loadings), i.e., a weight vector with only a few `active' (nonzero) values. This approach
+#' leads to an improved interpretability of the model, because the principal components are formed as a
+#' linear combination of only a few of the original variables. Further, SCPA avoids overfitting in a
+#' high-dimensional data setting where the number of variables \eqn{p} is greater than the number of
 #' observations \eqn{n}.
 #'
-#' Such a parsimonious model is obtained by introducing prior information like sparsity promoting regularizers. 
-#' More concreatly,given an \eqn{(m,n)} matrix \eqn{X} input matrix, SPCA attemps to minimize the following 
+#' Such a parsimonious model is obtained by introducing prior information like sparsity promoting regularizers.
+#' More concreatly,given an \eqn{(m,n)} matrix \eqn{X} input matrix, SPCA attemps to minimize the following
 #' objective function:
 #'
 #' \deqn{ f(A,B) = \tfrac{1}{2}\fnorm{X - X B A^\top}}^2 + \psi(B) }
@@ -228,7 +228,7 @@ spca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=FA
   spcaObj$transform <- A
   spcaObj$scores <- X %*% B
   spcaObj$eigenvalues <- svd_update$d / (n - 1)
-  spcaObj$objective <- ob
+  spcaObj$objective <- obj
 
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
