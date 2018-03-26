@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/erichson/spca/master/spca.png" width="550">
+
 Sparse Principal Component Analysis (SPCA) via Variable Projection
 *******************************************************************
 
