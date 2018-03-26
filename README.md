@@ -41,27 +41,35 @@ One of the most striking demonstrations of PCA are eigenfaces. The aim is to ext
 and outer features (e.g., head shape, hairline, eyebrows). These features can then be used for facial recognition and classification.
 
 In the following we use the downsampled cropped Yale face database B. The dataset comprises 2410 grayscale images of 38 different people, cropped and aligned, and can be loaded as 
+
 ```r
 download.file("https://github.com/erichson/data/raw/master/R/faces.RData", "faces.RData")
 load("faces.RData")
 ```
 
 For computational convenience the $96 \times 84$ faces images are stored as column vectors of the data matrix. For instance, the first face can be displayed as
+
 ```r
 face <- matrix(rev(faces[ , 1]), nrow = 84, ncol = 96)
 image(face, col = gray(0:255 / 255))
 ```
+
 In order to approximate the ``k=25`` dominant eigenfaces you can use the standard PCA function in R:
+
 ```r
 faces.pca <- prcomp(t(faces), k = 25, center = TRUE, scale. = TRUE)
 ```
+
 Note, that the data matrix needs to be transposed, so that each column corresponds to a pixel location rather then to a person. Here, the analysis is performed on the correlation matrix by setting the argument \code{scale = TRUE}. The mean face is provided as the attribute ``center``.
 
 In the following, we use the SPCA function and set the tuning parameter ``alpha=0``, ``beta=0``:
+
 ```r
 spca.results <- spca(t(faces), k=25, alpha=0, beta=0, center=TRUE, scale=TRUE)
 ```
+
 which reduces to PCA. The summary of the analysis is as follows:
+
 ```r
 summary(spca.results) 
 
@@ -98,6 +106,7 @@ plot(log(rspca.results$objective), col='red', xlab='Number of iterations', ylab=
 ```
 Note, that we have use here the randomized accelerated SPCA algorithm! The randomized algorithm eases the computational demands and is suitable if the input data feature some low-rank structure. For more details about randomized methods see, for instance, [Randomized Matrix Decompositions using R](http://arxiv.org/abs/1608.02148).
 Now, ``summary(rspca.results)`` reveals that the first $5$ PCs only explain about $67\%$ of the total variation. However, we yield a parsimonious representation of the data:
+
 ```r
 layout(matrix(1:25, 5, 5, byrow = TRUE))
 for(i in 1:25) {
@@ -106,12 +115,17 @@ for(i in 1:25) {
     image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
 }
 ```
+
 <img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparseeigenfaces.png" width="500">
+
 Unlike PCA, the sparse loadings contexualize localized features. If desired the solution can be made even sparser by increasing the tuning parameter ``alpha``:
+
 ```r
 rspca.results <- rspca(t(faces), k=25, alpha=2e-4, beta=2e-1, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
 ```
+
 We yield the following sparse loadings:
+
 ```r
 layout(matrix(1:25, 5, 5, byrow = TRUE))
 for(i in 1:25) {
@@ -120,6 +134,7 @@ for(i in 1:25) {
     image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
 }
 ```
+
 <img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparsereigenfaces.png" width="500">
 
 
