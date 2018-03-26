@@ -1,32 +1,32 @@
-#'@import rsvd
+#' @importFrom rsvd rqb
 #'
 #' @title  Randomized Sparse Principal Component Analysis (rspca).
 #
 #' @description Randomized accelerated implementation of SPCA, using variable projection as an optimization strategy.
 #
 #' @details
-#' Sparse principal component analysis is a modern variant of PCA. Specifically, SPCA attempts to find sparse 
-#' weight vectors (loadings), i.e., a weight vector with only a few `active' (nonzero) values. This approach 
-#' leads to an improved interpretability of the model, because the principal components are formed as a 
-#' linear combination of only a few of the original variables. Further, SCPA avoids overfitting in a 
-#' high-dimensional data setting where the number of variables \eqn{p} is greater than the number of 
+#' Sparse principal component analysis is a modern variant of PCA. Specifically, SPCA attempts to find sparse
+#' weight vectors (loadings), i.e., a weight vector with only a few 'active' (nonzero) values. This approach
+#' leads to an improved interpretability of the model, because the principal components are formed as a
+#' linear combination of only a few of the original variables. Further, SPCA avoids overfitting in a
+#' high-dimensional data setting where the number of variables \eqn{p} is greater than the number of
 #' observations \eqn{n}.
 #'
-#' Such a parsimonious model is obtained by introducing prior information like sparsity promoting regularizers. 
-#' More concreatly,given an \eqn{(m,n)} matrix \eqn{X} input matrix, SPCA attemps to minimize the following 
+#' Such a parsimonious model is obtained by introducing prior information like sparsity promoting regularizers.
+#' More concreatly,given an \eqn{(m,n)} matrix \eqn{X} input matrix, SPCA attemps to minimize the following
 #' objective function:
 #'
-#' \deqn{ f(A,B) = \tfrac{1}{2}\fnorm{X - X B A^\top}}^2 + \psi(B) }
+#' \deqn{ f(A,B) = \frac{1}{2} \| X - X B A^\top \|^2_F + \psi(B) }
 #'
 #' where \eqn{B} is the sparse weight (loadings) matrix and \eqn{A} is an orthonormal matrix.
 #' \eqn{\psi} denotes a sparsity inducing regularizer such as the LASSO (l1 norm) or the elastic net
 #' (a combination of the l1 and l2 norm). The principal components \eqn{Z} are then formed as
 #'
-#' \deqn{ Z = X B }{Z = X %*% B}.
+#' \deqn{ Z = X B }{Z = X B}.
 #'
 #' The data can be approximately rotated back as
 #'
-#' \deqn{ \tilde{X} = Z A^\top }{Xtilde = Z %*% t(A)}.
+#' \deqn{ \tilde{X} = Z A^\top }{Xtilde = Z t(A)}.
 #'
 #' The print and summary method can be used to present the results in a nice format.
 #'
@@ -38,7 +38,7 @@
 #'                specifies the target rank, i.e., number of components to be computed. \eqn{k} should satisfy \eqn{k << min(n,p)}.
 #'
 #' @param alpha   float; \cr
-#'                Sparsity controlling parameter. Higher values lead to sparser components..
+#'                Sparsity controlling parameter. Higher values lead to sparser components.
 #'
 #' @param beta    float; \cr
 #'                Amount of ridge shrinkage to apply in order to improve conditionin.
@@ -114,12 +114,23 @@
 #'
 #' @author N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin
 #'
-#' @seealso \code{\link{print.rspca}}, \code{\link{summary.rspca}},
-#'  \code{\link{spca}}, \code{\link{robspca}}
+#' @seealso \code{\link{spca}}, \code{\link{robspca}}
 #'
 #' @examples
 #'
+#' # Create artifical data
+#' m <- 10000
+#' V1 <- rnorm(m, 0, 290)
+#' V2 <- rnorm(m, 0, 300)
+#' V3 <- -0.1*V1 + 0.1*V2 + rnorm(m,0,100)
 #'
+#' X <- cbind(V1,V1,V1,V1, V2,V2,V2,V2, V3,V3)
+#' X <- X + matrix(rnorm(length(X),0,1), ncol = ncol(X), nrow = nrow(X))
+#'
+#' # Compute SPCA
+#' out <- rspca(X, k=3, alpha=1e-3, beta=1e-3, center = TRUE, scale = FALSE, verbose=0)
+#' print(out)
+#' summary(out)
 #'
 
 
@@ -182,7 +193,7 @@ rspca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=F
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Sketch the input data using the randomized QB decomposition
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  sketched <- rsvd::rqb(X, k=l, p=0, q=2)
+  sketched <- rqb(X, k=l, p=0, q=2)
 
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -285,7 +296,7 @@ rspca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=F
 
 
 #' @export
-print.spca <- function(x , ...) {
+print.rspca <- function(x , ...) {
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Print rpca
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -299,7 +310,7 @@ print.spca <- function(x , ...) {
 
 
 #' @export
-summary.spca <- function( object , ... )
+summary.rspca <- function( object , ... )
 {
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Summary spca
