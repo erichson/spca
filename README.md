@@ -34,8 +34,8 @@ devtools::install_github("erichson/spca")
 
 The source packge can be obtained here: [CRAN: rsvd](https://cran.r-project.org/web/packages/rsvd/index.html).
 
-Example
-*******
+Example: Sparse PCA
+********************
 
 One of the most striking demonstrations of PCA are eigenfaces. The aim is to extract the most dominant correlations between different faces from a large set of facial images. Specifically, the resulting columns of the rotation matrix (i.e., the eigenvectors) represent `shadows' of the faces, the so-called eigenfaces. Specifically, the eigenfaces reveal both inner face features (e.g., eyes, nose, mouth)
 and outer features (e.g., head shape, hairline, eyebrows). These features can then be used for facial recognition and classification.
@@ -47,7 +47,7 @@ download.file("https://github.com/erichson/data/raw/master/R/faces.RData", "face
 load("faces.RData")
 ```
 
-For computational convenience the $96 \times 84$ faces images are stored as column vectors of the data matrix. For instance, the first face can be displayed as
+For computational convenience the 96x84 faces images are stored as column vectors of the data matrix. For instance, the first face can be displayed as
 
 ```r
 face <- matrix(rev(faces[ , 1]), nrow = 84, ncol = 96)
@@ -80,14 +80,14 @@ Proportion of variance      0.360     0.336    0.048    0.028    0.015  ...
 Cumulative proportion       0.360     0.695    0.744    0.772    0.786  ... 
 ```                      
 
-Just the first $5$ PCs explain about $79\%$ of the total variation in the data, while the first $25$ PCs explain more then $90\%$.
+Just the first 5 PCs explain about 79% of the total variation in the data, while the first 25 PCs explain more then 90%.
 Finally, the eigenvectors can be visualized as eigenfaces, e.g., the first eigenvector (eigenface) is displayed as follows
 
 ```r
 layout(matrix(1:25, 5, 5, byrow = TRUE))
 for(i in 1:25) {
   par(mar = c(0.5,0.5,0.5,0.5))
-  img <- matrix(rspca.results$loadings[,i], nrow=84, ncol=96)
+  img <- matrix(spca.results$loadings[,i], nrow=84, ncol=96)
   image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
 }
 ```
@@ -105,7 +105,7 @@ the objective values for each iteration can be plotted as:
 plot(log(rspca.results$objective), col='red', xlab='Number of iterations', ylab='Objective value')
 ```
 Note, that we have use here the randomized accelerated SPCA algorithm! The randomized algorithm eases the computational demands and is suitable if the input data feature some low-rank structure. For more details about randomized methods see, for instance, [Randomized Matrix Decompositions using R](http://arxiv.org/abs/1608.02148).
-Now, ``summary(rspca.results)`` reveals that the first $5$ PCs only explain about $67\%$ of the total variation. However, we yield a parsimonious representation of the data:
+Now, ``summary(rspca.results)`` reveals that the first $5$ PCs only explain about 67% of the total variation. However, we yield a parsimonious representation of the data:
 
 ```r
 layout(matrix(1:25, 5, 5, byrow = TRUE))
@@ -123,7 +123,6 @@ Unlike PCA, the sparse loadings contexualize localized features. If desired the 
 ```r
 rspca.results <- rspca(t(faces), k=25, alpha=2e-4, beta=2e-1, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
 ```
-
 We yield the following sparse loadings:
 
 ```r
@@ -136,6 +135,66 @@ for(i in 1:25) {
 ```
 
 <img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparsereigenfaces.png" width="500">
+
+
+
+
+
+Example: Robust SPCA
+********************
+
+In the following we demonstrate the robust SCPA which allows to capture some grossly corrupted entries in the data. The idea is to seperate the input data into a low-rank component and a sparse component. The latter aims to capture potential outliers in the data. For the face data, we proceed as follows:
+
+```r
+robspca.results <- robspca(t(faces), k=25, alpha=1e-4, beta=1e-2, gamma=0.9, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
+```
+
+The tuning parameter ``gamma`` is the sparsity controlling parameter for the sparse error matrix. Smaller values lead to a larger amount of noise removeal. We yield the following sparse loadings:
+
+```r
+layout(matrix(1:25, 5, 5, byrow = TRUE))
+for(i in 1:25) {
+    par(mar = c(0.5,0.5,0.5,0.5))
+    img <- matrix(robspca.results$loadings[,i], nrow=84, ncol=96)
+    image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
+}
+```
+
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/robustsparseeigenfaces.png" width="500">
+
+
+We yield the following sparse loadings:
+
+```r
+layout(matrix(1:25, 5, 5, byrow = TRUE))
+for(i in 1:25) {
+    par(mar = c(0.5,0.5,0.5,0.5))
+    img <- matrix(rspca.results$loadings[,i], nrow=84, ncol=96)
+    image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
+}
+```
+
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/robustsparseeigenfaces.png" width="500">
+
+
+Further, we can visualize the captured outliers for each face. Here we show the outliers for the first 25 faces:
+
+```r
+layout(matrix(1:25, 5, 5, byrow = TRUE))
+for(i in 1:25) {
+  par(mar = c(0.5,0.5,0.5,0.5))
+  img <- matrix(robspca.results$sparse[i,], nrow=84, ncol=96)
+  image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
+}
+```
+
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparsecomp.png" width="500">
+
+It can be seen that the robust SPCA algorithms captures some of the specularities and other errors in the data. 
+
+
+Computational performance
+*************************
 
 
 
