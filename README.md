@@ -6,7 +6,7 @@ Sparse Principal Component Analysis (SPCA) via Variable Projection
 Sparse principal component analysis is a modern variant of PCA. Specifically, SPCA attempts to find sparse 
 weight vectors (loadings), i.e., a weight vector with only a few `active' (nonzero) values. This approach 
 leads to an improved interpretability of the model, because the principal components are formed as a 
-linear combination of only a few of the original variables. Further, SCPA avoids overfitting in a 
+linear combination of only a few of the original variables. Further, SPCA avoids overfitting in a 
 high-dimensional data setting where the number of variables is greater than the number of observations.
 
 This package provides robust and randomized accelerated SPCA routines in R:
@@ -36,6 +36,93 @@ The source packge can be obtained here: [CRAN: rsvd](https://cran.r-project.org/
 
 Example
 *******
+
+One of the most striking demonstrations of PCA are eigenfaces. The aim is to extract the most dominant correlations between different faces from a large set of facial images. Specifically, the resulting columns of the rotation matrix (i.e., the eigenvectors) represent `shadows' of the faces, the so-called eigenfaces. Specifically, the eigenfaces reveal both inner face features (e.g., eyes, nose, mouth)
+and outer features (e.g., head shape, hairline, eyebrows). These features can then be used for facial recognition and classification.
+
+In the following we use the downsampled cropped Yale face database B. The dataset comprises 2410 grayscale images of 38 different people, cropped and aligned, and can be loaded as 
+```r
+download.file("https://github.com/erichson/data/raw/master/R/faces.RData", "faces.RData")
+load("faces.RData")
+```
+
+For computational convenience the $96 \times 84$ faces images are stored as column vectors of the data matrix. For instance, the first face can be displayed as
+```r
+face <- matrix(rev(faces[ , 1]), nrow = 84, ncol = 96)
+image(face, col = gray(0:255 / 255))
+```
+In order to approximate the ``k=25`` dominant eigenfaces you can use the standard PCA function in R:
+```r
+faces.pca <- prcomp(t(faces), k = 25, center = TRUE, scale. = TRUE)
+```
+Note, that the data matrix needs to be transposed, so that each column corresponds to a pixel location rather then to a person. Here, the analysis is performed on the correlation matrix by setting the argument \code{scale = TRUE}. The mean face is provided as the attribute ``center``.
+
+In the following, we use the SPCA function and set the tuning parameter ``alpha=0``, ``beta=0``:
+```r
+spca.results <- spca(t(faces), k=25, alpha=0, beta=0, center=TRUE, scale=TRUE)
+```
+which reduces to PCA. The summary of the analysis is as follows:
+```r
+summary(spca.results) 
+
+                            PC1       PC2      PC3      PC4      PC5    ...    
+Explained variance       2901.541  2706.701  388.080  227.062  118.407  ...
+Standard deviations        53.866    52.026   19.700   15.069   10.882  ... 
+Proportion of variance      0.360     0.336    0.048    0.028    0.015  ...
+Cumulative proportion       0.360     0.695    0.744    0.772    0.786  ... 
+```                      
+
+Just the first $5$ PCs explain about $79\%$ of the total variation in the data, while the first $25$ PCs explain more then $90\%$.
+Finally, the eigenvectors can be visualized as eigenfaces, e.g., the first eigenvector (eigenface) is displayed as follows
+
+```r
+layout(matrix(1:25, 5, 5, byrow = TRUE))
+for(i in 1:25) {
+  par(mar = c(0.5,0.5,0.5,0.5))
+  img <- matrix(rspca.results$loadings[,i], nrow=84, ncol=96)
+  image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
+}
+```
+
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/eigenfaces.png" width="500">
+
+The eigenfaces encode the holistic facial features as well as the illumination. 
+
+In  many application, however, it is favorable to obtain a sparse representation. This, is because a sparse represenation is easier to interpret.  Further, this avoids overfitting in a high-dimensional data setting where the number of variables is greater than the number of observations. SPCA attempts to find sparse weight vectors (loadings), i.e., the approximate eigenvecotrs with only a few `active' (nonzero) values. We can compute the sparse eigenvectors as follows:
+```r
+rspca.results <- rspca(t(faces), k=25, alpha=1e-4, beta=1e-1, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
+```
+the objective values for each iteration can be plotted as:
+```r
+plot(log(rspca.results$objective), col='red', xlab='Number of iterations', ylab='Objective value')
+```
+Note, that we have use here the randomized accelerated SPCA algorithm! The randomized algorithm eases the computational demands and is suitable if the input data feature some low-rank structure. For more details about randomized methods see, for instance, [Randomized Matrix Decompositions using R](http://arxiv.org/abs/1608.02148).
+Now, ``summary(rspca.results)`` reveals that the first $5$ PCs only explain about $67\%$ of the total variation. However, we yield a parsimonious representation of the data:
+```r
+layout(matrix(1:25, 5, 5, byrow = TRUE))
+for(i in 1:25) {
+    par(mar = c(0.5,0.5,0.5,0.5))
+    img <- matrix(rspca.results$loadings[,i], nrow=84, ncol=96)
+    image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
+}
+```
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparseeigenfaces.png" width="500">
+Unlike PCA, the sparse loadings contexualize localized features. If desired the solution can be made even sparser by increasing the tuning parameter ``alpha``:
+```r
+rspca.results <- rspca(t(faces), k=25, alpha=2e-4, beta=2e-1, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
+```
+We yield the following sparse loadings:
+```r
+layout(matrix(1:25, 5, 5, byrow = TRUE))
+for(i in 1:25) {
+    par(mar = c(0.5,0.5,0.5,0.5))
+    img <- matrix(rspca.results$loadings[,i], nrow=84, ncol=96)
+    image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
+}
+```
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparsereigenfaces.png" width="500">
+
+
 
 
 References
