@@ -17,11 +17,11 @@ This package provides robust and randomized accelerated SPCA routines in R:
 
 Problem Formulation
 ********************
-Sparse PCA can be formualted in terms of the following optimization problem:
+Sparse PCA can be formulated in terms of the following optimization problem:
 
-<p align="center"><img src="https://rawgit.com/in	git@github.com:erichson/spca/master/svgs/d33bb46eb3ec82dbbd59d29cc261c04d.svg?invert_in_darkmode" align=middle width=559.1124pt height=53.802045pt/></p>
+<p align="center"><img src="https://rawgit.com/in	git@github.com:erichson/spca/master/plots/d33bb46eb3ec82dbbd59d29cc261c04d.svg?invert_in_darkmode" align=middle width=559.1124pt height=53.802045pt/></p>
 
-Here we use a combination of the l1 and l2 norm as a sparsity-promoting regularizer, also known as the elastic net. Specfically, the interfrace of the spca function is:
+Here we use a combination of the l1 and l2 norm as a sparsity-promoting regularizer, also known as the elastic net. Specifically, the interface of the SPCA function is:
 
 ```R
 spca(X, k, alpha=1e-4, beta=1e-4, center=TRUE, scale=TRUE,  max_iter=1000, tol=1e-4, verbose=TRUE)
@@ -32,7 +32,7 @@ The description of the arguments is listed in the following:
 
 * ``k`` specifies the target rank, i.e., number of components to be computed.
 
-* ``alpha`` is a parsity controlling parameter. Higher values lead to sparser components.
+* ``alpha`` is a sparsity controlling parameter. Higher values lead to sparser components.
 
 * `` beta`` controls the amount of ridge shrinkage to apply in order to improve conditioning.
 
@@ -72,10 +72,9 @@ The source packge can be obtained here: [CRAN: rsvd](https://cran.r-project.org/
 Example: Sparse PCA
 ********************
 
-One of the most striking demonstrations of PCA are eigenfaces. The aim is to extract the most dominant correlations between different faces from a large set of facial images. Specifically, the resulting columns of the rotation matrix (i.e., the eigenvectors) represent `shadows' of the faces, the so-called eigenfaces. Specifically, the eigenfaces reveal both inner face features (e.g., eyes, nose, mouth)
-and outer features (e.g., head shape, hairline, eyebrows). These features can then be used for facial recognition and classification.
+One of the most striking demonstrations of PCA are eigenfaces. The aim is to extract the most dominant correlations between different faces from a large set of facial images. Specifically, the resulting columns of the rotation matrix (i.e., the eigenvectors) represent `shadows' of the faces, the so-called eigenfaces. Specifically, the eigenfaces reveal both inner face features (e.g., eyes, nose, mouth) and outer features (e.g., head shape, hairline, eyebrows). These features can then be used for facial recognition and classification.
 
-In the following we use the downsampled cropped Yale face database B. The dataset comprises 2410 grayscale images of 38 different people, cropped and aligned, and can be loaded as 
+In the following we use the down-sampled cropped Yale face database B. The dataset comprises 2410 grayscale images of 38 different people, cropped and aligned, and can be loaded as 
 
 ```r
 download.file("https://github.com/erichson/data/raw/master/R/faces.RData", "faces.RData")
@@ -115,8 +114,7 @@ Proportion of variance      0.360     0.336    0.048    0.028    0.015  ...
 Cumulative proportion       0.360     0.695    0.744    0.772    0.786  ... 
 ```                      
 
-Just the first 5 PCs explain about 79% of the total variation in the data, while the first 25 PCs explain more then 90%.
-Finally, the eigenvectors can be visualized as eigenfaces, e.g., the first eigenvector (eigenface) is displayed as follows
+Just the first 5 PCs explain about 79% of the total variation in the data, while the first 25 PCs explain more then 90%. Finally, the eigenvectors can be visualized as eigenfaces, e.g., the first eigenvector (eigenface) is displayed as follows
 
 ```r
 layout(matrix(1:25, 5, 5, byrow = TRUE))
@@ -131,16 +129,20 @@ for(i in 1:25) {
 
 The eigenfaces encode the holistic facial features as well as the illumination. 
 
-In  many application, however, it is favorable to obtain a sparse representation. This, is because a sparse represenation is easier to interpret.  Further, this avoids overfitting in a high-dimensional data setting where the number of variables is greater than the number of observations. SPCA attempts to find sparse weight vectors (loadings), i.e., the approximate eigenvecotrs with only a few `active' (nonzero) values. We can compute the sparse eigenvectors as follows:
+In  many application, however, it is favorable to obtain a sparse representation. This, is because a sparse representation is easier to interpret.  Further, this avoids overfitting in a high-dimensional data setting where the number of variables is greater than the number of observations. SPCA attempts to find sparse weight vectors (loadings), i.e., the approximate eigenvecotrs with only a few `active' (nonzero) values. We can compute the sparse eigenvectors as follows:
+
 ```r
 rspca.results <- rspca(t(faces), k=25, alpha=1e-4, beta=1e-1, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
 ```
+
 the objective values for each iteration can be plotted as:
+
 ```r
 plot(log(rspca.results$objective), col='red', xlab='Number of iterations', ylab='Objective value')
 ```
+
 Note, that we have use here the randomized accelerated SPCA algorithm! The randomized algorithm eases the computational demands and is suitable if the input data feature some low-rank structure. For more details about randomized methods see, for instance, [Randomized Matrix Decompositions using R](http://arxiv.org/abs/1608.02148).
-Now, ``summary(rspca.results)`` reveals that the first $5$ PCs only explain about 67% of the total variation. However, we yield a parsimonious representation of the data:
+Now, ``summary(rspca.results)`` reveals that the first 5 PCs only explain about 67% of the total variation. However, we yield a parsimonious representation of the data:
 
 ```r
 layout(matrix(1:25, 5, 5, byrow = TRUE))
@@ -153,7 +155,7 @@ for(i in 1:25) {
 
 <img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparseeigenfaces.png" width="500">
 
-Unlike PCA, the sparse loadings contexualize localized features. If desired the solution can be made even sparser by increasing the tuning parameter ``alpha``:
+Unlike PCA, the sparse loadings contextualize localized features. If desired the solution can be made even sparser by increasing the tuning parameter ``alpha``:
 
 ```r
 rspca.results <- rspca(t(faces), k=25, alpha=2e-4, beta=2e-1, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
@@ -178,7 +180,7 @@ for(i in 1:25) {
 Example: Robust SPCA
 ********************
 
-In the following we demonstrate the robust SCPA which allows to capture some grossly corrupted entries in the data. The idea is to seperate the input data into a low-rank component and a sparse component. The latter aims to capture potential outliers in the data. For the face data, we proceed as follows:
+In the following we demonstrate the robust SCPA which allows to capture some grossly corrupted entries in the data. The idea is to separate the input data into a low-rank component and a sparse component. The latter aims to capture potential outliers in the data. For the face data, we proceed as follows:
 
 ```r
 robspca.results <- robspca(t(faces), k=25, alpha=1e-4, beta=1e-2, gamma=0.9, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
