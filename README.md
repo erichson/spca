@@ -15,6 +15,45 @@ This package provides robust and randomized accelerated SPCA routines in R:
 * Randomized SPCA: ``rspca()``.
 * Robust SPCA: ``robspca()``.
 
+Problem Formulation
+********************
+Sparse PCA can be formualted in terms of the following optimization problem:
+$$
+\begin{equation}\label{eq:spca_obj}
+\begin{aligned}
+\underset{\mathbf{A,B}}{\text{minimize}}~~
+& f(\mathbf{A,B}) = \| 1}{2}\fnorm{\mathbf{X} - \mathbf{X}\mathbf{B}\mathbf{A^\top} \|^2_F + \alpha \| \mathbf{B} \|_1 + 1/2 * \beta \| \mathbf{B}\|^2 \\
+\text{subject to}~~
+& \mathbf{A^\top}\mathbf{A} = \mathbf{I},
+\end{aligned}
+\end{equation}
+$$
+
+Here we use a combination of the l1 and l2 norm as a sparsity-promoting regularizer, also known as the elastic net. Specfically, the interfrace of the spca function is:
+
+```R
+spca(X, k, alpha=1e-4, beta=1e-4, center=TRUE, scale=TRUE,  max_iter=1000, tol=1e-4, verbose=TRUE)
+```
+The description of the arguments is listed in the following:
+
+* ``X`` is a real ``n, p`` input matrix (or data frame) to be decomposed.
+
+* ``k`` specifies the target rank, i.e., number of components to be computed.
+
+* ``alpha`` is a parsity controlling parameter. Higher values lead to sparser components.
+
+* `` beta`` controls the amount of ridge shrinkage to apply in order to improve conditioning.
+
+* ``center`` logical value which indicates whether the variables should be shifted to be zero centered (TRUE by default).
+
+* ``scale``logical value which indicates whether the variables should be scaled to have unit variance (FALSE by default).
+
+* ``max_iter`` maximum number of iterations to perform before exiting.
+
+* ``tol`` stopping tolerance for reconstruction error.
+
+* ``verbose`` logical value which indicates whether progress is printed.
+
 
 
 
@@ -33,6 +72,10 @@ devtools::install_github("erichson/spca")
 ```
 
 The source packge can be obtained here: [CRAN: rsvd](https://cran.r-project.org/web/packages/rsvd/index.html).
+
+
+
+
 
 Example: Sparse PCA
 ********************
@@ -156,20 +199,6 @@ layout(matrix(1:25, 5, 5, byrow = TRUE))
 for(i in 1:25) {
     par(mar = c(0.5,0.5,0.5,0.5))
     img <- matrix(robspca.results$loadings[,i], nrow=84, ncol=96)
-    image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
-}
-```
-
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/robustsparseeigenfaces.png" width="500">
-
-
-We yield the following sparse loadings:
-
-```r
-layout(matrix(1:25, 5, 5, byrow = TRUE))
-for(i in 1:25) {
-    par(mar = c(0.5,0.5,0.5,0.5))
-    img <- matrix(rspca.results$loadings[,i], nrow=84, ncol=96)
     image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
 }
 ```
