@@ -42,7 +42,7 @@
 #'                Sparsity controlling parameter. Higher values lead to sparser components.
 #'
 #' @param beta    float; \cr
-#'                Amount of ridge shrinkage to apply in order to improve conditionin.
+#'                Amount of ridge shrinkage to apply in order to improve conditioning.
 #'
 #' @param gamma   float; \cr
 #'                Sparsity controlling parameter for the error matrix S.
@@ -56,14 +56,14 @@
 #'                logical value which indicates whether the variables should
 #'                be scaled to have unit variance (\eqn{FALSE} by default).
 #'
-#' @param max_iter integer;
-#'                 Maximum number of iterations to perform before exiting.
+#' @param max_iter integer; \cr
+#'                 maximum number of iterations to perform before exiting.
 #'
-#' @param tol float;
-#'            Stopping tolerance for reconstruction error.
+#' @param tol float; \cr
+#'            stopping tolerance for reconstruction error.
 #'
-#' @param verbose bool;
-#'                If \eqn{TRUE}, display progress.
+#' @param verbose bool; \cr
+#'                logical value which indicates whether progress is printed.
 #'
 #'
 #'

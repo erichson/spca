@@ -41,30 +41,31 @@
 #'                Sparsity controlling parameter. Higher values lead to sparser components.
 #'
 #' @param beta    float; \cr
-#'                Amount of ridge shrinkage to apply in order to improve conditionin.
+#'                Amount of ridge shrinkage to apply in order to improve conditioning.
 #'
 #' @param center  bool; \cr
 #'                logical value which indicates whether the variables should be
-#'                shifted to be zero centered (\eqn{TRUE} by default).
+#'                shifted to be zero centered (TRUE by default).
 #'
 #' @param scale   bool; \cr
 #'                logical value which indicates whether the variables should
-#'                be scaled to have unit variance (\eqn{FALSE} by default).
+#'                be scaled to have unit variance (FALSE by default).
 #'
-#' @param max_iter integer;
-#'                 Maximum number of iterations to perform before exiting.
+#' @param max_iter integer; \cr
+#'                 maximum number of iterations to perform before exiting.
 #'
-#' @param tol float;
-#'            Stopping tolerance for reconstruction error.
+#' @param tol float; \cr
+#'            stopping tolerance for reconstruction error.
 #'
 #' @param o       integer, optional; \cr
-#'                oversampling parameter for \eqn{rsvd} (default \eqn{o=20}), see \code{\link{rsvd}}.
+#'                oversampling parameter (default \eqn{o=20}).
 #'
 #' @param q       integer, optional; \cr
-#'                number of additional power iterations for \eqn{rsvd} (default \eqn{q=2}), see \code{\link{rsvd}}.
+#'                number of additional power iterations (default \eqn{q=2}).
 #'
-#' @param verbose bool;
-#'                If \eqn{TRUE}, display progress.
+#' @param verbose bool; \cr
+#'            logical value which indicates whether progress is printed.
+
 #'
 #'
 #'
@@ -172,7 +173,7 @@ rspca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=F
 
   #Set oversampling parameter
   l <- k + o
-  if(l > n) l <- n
+  if(l > min(n,p)) l <- min(n,p)
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Center/Scale data
@@ -195,20 +196,19 @@ rspca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=F
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   sketched <- rqb(X, k=l, p=0, q=2)
 
-
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Compute SVD for initialization of the Variable Projection Solver
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  svd_init <- svd(sketched$B, nu = k, nv = k)
+  svd_init <- svd(sketched$B)
 
   Dmax <- svd_init$d[1] # l2 norm
 
   A <- svd_init$v[,1:k]
   B <- svd_init$v[,1:k]
 
-  V <- svd_init$v[,1:k]
-  VD = sweep(V, MARGIN = 2, STATS = svd_init$d[1:k], FUN = "*", check.margin = TRUE)
-  VD2 = sweep(V, MARGIN = 2, STATS = svd_init$d[1:k]**2, FUN = "*", check.margin = TRUE)
+  V <- svd_init$v
+  VD = sweep(V, MARGIN = 2, STATS = svd_init$d, FUN = "*", check.margin = TRUE)
+  VD2 = sweep(V, MARGIN = 2, STATS = svd_init$d**2, FUN = "*", check.margin = TRUE)
 
 
   #--------------------------------------------------------------------
@@ -261,7 +261,7 @@ rspca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=F
       }
 
       # Trace
-      if(verbose > 0 && noi > 1) {
+      if(verbose > 0 && (noi-1) %% 10 == 0) {
         print(sprintf("Iteration: %4d, Objective: %1.5e, Relative improvement %1.5e", noi, obj[noi], improvement))
       }
 

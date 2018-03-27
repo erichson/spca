@@ -4,9 +4,9 @@
 #
 #' @details
 #' Sparse principal component analysis is a modern variant of PCA. Specifically, SPCA attempts to find sparse
-#' weight vectors (loadings), i.e., a weight vector with only a few `active' (nonzero) values. This approach
+#' weight vectors (loadings), i.e., a weight vector with only a few 'active' (nonzero) values. This approach
 #' leads to an improved interpretability of the model, because the principal components are formed as a
-#' linear combination of only a few of the original variables. Further, SCPA avoids overfitting in a
+#' linear combination of only a few of the original variables. Further, SPCA avoids overfitting in a
 #' high-dimensional data setting where the number of variables \eqn{p} is greater than the number of
 #' observations \eqn{n}.
 #'
@@ -14,21 +14,19 @@
 #' More concreatly,given an \eqn{(m,n)} matrix \eqn{X} input matrix, SPCA attemps to minimize the following
 #' objective function:
 #'
-#' \deqn{ f(A,B) = \tfrac{1}{2}\fnorm{X - X B A^\top}}^2 + \psi(B) }
+#' \deqn{ f(A,B) = \frac{1}{2} \| X - X B A^\top \|^2_F + \psi(B) }
 #'
 #' where \eqn{B} is the sparse weight (loadings) matrix and \eqn{A} is an orthonormal matrix.
 #' \eqn{\psi} denotes a sparsity inducing regularizer such as the LASSO (l1 norm) or the elastic net
 #' (a combination of the l1 and l2 norm). The principal components \eqn{Z} are then formed as
 #'
-#' \deqn{ Z = X B }{Z = X %*% B}.
+#' \deqn{ Z = X B }{Z = X * B}.
 #'
 #' The data can be approximately rotated back as
 #'
-#' \deqn{ \tilde{X} = Z A^\top }{Xtilde = Z %*% t(A)}.
+#' \deqn{ \tilde{X} = Z A^\top }{ X = Z t(A)}.
 #'
 #' The print and summary method can be used to present the results in a nice format.
-#'
-#'
 #'
 #' @param X       array_like; \cr
 #'                a real \eqn{(n, p)} input matrix (or data frame) to be decomposed.
@@ -37,27 +35,27 @@
 #'                specifies the target rank, i.e., number of components to be computed. \eqn{k} should satisfy \eqn{k << min(n,p)}.
 #'
 #' @param alpha   float; \cr
-#'                Sparsity controlling parameter. Higher values lead to sparser components..
+#'                Sparsity controlling parameter. Higher values lead to sparser components.
 #'
 #' @param beta    float; \cr
-#'                Amount of ridge shrinkage to apply in order to improve conditionin.
+#'                Amount of ridge shrinkage to apply in order to improve conditioning.
 #'
 #' @param center  bool; \cr
 #'                logical value which indicates whether the variables should be
-#'                shifted to be zero centered (\eqn{TRUE} by default).
+#'                shifted to be zero centered (TRUE by default).
 #'
 #' @param scale   bool; \cr
 #'                logical value which indicates whether the variables should
-#'                be scaled to have unit variance (\eqn{FALSE} by default).
+#'                be scaled to have unit variance (FALSE by default).
 #'
-#' @param max_iter integer;
-#'                 Maximum number of iterations to perform before exiting.
+#' @param max_iter integer; \cr
+#'                 maximum number of iterations to perform before exiting.
 #'
-#' @param tol float;
-#'            Stopping tolerance for reconstruction error.
+#' @param tol float; \cr
+#'            stopping tolerance for reconstruction error.
 #'
-#' @param verbose bool;
-#'                If \eqn{TRUE}, display progress.
+#' @param verbose bool; \cr
+#'                logical value which indicates whether progress is printed.
 #'
 #'
 #'
@@ -85,10 +83,25 @@
 #'
 #' @author N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin
 #'
-#' @seealso \code{\link{print.spca}}, \code{\link{summary.spca}},
-#'  \code{\link{rspca}}, \code{\link{robspca}}
+#' @seealso \code{\link{rspca}}, \code{\link{robspca}}
 #'
 #' @examples
+#'
+#' # Create artifical data
+#' m <- 10000
+#' V1 <- rnorm(m, 0, 290)
+#' V2 <- rnorm(m, 0, 300)
+#' V3 <- -0.1*V1 + 0.1*V2 + rnorm(m,0,100)
+#'
+#' X <- cbind(V1,V1,V1,V1, V2,V2,V2,V2, V3,V3)
+#' X <- X + matrix(rnorm(length(X),0,1), ncol = ncol(X), nrow = nrow(X))
+#'
+#' # Compute SPCA
+#' out <- spca(X, k=3, alpha=1e-3, beta=1e-3, center = TRUE, scale = FALSE, verbose=0)
+#' print(out)
+#' summary(out)
+#'
+#'
 
 
 #' @export
@@ -148,16 +161,16 @@ spca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=FA
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Compute SVD for initialization of the Variable Projection Solver
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  svd_init <- svd(X, nu = k, nv = k)
+  svd_init <- svd(X)
 
   Dmax <- svd_init$d[1] # l2 norm
 
   A <- svd_init$v[,1:k]
   B <- svd_init$v[,1:k]
 
-  V <- svd_init$v[,1:k]
-  VD = sweep(V, MARGIN = 2, STATS = svd_init$d[1:k], FUN = "*", check.margin = TRUE)
-  VD2 = sweep(V, MARGIN = 2, STATS = svd_init$d[1:k]**2, FUN = "*", check.margin = TRUE)
+  V <- svd_init$v
+  VD = sweep(V, MARGIN = 2, STATS = svd_init$d, FUN = "*", check.margin = TRUE)
+  VD2 = sweep(V, MARGIN = 2, STATS = svd_init$d**2, FUN = "*", check.margin = TRUE)
 
 
   #--------------------------------------------------------------------
@@ -201,7 +214,7 @@ spca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=FA
       # compute residual
       R <- t(VD) - (t(VD) %*% B) %*% t(A)
 
-              # compute objective function
+      # compute objective function
       obj <- c(obj, 0.5 * sum(R**2) + alpha * sum(abs(B)) + 0.5 * beta * sum(B**2))
 
       # Break if obj is not improving anymore
@@ -210,7 +223,7 @@ spca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=FA
       }
 
       # Trace
-      if(verbose > 0 && noi > 1) {
+      if(verbose > 0 && (noi-1) %% 10 == 0) {
         print(sprintf("Iteration: %4d, Objective: %1.5e, Relative improvement %1.5e", noi, obj[noi], improvement))
       }
 
