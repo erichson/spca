@@ -241,7 +241,7 @@ autoplot(timing_spca, log = TRUE, y_max = 1.05 * max(timing_spca$time))
 ```
 The performance is summarized in the following plot.
 
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/timeing_art.png" width="500">
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/timeing_art.png" width="800">
 
 We clearly see the computational advantage of the SPCA algorithm using variable projection comparted tot he implementation provided by the elastinet package. Further, we see that there is little difference between the randomized and the deterministic algorithms here. However, the performance is pronaunced for bigger datasets such as the face data. 
 
@@ -254,7 +254,7 @@ timing_spca = microbenchmark(
 ```
 Clearly, the randomized algorithm shows some substantial speedups over the deterministic algorithm.
 
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/timeing.png" width="500">
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/timeing.png" width="800">
 
 
 
