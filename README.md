@@ -18,16 +18,8 @@ This package provides robust and randomized accelerated SPCA routines in R:
 Problem Formulation
 ********************
 Sparse PCA can be formualted in terms of the following optimization problem:
-$$
-\begin{equation}\label{eq:spca_obj}
-\begin{aligned}
-\underset{\mathbf{A,B}}{\text{minimize}}~~
-& f(\mathbf{A,B}) = \| 1}{2}\fnorm{\mathbf{X} - \mathbf{X}\mathbf{B}\mathbf{A^\top} \|^2_F + \alpha \| \mathbf{B} \|_1 + 1/2 * \beta \| \mathbf{B}\|^2 \\
-\text{subject to}~~
-& \mathbf{A^\top}\mathbf{A} = \mathbf{I},
-\end{aligned}
-\end{equation}
-$$
+
+<p align="center"><img src="https://rawgit.com/in	git@github.com:erichson/spca/master/svgs/d33bb46eb3ec82dbbd59d29cc261c04d.svg?invert_in_darkmode" align=middle width=559.1124pt height=53.802045pt/></p>
 
 Here we use a combination of the l1 and l2 norm as a sparsity-promoting regularizer, also known as the elastic net. Specfically, the interfrace of the spca function is:
 
@@ -36,7 +28,7 @@ spca(X, k, alpha=1e-4, beta=1e-4, center=TRUE, scale=TRUE,  max_iter=1000, tol=1
 ```
 The description of the arguments is listed in the following:
 
-* ``X`` is a real ``n, p`` input matrix (or data frame) to be decomposed.
+* ``X`` is a real ``n`` by ``p`` data matrix (or data frame), where ``n`` denotes the number of observations and ``p`` the number of variables.
 
 * ``k`` specifies the target rank, i.e., number of components to be computed.
 
