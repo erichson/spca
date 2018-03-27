@@ -34,7 +34,7 @@ Here we use a combination of the l1 and l2 norm as a sparsity-promoting regulari
 Then, the principal components ``Z`` are then formed as
 
 ```
-Z = X⋅B.
+Z = X %*% B.
 ```
 
 Specifically, the interface of the SPCA function is:
@@ -68,7 +68,7 @@ A list with the following components is returned:
 * ``transform`` the approximated inverse transform to rotate the scores back to high-dimensional space.
 * ``scores`` the principal component scores.
 * ``eigenvalues`` the approximated eigenvalues; 
-*  ``center, scale`` the centering and scaling used.
+* ``center, scale`` the centering and scaling used.
 
 
 Installation
@@ -99,10 +99,9 @@ One of the most striking demonstrations of PCA are eigenfaces. The aim is to ext
 In the following we use the down-sampled cropped Yale face database B. The dataset comprises 2410 grayscale images of 38 different people, cropped and aligned, and can be loaded as 
 
 ```r
-download.file("https://github.com/erichson/data/raw/master/R/faces.RData", "faces.RData")
+utils::download.file('https://github.com/erichson/data/blob/master/R/faces.RData?raw=true', 'faces.RData', "wget")
 load("faces.RData")
 ```
-
 For computational convenience the 96x84 faces images are stored as column vectors of the data matrix. For instance, the first face can be displayed as
 
 ```r
@@ -118,13 +117,19 @@ faces.pca <- prcomp(t(faces), k = 25, center = TRUE, scale. = TRUE)
 
 Note, that the data matrix needs to be transposed, so that each column corresponds to a pixel location rather then to a person. Here, the analysis is performed on the correlation matrix by setting the argument \code{scale = TRUE}. The mean face is provided as the attribute ``center``.
 
-In the following, we use the SPCA function and set the tuning parameter ``alpha=0``, ``beta=0``:
+In the following, we use the SPCA package:
+
+```r
+library("spca")
+```
+
+First, we set the tuning parameters ``alpha=0`` and ``beta=0``, which reduces to PCA:
 
 ```r
 spca.results <- spca(t(faces), k=25, alpha=0, beta=0, center=TRUE, scale=TRUE)
 ```
 
-which reduces to PCA. The summary of the analysis is as follows:
+The summary of the analysis is as follows:
 
 ```r
 summary(spca.results) 
@@ -197,6 +202,63 @@ for(i in 1:25) {
 
 
 
+Computational performance
+*************************
+
+Now, let us evaluate the computatinal performace. Here we consider for comparision also the SPCA function from the ``elasticnet`` package. First, we create some artificial data where we know the ground truth: 
+
+```r
+m <- 100000
+V1 <- rnorm(m, 0, 290)
+V2 <- rnorm(m, 0, 300)
+V3 <- -0.1*V1 + 0.1*V2 + rnorm(m,0,100)
+X <- cbind(V1,V1,V1,V1, V2,V2,V2,V2, V3,V3)
+X <- X + matrix(rnorm(length(X),0,1), ncol = ncol(X), nrow = nrow(X))
+```
+Hence, we expect to find 3 components. The first and second should have 4 non-zero loadings and the third 2 non-zero loadings. As a sanity check you can plot the loadings:
+
+```r
+out <- spca(X, k=3, alpha=1e-3, beta=1e-3, center = TRUE, scale = FALSE, verbose=0)
+print(out)
+
+
+
+```
+
+Next, we use the ``microbenchmark`` package for timing:
+
+```r
+library("microbenchmark")
+
+timing_spca = microbenchmark(
+  'Elastinet SPCA' = elasticnet::spca(X, K = 3, type = "predictor", sparse = "varnum", para = c(4, 4, 2)),
+  'Deterministic SPCA' = spca(X, k=3, alpha=1e-4, beta=1e-4, verbose=0),
+  'Randomized SPCA'  = rspca(X, k=3, alpha=1e-4, beta=1e-4, verbose=0, o=0, q=0),
+  times = 20
+)
+
+autoplot(timing_spca, log = TRUE, y_max = 1.05 * max(timing_spca$time))
+```
+The performance is summarized in the following plot.
+
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/timeing_art.png" width="500">
+
+We clearly see the computational advantage of the SPCA algorithm using variable projection comparted tot he implementation provided by the elastinet package. Further, we see that there is little difference between the randomized and the deterministic algorithms here. However, the performance is pronaunced for bigger datasets such as the face data. 
+
+```r
+timing_spca = microbenchmark(
+  'Deterministic SPCA' = spca(t(faces), k=25, alpha=1e-4, beta=1e-1, verbose=0, max_iter=1000, tol=1e-4),
+  'Randomized SPCA'  = rspca(t(faces), k=25, alpha=1e-4, beta=1e-1, verbose=0, max_iter=1000, tol=1e-4),
+  times = 15
+)
+```
+Clearly, the randomized algorithm shows some substantial speedups over the deterministic algorithm.
+
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/timeing.png" width="500">
+
+
+
+
 
 
 Example: Robust SPCA
@@ -236,10 +298,6 @@ for(i in 1:25) {
 <img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparsecomp.png" width="500">
 
 It can be seen that the robust SPCA algorithms captures some of the specularities and other errors in the data. 
-
-
-Computational performance
-*************************
 
 
 
