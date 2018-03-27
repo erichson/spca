@@ -17,13 +17,23 @@ This package provides robust and randomized accelerated SPCA routines in R:
 
 Problem Formulation
 ********************
-Sparse PCA can be formulated in terms of the following optimization problem:
+Such a parsimonious model is obtained by introducing prior information like sparsity promoting regularizers.
+More concreatly, given a data matrix ``X`` with shape ``(m,p)``, SPCA attemps to minimize the following
+optimization problem:
 
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/objective.svg" width=480.04605pt height=53.802045pt>
+```
+minimize f(A,B) = 1/2⋅‖X - X⋅B⋅Aᵀ‖² + α⋅‖B‖₁ + 1/2⋅β‖B‖² subject to AᵀA = I.
+```
 
-minimize f(A,B) = 1/2⋅‖X - X⋅B⋅Aᵀ‖² + α⋅‖B‖₁ + 1/2⋅β‖B‖² subject to AᵀA = I
- 
-Here we use a combination of the l1 and l2 norm as a sparsity-promoting regularizer, also known as the elastic net. Specifically, the interface of the SPCA function is:
+The matrix ``B`` is the sparse weight (loadings) matrix and ``A`` is an orthonormal matrix.
+Here we use a combination of the l1 and l2 norm as a sparsity-promoting regularizer, also known as the elastic net. 
+Then, the principal components ``Z`` are then formed as
+
+```
+Z = X⋅B.
+```
+
+Specifically, the interface of the SPCA function is:
 
 ```R
 spca(X, k, alpha=1e-4, beta=1e-4, center=TRUE, scale=TRUE,  max_iter=1000, tol=1e-4, verbose=TRUE)
@@ -48,7 +58,13 @@ The description of the arguments is listed in the following:
 
 * ``verbose`` logical value which indicates whether progress is printed.
 
+A list with the following components is returned:
 
+* ``loadings`` sparse loadings (weight) vector.
+* ``transform`` the approximated inverse transform to rotate the scores back to high-dimensional space.
+* ``scores`` the principal component scores.
+* ``eigenvalues`` the approximated eigenvalues; 
+*  ``center, scale`` the centering and scaling used.
 
 
 Installation
