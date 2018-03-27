@@ -1,5 +1,9 @@
 <img src="https://raw.githubusercontent.com/erichson/spca/master/spca.png" width="550">
+
 [![Build Status](https://travis-ci.org/erichson/spca.svg?branch=master)](https://travis-ci.org/erichson/spca)
+
+
+
 Sparse Principal Component Analysis (SPCA) via Variable Projection
 *******************************************************************
 
