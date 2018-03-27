@@ -21,6 +21,8 @@ Sparse PCA can be formulated in terms of the following optimization problem:
 
 <img src="https://raw.githubusercontent.com/erichson/spca/master/plots/objective.svg" width=480.04605pt height=53.802045pt>
 
+minimize f(A,B) = 1/2⋅‖X - X⋅B⋅Aᵀ‖² + α⋅‖B‖₁ + 1/2⋅β‖B‖² subject to AᵀA = I
+ 
 Here we use a combination of the l1 and l2 norm as a sparsity-promoting regularizer, also known as the elastic net. Specifically, the interface of the SPCA function is:
 
 ```R
