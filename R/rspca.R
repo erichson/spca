@@ -206,9 +206,9 @@ rspca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=F
   A <- svd_init$v[,1:k]
   B <- svd_init$v[,1:k]
 
-  V <- svd_init$v
-  VD = sweep(V, MARGIN = 2, STATS = svd_init$d, FUN = "*", check.margin = TRUE)
-  VD2 = sweep(V, MARGIN = 2, STATS = svd_init$d**2, FUN = "*", check.margin = TRUE)
+  Vt <- t(svd_init$v)
+  VD = sweep(svd_init$v, MARGIN = 2, STATS = svd_init$d, FUN = "*", check.margin = TRUE)
+  VD2 = sweep(svd_init$v, MARGIN = 2, STATS = svd_init$d**2, FUN = "*", check.margin = TRUE)
 
 
   #--------------------------------------------------------------------
@@ -230,13 +230,13 @@ rspca.default <- function(X, k=NULL, alpha=1e-4, beta=1e-4, center=TRUE, scale=F
   while (noi <= max_iter && improvement > tol) {
 
         # Update A:  X'XB = UDV'
-        Z <- VD2 %*% (t(V) %*% B)
+        Z <- VD2 %*% (Vt %*% B)
         svd_update <- svd(Z)
         A <- svd_update$u %*% t(svd_update$v)
 
 
         # Proximal Gradient Descent to Update B:
-        grad <- VD2 %*% (t(V) %*% (A - B)) - beta * B
+        grad <- VD2 %*% (Vt %*% (A - B)) - beta * B
         B_temp <- B + nu * grad
 
         # l1 soft-threshold
