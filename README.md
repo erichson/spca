@@ -19,7 +19,7 @@ Problem Formulation
 ********************
 Sparse PCA can be formulated in terms of the following optimization problem:
 
-<p align="center"><img src="https://rawgit.com/in	git@github.com:erichson/spca/master/plots/objective.svg?invert_in_darkmode" align=middle width=559.1124pt height=53.802045pt/></p>
+<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/objective.svg" width=480.04605pt height=53.802045pt>
 
 Here we use a combination of the l1 and l2 norm as a sparsity-promoting regularizer, also known as the elastic net. Specifically, the interface of the SPCA function is:
 
@@ -112,7 +112,7 @@ Explained variance       2901.541  2706.701  388.080  227.062  118.407  ...
 Standard deviations        53.866    52.026   19.700   15.069   10.882  ... 
 Proportion of variance      0.360     0.336    0.048    0.028    0.015  ...
 Cumulative proportion       0.360     0.695    0.744    0.772    0.786  ... 
-```                      
+```
 
 Just the first 5 PCs explain about 79% of the total variation in the data, while the first 25 PCs explain more then 90%. Finally, the eigenvectors can be visualized as eigenfaces, e.g., the first eigenvector (eigenface) is displayed as follows
 
