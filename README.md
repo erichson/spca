@@ -218,11 +218,27 @@ X <- X + matrix(rnorm(length(X),0,1), ncol = ncol(X), nrow = nrow(X))
 Hence, we expect to find 3 components. The first and second should have 4 non-zero loadings and the third 2 non-zero loadings. As a sanity check you can plot the loadings:
 
 ```r
-out <- spca(X, k=3, alpha=1e-3, beta=1e-3, center = TRUE, scale = FALSE, verbose=0)
+out <- rspca(X, k=3, alpha=1e-4, beta=1e-4, center = TRUE, scale = FALSE, verbose=0)
 print(out)
 
+Standard deviations:
+[1] 599.686 578.621 137.740
 
+Eigenvalues:
+[1] 359623.56 334802.29  18972.17
 
+Sparse loadings:
+        [,1]   [,2]  [,3]
+ [1,]  0.000 -0.498 0.000
+ [2,]  0.000 -0.498 0.000
+ [3,]  0.000 -0.498 0.000
+ [4,]  0.000 -0.498 0.000
+ [5,] -0.499  0.000 0.000
+ [6,] -0.499  0.000 0.000
+ [7,] -0.499  0.000 0.000
+ [8,] -0.499  0.000 0.000
+ [9,]  0.000  0.000 0.678
+[10,]  0.000  0.000 0.678
 ```
 
 Next, we use the ``microbenchmark`` package for timing:
