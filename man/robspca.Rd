@@ -19,7 +19,7 @@ specifies the target rank, i.e., number of components to be computed. \eqn{k} sh
 Sparsity controlling parameter. Higher values lead to sparser components.}
 
 \item{beta}{float; \cr
-Amount of ridge shrinkage to apply in order to improve conditionin.}
+Amount of ridge shrinkage to apply in order to improve conditioning.}
 
 \item{gamma}{float; \cr
 Sparsity controlling parameter for the error matrix S.
@@ -33,14 +33,14 @@ shifted to be zero centered (\eqn{TRUE} by default).}
 logical value which indicates whether the variables should
 be scaled to have unit variance (\eqn{FALSE} by default).}
 
-\item{max_iter}{integer;
-Maximum number of iterations to perform before exiting.}
+\item{max_iter}{integer; \cr
+maximum number of iterations to perform before exiting.}
 
-\item{tol}{float;
-Stopping tolerance for reconstruction error.}
+\item{tol}{float; \cr
+stopping tolerance for reconstruction error.}
 
-\item{verbose}{bool;
-If \eqn{TRUE}, display progress.}
+\item{verbose}{bool; \cr
+logical value which indicates whether progress is printed.}
 }
 \value{
 \code{spca} returns a list containing the following three components:
