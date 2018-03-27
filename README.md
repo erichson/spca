@@ -251,6 +251,8 @@ timing_spca = microbenchmark(
   'Randomized SPCA'  = rspca(t(faces), k=25, alpha=1e-4, beta=1e-1, verbose=0, max_iter=1000, tol=1e-4),
   times = 15
 )
+
+autoplot(timing_spca, log = FALSE, y_max = 1.2 * max(timing_spca$time))
 ```
 Clearly, the randomized algorithm shows some substantial speedups over the deterministic algorithm.
 
