@@ -12,7 +12,7 @@ spca(X, k = NULL, alpha = 1e-04, beta = 1e-04, center = TRUE,
 a real \eqn{(n, p)} input matrix (or data frame) to be decomposed.}
 
 \item{k}{integer; \cr
-specifies the target rank, i.e., number of components to be computed. \eqn{k} should satisfy \eqn{k << min(n,p)}.}
+specifies the target rank, i.e., the number of components to be computed.}
 
 \item{alpha}{float; \cr
 Sparsity controlling parameter. Higher values lead to sparser components.}
@@ -32,7 +32,7 @@ be scaled to have unit variance (FALSE by default).}
 maximum number of iterations to perform before exiting.}
 
 \item{tol}{float; \cr
-stopping tolerance for reconstruction error.}
+stopping tolerance for the convergence criterion.}
 
 \item{verbose}{bool; \cr
 logical value which indicates whether progress is printed.}
@@ -71,20 +71,20 @@ high-dimensional data setting where the number of variables \eqn{p} is greater t
 observations \eqn{n}.
 
 Such a parsimonious model is obtained by introducing prior information like sparsity promoting regularizers.
-More concreatly,given an \eqn{(m,n)} matrix \eqn{X} input matrix, SPCA attemps to minimize the following
+More concreatly, given an \eqn{(n,p)} data matrix \eqn{X}, SPCA attemps to minimize the following
 objective function:
 
 \deqn{ f(A,B) = \frac{1}{2} \| X - X B A^\top \|^2_F + \psi(B) }
 
 where \eqn{B} is the sparse weight (loadings) matrix and \eqn{A} is an orthonormal matrix.
-\eqn{\psi} denotes a sparsity inducing regularizer such as the LASSO (l1 norm) or the elastic net
-(a combination of the l1 and l2 norm). The principal components \eqn{Z} are then formed as
+\eqn{\psi} denotes a sparsity inducing regularizer such as the LASSO (\eqn{\ell_1}{l1} norm) or the elastic net
+(a combination of the \eqn{\ell_1}{l1} and \eqn{\ell_2}{l2} norm). The principal components \eqn{Z} are formed as
 
-\deqn{ Z = X B }{Z = X * B}.
+\deqn{ Z = X B }{Z = X * B}
 
-The data can be approximately rotated back as
+and the data can be approximately rotated back as
 
-\deqn{ \tilde{X} = Z A^\top }{ X = Z t(A)}.
+\deqn{ \tilde{X} = Z A^\top }{ X = Z t(A)}
 
 The print and summary method can be used to present the results in a nice format.
 }

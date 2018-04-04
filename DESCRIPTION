@@ -4,7 +4,7 @@ Title: Sparse Principal Component Analysis (SPCA)
 Version: 0.1.0
 Author: N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin
 Maintainer: N. Benjamin Erichsonr <erichson@uw.edu>
-Description: This package provides efficient routines to compute sparse principal component analysis (SPCA).SPCA attempts to find sparse weight vectors (loadings), i.e., a weight vector with only a few 'active' (nonzero) values. This approach leads to an improved interpretability of the model, because the principal components are formed as a linear combination of only a few of the original variables.    This package uses a variable projection solver to compute the sparse solution. In addition, a randomized accelerated SPCA routine and a robust SPCA routine is provided. Robust SPCA allows to capture grossly corrupted entries in the data. 
+Description: Sparse principal component analysis (SPCA) attempts to find sparse weight vectors (loadings), i.e., a weight vector with only a few 'active' (nonzero) values. This approach provides better interpretability for the principal components in high-dimensional data settings. This is, because the principal components are formed as a linear combination of only a few of the original variables. This package provides efficient routines to compute SPCA. Specifically, a variable projection solver is used to compute the sparse solution. In addition, a fast randomized accelerated SPCA routine and a robust SPCA routine is provided. Robust SPCA allows to capture grossly corrupted entries in the data. 
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
