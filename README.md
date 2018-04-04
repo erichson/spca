@@ -199,7 +199,7 @@ for(i in 1:25) {
 
 
 
-## Computational performance
+## Computational Comparison
 
 Now, let us evaluate the computatinal performace. Here we consider for comparision also the SPCA function from the ``elasticnet`` package. First, we create some artificial data where we know the ground truth: 
 
