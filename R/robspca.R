@@ -101,6 +101,7 @@
 #'  (available at `arXiv \url{https://arxiv.org/abs/1804.00341}).
 #' }
 #'
+#'
 #' @author N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin
 #'
 #' @seealso \code{\link{rspca}}, \code{\link{spca}}
