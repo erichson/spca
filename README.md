@@ -4,10 +4,9 @@
 
 
 
-Sparse Principal Component Analysis (SPCA) via Variable Projection
-*******************************************************************
+# SPCA via Variable Projection
 
-Sparse principal component analysis is a modern variant of PCA. Specifically, SPCA attempts to find sparse 
+Sparse principal component analysis (SPCA) is a modern variant of PCA. Specifically, SPCA attempts to find sparse 
 weight vectors (loadings), i.e., a weight vector with only a few `active' (nonzero) values. This approach 
 leads to an improved interpretability of the model, because the principal components are formed as a 
 linear combination of only a few of the original variables. Further, SPCA avoids overfitting in a 
@@ -19,14 +18,14 @@ This package provides robust and randomized accelerated SPCA routines in R:
 * Randomized SPCA: ``rspca()``.
 * Robust SPCA: ``robspca()``.
 
-Problem Formulation
-********************
+## Problem Formulation
+
 Such a parsimonious model is obtained by introducing prior information like sparsity promoting regularizers.
 More concreatly, given a data matrix ``X`` with shape ``(m,p)``, SPCA attemps to minimize the following
 optimization problem:
 
 ```
-minimize f(A,B) = 1/2⋅‖X - X⋅B⋅Aᵀ‖² + α⋅‖B‖₁ + 1/2⋅β‖B‖² subject to AᵀA = I.
+minimize f(A,B) = 1/2⋅‖X - X⋅B⋅Aᵀ‖² + α⋅‖B‖₁ + 1/2⋅β‖B‖², subject to AᵀA = I.
 ```
 
 The matrix ``B`` is the sparse weight (loadings) matrix and ``A`` is an orthonormal matrix.
@@ -71,8 +70,7 @@ A list with the following components is returned:
 * ``center, scale`` the centering and scaling used.
 
 
-Installation
-************
+## Installation
 
 Install the spca package via CRAN
 ```R
@@ -91,8 +89,7 @@ The source packge can be obtained here: [CRAN: rsvd](https://cran.r-project.org/
 
 
 
-Example: Sparse PCA
-********************
+## Example: Sparse PCA
 
 One of the most striking demonstrations of PCA are eigenfaces. The aim is to extract the most dominant correlations between different faces from a large set of facial images. Specifically, the resulting columns of the rotation matrix (i.e., the eigenvectors) represent `shadows' of the faces, the so-called eigenfaces. Specifically, the eigenfaces reveal both inner face features (e.g., eyes, nose, mouth) and outer features (e.g., head shape, hairline, eyebrows). These features can then be used for facial recognition and classification.
 
@@ -115,7 +112,7 @@ In order to approximate the ``k=25`` dominant eigenfaces you can use the standar
 faces.pca <- prcomp(t(faces), k = 25, center = TRUE, scale. = TRUE)
 ```
 
-Note, that the data matrix needs to be transposed, so that each column corresponds to a pixel location rather then to a person. Here, the analysis is performed on the correlation matrix by setting the argument \code{scale = TRUE}. The mean face is provided as the attribute ``center``.
+Note, that the data matrix needs to be transposed, so that each column corresponds to a pixel location rather than to a person. Here, the analysis is performed on the correlation matrix by setting the argument \code{scale = TRUE}. The mean face is provided as the attribute ``center``.
 
 In the following, we use the SPCA package:
 
@@ -156,7 +153,7 @@ for(i in 1:25) {
 
 The eigenfaces encode the holistic facial features as well as the illumination. 
 
-In  many application, however, it is favorable to obtain a sparse representation. This, is because a sparse representation is easier to interpret.  Further, this avoids overfitting in a high-dimensional data setting where the number of variables is greater than the number of observations. SPCA attempts to find sparse weight vectors (loadings), i.e., the approximate eigenvecotrs with only a few `active' (nonzero) values. We can compute the sparse eigenvectors as follows:
+In  many application, however, it is favorable to obtain a sparse representation. This is because a sparse representation is easier to interpret.  Further, this avoids overfitting in a high-dimensional data setting where the number of variables is greater than the number of observations. SPCA attempts to find sparse weight vectors (loadings), i.e., the approximate eigenvecotrs with only a few `active' (nonzero) values. We can compute the sparse eigenvectors as follows:
 
 ```r
 rspca.results <- rspca(t(faces), k=25, alpha=1e-4, beta=1e-1, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
@@ -202,8 +199,7 @@ for(i in 1:25) {
 
 
 
-Computational performance
-*************************
+## Computational Comparison
 
 Now, let us evaluate the computatinal performace. Here we consider for comparision also the SPCA function from the ``elasticnet`` package. First, we create some artificial data where we know the ground truth: 
 
@@ -259,7 +255,7 @@ The performance is summarized in the following plot.
 
 <img src="https://raw.githubusercontent.com/erichson/spca/master/plots/timeing_art.png" width="800">
 
-We clearly see the computational advantage of the SPCA algorithm using variable projection comparted tot he implementation provided by the elastinet package. Further, we see that there is little difference between the randomized and the deterministic algorithms here. However, the performance is pronaunced for bigger datasets such as the face data. 
+We clearly see the computational advantage of the SPCA algorithm using variable projection compare to the implementation provided by the elastinet package. Further, we see that there is little difference between the randomized and the deterministic algorithms here. However, the performance is pronaunced for bigger datasets such as the face data. 
 
 ```r
 timing_spca = microbenchmark(
@@ -279,8 +275,7 @@ Clearly, the randomized algorithm shows some substantial speedups over the deter
 
 
 
-Example: Robust SPCA
-********************
+## Example: Robust SPCA
 
 In the following we demonstrate the robust SCPA which allows to capture some grossly corrupted entries in the data. The idea is to separate the input data into a low-rank component and a sparse component. The latter aims to capture potential outliers in the data. For the face data, we proceed as follows:
 
@@ -320,6 +315,6 @@ It can be seen that the robust SPCA algorithms captures some of the specularitie
 
 
 
-References
-*************
+## References
+
 * [N. Benjamin Erichson, et al. Randomized Matrix Decompositions using R. (2016)](http://arxiv.org/abs/1608.02148)
