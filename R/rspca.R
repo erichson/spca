@@ -107,8 +107,16 @@
 #'
 #' @references
 #' \itemize{
+#'
+#'  \item [1] N. B. Erichson, P. Zheng, K. Manohar, S. Brunton, J. N. Kutz, A. Y. Aravkin.
+#'  "Sparse Principal Component Analysis via Variable Projection."
+#'  Submitted to IEEE Journal of Selected Topics on Signal Processing (2018).
+#'  (available at `arXiv \url{https://arxiv.org/abs/1804.00341}).
+#'
+#'
 #'   \item  [1] N. B. Erichson, S. Voronin, S. Brunton, J. N. Kutz.
-#'          "Randomized matrix decompositions using R" (2016).
+#'          "Randomized matrix decompositions using R."
+#'          Submitted to Journal of Statistical Software (2016).
 #'          (available at `arXiv \url{http://arxiv.org/abs/1608.02148}).
 #' }
 #'
