@@ -83,10 +83,6 @@ You can also install the development version from GitHub using [devtools](https:
 devtools::install_github("erichson/spca")
 ```
 
-The source packge can be obtained here: [CRAN: rsvd](https://cran.r-project.org/web/packages/rsvd/index.html).
-
-
-
 
 
 ## Example: Sparse PCA
@@ -317,4 +313,6 @@ It can be seen that the robust SPCA algorithms captures some of the specularitie
 
 ## References
 
-* [N. Benjamin Erichson, et al. Randomized Matrix Decompositions using R. (2016)](http://arxiv.org/abs/1608.02148)
+* [N. Benjamin Erichson, et al. "Sparse Principal Component Analysis via Variable Projection." (2018)](https://arxiv.org/abs/1804.00341)
+
+* [N. Benjamin Erichson, et al. "Randomized Matrix Decompositions using R." (2016)](http://arxiv.org/abs/1608.02148)
