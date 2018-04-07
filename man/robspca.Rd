@@ -116,6 +116,15 @@ print(out)
 summary(out)
 
 }
+\references{
+\itemize{
+
+ \item [1] N. B. Erichson, P. Zheng, K. Manohar, S. Brunton, J. N. Kutz, A. Y. Aravkin.
+ "Sparse Principal Component Analysis via Variable Projection."
+ Submitted to IEEE Journal of Selected Topics on Signal Processing (2018).
+ (available at `arXiv \url{https://arxiv.org/abs/1804.00341}).
+}
+}
 \seealso{
 \code{\link{rspca}}, \code{\link{spca}}
 }

@@ -72,9 +72,9 @@ A list with the following components is returned:
 
 ## Installation
 
-Install the spca package via CRAN
+Install the sparsepca package via CRAN
 ```R
-install.packages("spca")
+install.packages("sparsepca")
 ```
 
 You can also install the development version from GitHub using [devtools](https://cran.r-project.org/package=devtools):
