@@ -53,6 +53,15 @@
 
 ## Maintenance and documentation
 
+- Extend the independent numerical tests to cover genuinely compressed
+  sparse sketches, finite-difference reduced-objective gradients, correlated
+  loading optimality conditions, active robust Huber optima, changes of
+  measurement units, and numerical safeguard branches. Fault-injection
+  experiments verify that the new safeguards detect their intended failures.
+- Clarify that ordinary-PCA recovery at zero penalties assumes the default
+  SVD initialization, and distinguish objective convergence from coefficient
+  accuracy or first-order optimality of every returned factor.
+
 - Avoid computing unused left singular vectors during deterministic
   initialization. Reuse thin matrix products during optimization instead
   of constructing a full reconstruction residual on every iteration.

@@ -138,9 +138,12 @@ For fixed \eqn{B}, an SVD of \eqn{X^T X B} gives the best orthogonal
 reconstruction factor \eqn{A}. A gradient step followed by thresholding
 updates \eqn{B}. The joint problem is nonconvex, so the solution can
 depend on initialization. Small objective change is a convergence
-diagnostic, not proof of a global minimum. With \code{alpha = beta = 0},
+diagnostic, not proof of a global minimum or a bound on the gradient.
+With \code{alpha = beta = 0} and the default SVD initialization,
 deterministic fitting recovers ordinary PCA with matching preprocessing,
-up to signs and bases within repeated singular subspaces.
+up to signs and bases within repeated singular subspaces. A custom
+\code{B_init} can remain in a different stationary subspace even with
+zero penalties.
 
 Relative improvement divides the decrease in objective by the magnitude
 of the current objective, with a positive machine denominator at zero.
@@ -149,7 +152,11 @@ times the largest of the consecutive objective magnitudes and the
 squared data norm. Machine precision is \code{.Machine$double.eps}.
 Larger increases stop with a warning and \code{converged = FALSE}.
 For \code{rspca}, the squared data norm in this allowance is that of
-the sketch.
+the sketch. The returned \eqn{A} was optimized immediately before the
+final \eqn{B} update (and the final \eqn{S} update for robust fits),
+so objective convergence does not imply that every block's first-order
+optimality condition holds to \code{tol}. A tighter tolerance can refine
+those conditions, at the cost of more iterations.
 
 Scores are \eqn{Z=XB}; reconstruction in processed coordinates is
 \eqn{ZA^T}. The loading matrix \eqn{B} retains its penalized scale.

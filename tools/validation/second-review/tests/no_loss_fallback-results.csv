@@ -1,0 +1,4 @@
+"file","context","test","nb","failed","skipped","error","warning","user","system","real","passed"
+"test-numerical-safeguards.R","","residual loss remains accurate near an exact reconstruction",4,1,FALSE,FALSE,0,0.221,0.084,0.305,3
+"test-numerical-safeguards.R","","stopping distinguishes descent, roundoff, and objective increases",13,0,FALSE,FALSE,0,0.0749999999999997,0.004,0.0790000000000002,13
+"test-numerical-safeguards.R","","adjusted variances retain geometry after zero and dependent scores",2,0,FALSE,FALSE,0,0.012,0.002,0.0150000000000001,2

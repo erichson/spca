@@ -1,0 +1,9 @@
+"case","block","passed","failed","errors","warnings","skipped"
+"unmodified",1,2,0,FALSE,0,FALSE
+"unmodified",2,5,0,FALSE,0,FALSE
+"omit_ridge_shrinkage",1,0,2,FALSE,0,FALSE
+"omit_ridge_shrinkage",2,2,3,FALSE,1,FALSE
+"reverse_smooth_gradient",1,0,2,FALSE,0,FALSE
+"reverse_smooth_gradient",2,2,3,FALSE,1,FALSE
+"treat_alpha_as_absolute",1,0,2,FALSE,0,FALSE
+"treat_alpha_as_absolute",2,2,3,FALSE,0,FALSE

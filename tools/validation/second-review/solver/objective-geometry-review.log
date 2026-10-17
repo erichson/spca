@@ -1,0 +1,6 @@
+Cross-product singular values: 30.5676 21.14345
+FD gradients maximum differences, h=1e-5 versus 1e-4/1e-6: 2.728484e-08 4.618528e-09
+Minimum soft-threshold distance: 0.00366037
+Minimum hard-threshold cost distance: 0.01112401
+elasticnet max coefficient error 1.867817e-11
+l0 max coefficient error 1.867817e-11

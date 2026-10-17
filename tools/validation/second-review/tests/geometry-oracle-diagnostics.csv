@@ -1,0 +1,6 @@
+"metric","value"
+"min_cross_singular_value",21.1434483180321
+"min_hard_cost_margin",0.0111240068658698
+"largest_data_singular_value_squared",40.4157104935012
+"max_loading_error_elasticnet",1.86781701216887e-11
+"max_loading_error_l0",1.86781701216887e-11

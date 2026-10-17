@@ -1,0 +1,3 @@
+"file","context","test","nb","failed","skipped","error","warning","user","system","real","passed"
+"focused-objective-geometry.R","","the penalized update agrees with a finite-difference value-function gradient",2,2,FALSE,FALSE,0,0.11,0,0.11,0
+"focused-objective-geometry.R","","a correlated penalized fit satisfies independent optimality conditions",5,3,FALSE,FALSE,0,0.32,0,0.32,2

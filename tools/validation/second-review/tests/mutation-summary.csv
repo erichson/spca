@@ -1,0 +1,6 @@
+"case","passed","failed","errors","warnings","skipped"
+"unmodified",19,0,0,0,0
+"no_loss_fallback",18,1,0,0,0
+"increased_objective_converged",18,1,0,0,0
+"ignore_evaluation_scale",17,2,0,0,0
+"forget_variance_pivot",18,1,0,0,0

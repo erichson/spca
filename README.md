@@ -119,10 +119,11 @@ processed matrix, or of its sketch for `rspca()`. Returned `alpha` and
 `beta` contain these **effective penalties**. The arguments are relative
 penalty strengths, not the literal coefficients in the displayed objective.
 
-With `alpha = beta = 0`, deterministic `spca()` recovers ordinary PCA with
-matching centering and scaling, up to signs and basis choices in tied
-singular subspaces. Sparse fits accept extra reconstruction error in
-exchange for simpler coefficients. Keeping only `k` components also
+With `alpha = beta = 0` and the default SVD initialization, deterministic
+`spca()` recovers ordinary PCA with matching centering and scaling, up to
+signs and basis choices in tied singular subspaces. A custom `B_init` can
+remain in a different stationary subspace even with zero penalties. Sparse
+fits accept extra reconstruction error in exchange for simpler coefficients. Keeping only `k` components also
 discards information, even if no sparsity penalty is used.
 
 Scores and the reconstruction factor require `k * (n + p)` numeric entries;
@@ -168,7 +169,11 @@ c(iterations = fit$iterations, converged = fit$converged)
 
 `converged` records the objective-based stopping criterion. Tightening
 `tol` or increasing `max_iter` may refine the fit; neither is a test of
-scientific validity or a guarantee of a global solution.
+scientific validity or a guarantee of a global solution. A small objective
+change also does not bound coefficient error or the size of the gradient.
+The final A update precedes the final B update (and S update for robust
+fits), so the returned blocks need not satisfy every optimality condition
+to the requested objective tolerance.
 
 ## Choosing a sparsity level
 
@@ -432,7 +437,8 @@ warm-up, and subsequent quality calculations are outside the timer.
 
 The recorded environment is R 4.6.1, Matrix 1.7-6, rsvd 1.0.6, Ubuntu
 24.04.3, and OpenBLAS 0.3.26/LAPACK 3.12.0 on a virtualized Intel Xeon
-Platinum 8573C system. All 36 measured fits converged without warnings.
+Platinum 8573C system. All 36 measured runs completed without warnings;
+all iterative fits converged.
 The [benchmark guide](tools/benchmarks/README.md) records seeds, hardware,
 thread settings, reference work, and all measurement definitions;
 [raw measurements](tools/benchmarks/results/measurements.csv),
