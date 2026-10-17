@@ -1,0 +1,27 @@
+{
+  "recorded_utc": "2026-10-17T20:44:43.348555+00:00",
+  "git_head": "e9880986d71b8441946353f14b732d537e732d65",
+  "scope": "Source checkout including uncommitted release documentation; file hashes identify the inspected contents. Not a check of an installed source archive.",
+  "sha256": {
+    "DESCRIPTION": "1e7c1c976887643ec6c9c77cd7335562b6a06d319baa7c9f630c5f59ac7350c6",
+    "README.md": "a0570cdbaaa9b7eb315a7f22c3a1e3ccde749c4c2893ae9e1c26cc2dbab02558",
+    "NAMESPACE": "153ebc3caa092d2029b7652637fe924feabb8d848a3a6fca9dcc87c08229c81e",
+    "R/documentation.R": "000d71ec1b01a989c670535db6e3fcc8ecc8c77bba3a905f2712da50c22923fa",
+    "R/methods.R": "21385e0d223babfd46e86169ba7a0bf48ef65d9b75657189cc245dae3c2459f6",
+    "R/preprocess.R": "d9e61abce7dcb90d8792dd167bc70996fd4dd1d20eb4387893448d0ab96f04b4",
+    "R/robspca.R": "80d3e137ebbcc9f25f13249b63e62d6a7a389dc368ed668e138b483d47f269f5",
+    "R/rspca.R": "ef5cc163d6129493a824fb92279da3959fc8d751116f07804fe39e4431d30973",
+    "R/solver.R": "9ff3b7a734a32d0a782befc135f2da66642a254f52eefaaf27fdb47519c9b00c",
+    "R/spca.R": "a97e7773ed49f5065591de1708dc7b57f2cccea806687e8937539cead96d62e8",
+    "R/spca_path.R": "ff1eae827bbde974647d17127d277239f21f03551e2414b5ef0c56710a277ec5",
+    "R/utils.R": "cefa1d3b9c5c7b4b08df6248a4a9f3332b28199d51817f63e7509e668dd39f96",
+    "man/predict.spca.Rd": "f7a1bb9ae166e51b702a2be44f8d6b611993cb5792af748158a76e52b9af3ee0",
+    "man/robspca.Rd": "4c4e94cb91831d7556f07144df1b41c0fdba199cd07c01f56e7221bfa2c645e7",
+    "man/rspca.Rd": "76d5716915a7cba26be1627fe48ab33ca9a0e79faddd80a1666b0bc8a2a5018f",
+    "man/sparsepca-package.Rd": "e7d054822ddf07d49b90a6638403090b9d213f12859df96101bcec54dfda811c",
+    "man/spca-methods.Rd": "55cf0ccac9c590915f425c5288049e36eca46fbca90a800d5fedfe75455d5416",
+    "man/spca.Rd": "4f476dcb6ed86a64506d38a39e3304ce1bce0b701a57c70d5dbc53996137f6f9",
+    "man/spca_path.Rd": "af16bda96f91519c6bc3f0d96300d9024e35c54e827bb9964a5848e38b8e7c03"
+  },
+  "manual_sha256": "c530691bd146b192276d9d803c4e9a68886095e0e6f3151c492821cf356c7f00"
+}

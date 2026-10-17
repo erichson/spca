@@ -1,14 +1,36 @@
 Package: sparsepca
 Type: Package
-Title: Sparse Principal Component Analysis (SPCA)
-Version: 0.1.0
-Author: N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin
-Maintainer: N. Benjamin Erichson <erichson@uw.edu>
-Description: Sparse principal component analysis (SPCA) attempts to find sparse weight vectors (loadings), i.e., a weight vector with only a few 'active' (nonzero) values. This approach provides better interpretability for the principal components in high-dimensional data settings. This is, because the principal components are formed as a linear combination of only a few of the original variables. This package provides efficient routines to compute SPCA. Specifically, a variable projection solver is used to compute the sparse solution. In addition, a fast randomized accelerated SPCA routine and a robust SPCA routine is provided. Robust SPCA allows to capture grossly corrupted entries in the data. 
+Title: Sparse Principal Component Analysis
+Version: 1.0.0
+Authors@R: c(
+    person("N. Benjamin", "Erichson", role = c("aut", "cre"),
+           email = "erichson@icsi.berkeley.edu"),
+    person("Peng", "Zheng", role = "aut"),
+    person("Sasha", "Aravkin", role = "aut"),
+    person("Maria", "Sans-Fuentes", role = "ctb",
+           comment = "Reported the robust objective error"))
+Description: Fits principal components with sparse loading vectors for
+    interpretable dimension reduction. Variable projection combines an
+    orthogonal reconstruction factor with elastic net or cardinality
+    regularization of the loadings. Deterministic, randomized, and robust
+    algorithms support exploratory analysis of high-dimensional data;
+    the randomized algorithm also supports sparse input matrices through
+    implicit centering and scaling. A robust formulation separates
+    entrywise outliers from the low-rank reconstruction. Regularization
+    paths reuse matrix factorizations, and prediction applies the fitted
+    transformation to new observations. The methods are described in
+    Erichson et al. (2020) <doi:10.1137/18M1211350>.
 License: GPL (>= 3)
+Depends: R (>= 4.0.0)
+Imports:
+    Matrix (>= 1.3-0),
+    methods,
+    rsvd (>= 1.0.5)
+Suggests:
+    testthat (>= 3.0.0)
 Encoding: UTF-8
-LazyData: true
 URL: https://github.com/erichson/spca
 BugReports: https://github.com/erichson/spca/issues
-Imports: rsvd
-RoxygenNote: 6.0.1
+NeedsCompilation: no
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.1

@@ -1,0 +1,96 @@
+name: R-CMD-check
+
+on:
+  pull_request:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  VECLIB_MAXIMUM_THREADS: '1'
+  NOT_CRAN: 'false'
+  _R_CHECK_FORCE_SUGGESTS_: 'true'
+  _R_CHECK_CRAN_INCOMING_: 'true'
+  _R_CHECK_CRAN_INCOMING_REMOTE_: 'true'
+
+jobs:
+  check:
+    name: ${{ matrix.config.os }} (R ${{ matrix.config.r }})
+    runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-24.04, r: 'release', minimum: false}
+          - {os: ubuntu-24.04, r: 'devel', minimum: false}
+          - {os: ubuntu-24.04, r: '4.4.0', minimum: false}
+          - {os: ubuntu-24.04, r: '4.0.0', minimum: true}
+          - {os: windows-latest, r: 'release', minimum: false}
+          - {os: macos-latest, r: 'release', minimum: false}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        if: ${{ !matrix.config.minimum }}
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+      - name: Install build requirements for the minimum R test tools
+        if: ${{ matrix.config.minimum }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libcurl4-openssl-dev pkg-config
+      - name: Install the minimum supported dependency combination
+        if: ${{ matrix.config.minimum }}
+        shell: Rscript {0}
+        run: |
+          # A dated CRAN snapshot supplies test tooling compatible with R 4.0.
+          # The package's actual runtime dependencies are pinned separately.
+          options(repos = c(CRAN = "https://packagemanager.posit.co/cran/2023-02-01"),
+                  timeout = 300)
+          install.packages(c("testthat", "rcmdcheck"), Ncpus = 2L)
+          install.packages(c(
+            "https://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.3-0.tar.gz",
+            "https://cran.r-project.org/src/contrib/Archive/rsvd/rsvd_1.0.5.tar.gz"
+          ), repos = NULL, type = "source")
+          stopifnot(getRversion() == package_version("4.0.0"),
+                    packageVersion("Matrix") == package_version("1.3-0"),
+                    packageVersion("rsvd") == package_version("1.0.5"),
+                    requireNamespace("testthat", quietly = TRUE),
+                    requireNamespace("rcmdcheck", quietly = TRUE))
+      - name: Record the tested environment
+        shell: Rscript {0}
+        run: |
+          dir.create("check-results", showWarnings = FALSE)
+          writeLines(capture.output(sessionInfo()), "check-results/session-info.txt")
+          write.table(installed.packages()[, c("Package", "Version", "Built")],
+                      "check-results/package-versions.tsv", sep = "\t",
+                      quote = FALSE, row.names = FALSE)
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--as-cran")'
+          error-on: '"warning"'
+          check-dir: '"check-results"'
+      - name: Save all check diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sparsepca-check-${{ matrix.config.os }}-${{ matrix.config.r }}
+          path: check-results/
+          if-no-files-found: warn
+          retention-days: 90

@@ -1,0 +1,109 @@
+"method","variable","component","loading"
+"Ordinary PCA","A1",1,0.270958755190031
+"Ordinary PCA","A2",1,0.275278019887272
+"Ordinary PCA","A3",1,0.272048286069947
+"Ordinary PCA","A4",1,0.274601091746016
+"Ordinary PCA","B1",1,0.294233848369831
+"Ordinary PCA","B2",1,0.294742127897819
+"Ordinary PCA","B3",1,0.296570776561837
+"Ordinary PCA","B4",1,0.297610779719726
+"Ordinary PCA","C1",1,0.298207631003658
+"Ordinary PCA","C2",1,0.295441418726971
+"Ordinary PCA","C3",1,0.296177953925329
+"Ordinary PCA","C4",1,0.295769590274878
+"Ordinary PCA","A1",2,-0.421905464882323
+"Ordinary PCA","A2",2,-0.415866452283243
+"Ordinary PCA","A3",2,-0.420466393976119
+"Ordinary PCA","A4",2,-0.416617247804683
+"Ordinary PCA","B1",2,0.197045736212277
+"Ordinary PCA","B2",2,0.191111534948812
+"Ordinary PCA","B3",2,0.187248170603315
+"Ordinary PCA","B4",2,0.187977288029139
+"Ordinary PCA","C1",2,0.192692338936159
+"Ordinary PCA","C2",2,0.194032801540122
+"Ordinary PCA","C3",2,0.196363517459011
+"Ordinary PCA","C4",2,0.199005721601346
+"Ordinary PCA","A1",3,0.0015434967805027
+"Ordinary PCA","A2",3,0.00381692826885927
+"Ordinary PCA","A3",3,-0.00833297499491348
+"Ordinary PCA","A4",3,-0.007160652873667
+"Ordinary PCA","B1",3,0.354213742569628
+"Ordinary PCA","B2",3,0.356973062401903
+"Ordinary PCA","B3",3,0.355868926328094
+"Ordinary PCA","B4",3,0.353155832971847
+"Ordinary PCA","C1",3,-0.35050092952034
+"Ordinary PCA","C2",3,-0.354709940625266
+"Ordinary PCA","C3",3,-0.351688085530061
+"Ordinary PCA","C4",3,-0.351068233230963
+"Elastic net SPCA","A1",1,0
+"Elastic net SPCA","A2",1,0
+"Elastic net SPCA","A3",1,0
+"Elastic net SPCA","A4",1,0
+"Elastic net SPCA","B1",1,0
+"Elastic net SPCA","B2",1,0
+"Elastic net SPCA","B3",1,0
+"Elastic net SPCA","B4",1,0
+"Elastic net SPCA","C1",1,0.471098134662672
+"Elastic net SPCA","C2",1,0.46333811141955
+"Elastic net SPCA","C3",1,0.467006295691209
+"Elastic net SPCA","C4",1,0.468346737834103
+"Elastic net SPCA","A1",2,-0.471508516475458
+"Elastic net SPCA","A2",2,-0.463809414746313
+"Elastic net SPCA","A3",2,-0.469960346359224
+"Elastic net SPCA","A4",2,-0.464103882210388
+"Elastic net SPCA","B1",2,0
+"Elastic net SPCA","B2",2,0
+"Elastic net SPCA","B3",2,0
+"Elastic net SPCA","B4",2,0
+"Elastic net SPCA","C1",2,0
+"Elastic net SPCA","C2",2,0
+"Elastic net SPCA","C3",2,0
+"Elastic net SPCA","C4",2,0
+"Elastic net SPCA","A1",3,0
+"Elastic net SPCA","A2",3,0
+"Elastic net SPCA","A3",3,0
+"Elastic net SPCA","A4",3,0
+"Elastic net SPCA","B1",3,0.46436438644475
+"Elastic net SPCA","B2",3,0.473720976918945
+"Elastic net SPCA","B3",3,0.470550910665614
+"Elastic net SPCA","B4",3,0.460832553536618
+"Elastic net SPCA","C1",3,0
+"Elastic net SPCA","C2",3,0
+"Elastic net SPCA","C3",3,0
+"Elastic net SPCA","C4",3,0
+"Hard-threshold SPCA","A1",1,0
+"Hard-threshold SPCA","A2",1,0
+"Hard-threshold SPCA","A3",1,0
+"Hard-threshold SPCA","A4",1,0
+"Hard-threshold SPCA","B1",1,0.351673474289919
+"Hard-threshold SPCA","B2",1,0.351051781663812
+"Hard-threshold SPCA","B3",1,0.352275981877046
+"Hard-threshold SPCA","B4",1,0.353533247683392
+"Hard-threshold SPCA","C1",1,0.355551969921857
+"Hard-threshold SPCA","C2",1,0.352864509270303
+"Hard-threshold SPCA","C3",1,0.354093179240779
+"Hard-threshold SPCA","C4",1,0.354149637620861
+"Hard-threshold SPCA","A1",2,-0.502992432091085
+"Hard-threshold SPCA","A2",2,-0.495785412321299
+"Hard-threshold SPCA","A3",2,-0.501269218992968
+"Hard-threshold SPCA","A4",2,-0.49666925392179
+"Hard-threshold SPCA","B1",2,0
+"Hard-threshold SPCA","B2",2,0
+"Hard-threshold SPCA","B3",2,0
+"Hard-threshold SPCA","B4",2,0
+"Hard-threshold SPCA","C1",2,0
+"Hard-threshold SPCA","C2",2,0
+"Hard-threshold SPCA","C3",2,0
+"Hard-threshold SPCA","C4",2,0
+"Hard-threshold SPCA","A1",3,0
+"Hard-threshold SPCA","A2",3,0
+"Hard-threshold SPCA","A3",3,0
+"Hard-threshold SPCA","A4",3,0
+"Hard-threshold SPCA","B1",3,0.352878361017866
+"Hard-threshold SPCA","B2",3,0.355648471624598
+"Hard-threshold SPCA","B3",3,0.354576963099496
+"Hard-threshold SPCA","B4",3,0.351843073814616
+"Hard-threshold SPCA","C1",3,-0.350213099506302
+"Hard-threshold SPCA","C2",3,-0.354404449496315
+"Hard-threshold SPCA","C3",3,-0.35139796126882
+"Hard-threshold SPCA","C4",3,-0.35078606651806

@@ -1,0 +1,23 @@
+	Command being timed: "/opt/R/4.6.1/bin/Rscript --vanilla /workspace/scratch/4668db2fbf57/spca/tools/benchmarks/worker.R /workspace/scratch/4668db2fbf57/benchmark-inputs/source-d29e56ad6c4b5781 /workspace/scratch/4668db2fbf57/benchmark-inputs/flat-small.rds rspca pca-flat 1 /workspace/scratch/4668db2fbf57/spca/tools/benchmarks/results/pca-flat-rspca-1.csv d29e56ad6c4b578184d367b23002473f0df9267f474d85d03de5557ede9342c6 /workspace/scratch/4668db2fbf57/spca/tools/benchmarks/results/r-environment.txt"
+	User time (seconds): 2.76
+	System time (seconds): 0.45
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.22
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 256200
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 75230
+	Voluntary context switches: 32
+	Involuntary context switches: 35
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

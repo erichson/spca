@@ -1,0 +1,148 @@
+{
+  "requestedUrl": "https://github.com/erichson/spca/blob/6a0afd350b557f3dc52083ababdc206451bc3606/README.md",
+  "httpStatus": 200,
+  "browserVersion": "155.0.8059.84",
+  "failedRequests": [],
+  "pageErrors": [],
+  "title": "spca/README.md at 6a0afd350b557f3dc52083ababdc206451bc3606 \u00b7 erichson/spca \u00b7 GitHub",
+  "url": "https://github.com/erichson/spca/blob/6a0afd350b557f3dc52083ababdc206451bc3606/README.md",
+  "articles": [
+    {
+      "className": "markdown-body entry-content container-lg",
+      "width": 1012,
+      "height": 10306
+    }
+  ],
+  "headings": [
+    {
+      "text": "Sparse PCA: fewer variables, clearer components",
+      "y": 534.03125
+    },
+    {
+      "text": "Installation",
+      "y": 1077.625
+    },
+    {
+      "text": "A first fit",
+      "y": 1413.734375
+    },
+    {
+      "text": "Two factors with different jobs",
+      "y": 2752.546875
+    },
+    {
+      "text": "How variable projection fits the model",
+      "y": 3557.984375
+    },
+    {
+      "text": "Choosing a sparsity level",
+      "y": 4079.28125
+    },
+    {
+      "text": "Randomized SPCA: solve a smaller problem",
+      "y": 4571.6875
+    },
+    {
+      "text": "Sparse data and sparse loadings are different",
+      "y": 5146.984375
+    },
+    {
+      "text": "Robust SPCA: separate unusual entries",
+      "y": 5817.390625
+    },
+    {
+      "text": "What does \u201cvariance explained\u201d mean here?",
+      "y": 6549.3125
+    },
+    {
+      "text": "Predicting new observations",
+      "y": 6987.5
+    },
+    {
+      "text": "Measured performance",
+      "y": 7268.796875
+    },
+    {
+      "text": "Comparison with ordinary PCA",
+      "y": 7442.984375
+    },
+    {
+      "text": "Acceleration of sparse fitting",
+      "y": 7883.984375
+    },
+    {
+      "text": "Memory with sparse input",
+      "y": 9251.578125
+    },
+    {
+      "text": "Documentation, examples, and development",
+      "y": 10197.5
+    },
+    {
+      "text": "References and citation",
+      "y": 10435.6875
+    }
+  ],
+  "images": [
+    {
+      "src": "https://avatars.githubusercontent.com/u/12964143?v=4&size=40",
+      "alt": "erichson",
+      "width": 40,
+      "height": 40,
+      "complete": true
+    },
+    {
+      "src": "https://github.com/erichson/spca/raw/6a0afd350b557f3dc52083ababdc206451bc3606/spca.png",
+      "alt": "sparsepca: sparse principal component analysis",
+      "width": 2402,
+      "height": 367,
+      "complete": true
+    },
+    {
+      "src": "https://github.com/erichson/spca/actions/workflows/R-CMD-check.yaml/badge.svg",
+      "alt": "R-CMD-check",
+      "width": 145,
+      "height": 20,
+      "complete": true
+    },
+    {
+      "src": "https://camo.githubusercontent.com/8658c55646ed003392a01783cf82695c071089a5bfa9a3dfcd3ac3f9688a4be9/68747470733a2f2f7777772e722d706b672e6f72672f6261646765732f76657273696f6e2f737061727365706361",
+      "alt": "CRAN version",
+      "width": 85,
+      "height": 20,
+      "complete": true
+    },
+    {
+      "src": "https://github.com/erichson/spca/raw/6a0afd350b557f3dc52083ababdc206451bc3606/man/figures/sparse-loadings.svg",
+      "alt": "Loading coefficients for ordinary PCA, elastic net SPCA, and hard-threshold SPCA on twelve simulated variables.",
+      "width": 979,
+      "height": 672,
+      "complete": true
+    },
+    {
+      "src": "https://github.com/erichson/spca/raw/6a0afd350b557f3dc52083ababdc206451bc3606/inst/figures/benchmark-time.png",
+      "alt": "Absolute fitting time with observed ranges across three processes",
+      "width": 2708,
+      "height": 1236,
+      "complete": true
+    },
+    {
+      "src": "https://github.com/erichson/spca/raw/6a0afd350b557f3dc52083ababdc206451bc3606/inst/figures/benchmark-speedup.png",
+      "alt": "Speedup of randomized fits relative to each matched reference",
+      "width": 2567,
+      "height": 1090,
+      "complete": true
+    },
+    {
+      "src": "https://github.com/erichson/spca/raw/6a0afd350b557f3dc52083ababdc206451bc3606/inst/figures/benchmark-memory.png",
+      "alt": "Resident memory for dense fitting and sparse-preserving preprocessing",
+      "width": 2568,
+      "height": 1162,
+      "complete": true
+    }
+  ],
+  "math_display_count": 4,
+  "review": "The complete rendered article was visually reviewed in seven sections. Four mathematical displays, four content figures, tables, code blocks, and references were readable. All 14 repository-relative links resolved to files in the checked source tree.",
+  "followup": "Thin seams in the SVG color legend were visible in Chromium. The existing PNG was visually verified as smooth and was selected for README embedding afterward; the SVG remains an export.",
+  "network_note": "The isolated browser context ignored certificate errors because the container browser did not trust its HTTPS proxy certificate. This used no signed-in session or credentials."
+}
