@@ -10,20 +10,91 @@ Deterministic, randomized, and robust sparse PCA with loading penalties,
 prediction, and shared-factorization regularization paths.
 }
 \details{
-The package separates the sparse coefficients that create component
-scores from the orthogonal factor that reconstructs the observations.
-\code{\link{spca}} gives the mathematical model, parameter scaling,
-variance conventions, and complete returned-object description.
-\code{\link{rspca}} adds randomized compression and sparse input
-products; \code{\link{robspca}} models sparse additive errors.
-\code{\link{spca_path}} shares preprocessing across penalties, and
-\code{\link{predict.spca}} projects new observations.
+Principal components summarize many measured variables in a few score
+coordinates. Ordinary PCA usually uses every variable in each component,
+which can obscure what a score represents. Sparse PCA permits some
+coefficients to be exactly zero, giving each score a shorter list of
+contributing measurements. This exchanges some reconstruction quality
+for a representation that may be easier to inspect and use.
+
+Rows of the input are observations and columns are variables. For the
+centered and/or scaled data \eqn{X}, the fitted scores are \eqn{XB},
+where \eqn{B} contains sparse coefficients. A separate orthogonal
+factor \eqn{A} reconstructs the data as \eqn{XBA^T}. Both factors
+have \eqn{p} rows and \eqn{k} columns, and the score matrix has
+\eqn{n} rows and \eqn{k} columns. The choice of orientation matters:
+transposing the data changes which objects get sparse coefficients.
+
+The functions preserve the fitted coefficient magnitudes. Scores may
+be correlated, and the historical \code{eigenvalues} output describes
+adjusted score energies rather than general covariance eigenvalues.
+The \code{\link{spca}} topic develops the mathematical model,
+preprocessing, parameter scaling, output definitions, and these
+interpretation conventions in detail.
+}
+\section{Choosing a routine}{
+
+\describe{
+  \item{\code{\link{spca}}}{A deterministic fit using the full
+    processed data. It is a useful starting point and numerical
+    reference for manageable dense problems. Sparse input is accepted
+    but converted to a dense workspace.}
+  \item{\code{\link{rspca}}}{A fit to a randomized compressed
+    problem, with full-data scores afterward. It is most useful when
+    a sketch much smaller than the data captures the relevant variation.
+    Sparse \pkg{Matrix} input retains sparse storage for products and
+    implicit preprocessing.}
+  \item{\code{\link{robspca}}}{An additive entrywise sparse-error
+    model with a Huber reconstruction loss. It separates unusually large
+    residual entries from the low-rank part and uses dense workspaces.}
+  \item{\code{\link{spca_path}}}{A sequence of candidate penalties
+    sharing preprocessing and a factorization or sketch, with warm starts.}
+  \item{\code{\link{predict.spca}}}{The fitted training transformation
+    applied to future observations, with no refitting.}
+}
 
 Sparse loadings use a subset of variables. Sparse input storage is a
-separate property of a matrix; only the randomized fitting path
-preserves it during centering and scaling. All fits return dense
-loading and score matrices. The optimization is nonconvex, and
-sparsity does not itself guarantee stability or generalization.
+separate property of a matrix; only the randomized fitting methods
+preserve it during centering and scaling. All fits return dense
+loading and score matrices. A sparse input does not force sparse
+components, and sparse components do not make a dense input cheap to store.
+}
+
+\section{A practical workflow}{
+
+Choose the observation/variable orientation, retain numeric measurements,
+and decide whether centering and scaling match the scientific question.
+Choose \code{k} as the number of score coordinates. Explore the
+tradeoff between loading sparsity and reconstruction with a short
+\code{alpha} path, keeping the preprocessing fixed. Inspect the
+actual coefficients and score correlations, not only a rounded summary.
+Use training-only preprocessing and \code{predict} for validation or
+downstream predictive models.
+
+Numerical convergence, approximation quality, and statistical usefulness
+are separate questions. The joint optimization is nonconvex; an
+objective-based \code{converged} flag is not a global-optimality or
+scientific-validity certificate. A randomized fit additionally needs
+a sufficiently informative sketch. Sparsity does not itself guarantee
+stable feature selection, generalization, or causal interpretation.
+
+To make an analysis reproducible, record \code{k}, preprocessing,
+relative penalties, convergence settings, and the chosen model.
+For randomized methods also record \code{o}, \code{q}, and the seed;
+for robust fits record \code{gamma} in the processed units. Fitted
+factors can differ by signs or bases within tied subspaces while
+representing the same reconstruction.
+}
+
+\examples{
+X <- as.matrix(iris[, 1:4])
+fit <- spca(X, k = 2, alpha = 0.01, scale = TRUE, verbose = FALSE)
+dim(fit$loadings)  # variables by components
+dim(fit$scores)    # observations by components
+colSums(fit$loadings != 0)
+summary(fit)
+predict(fit, X[1:3, , drop = FALSE])
+
 }
 \references{
 Erichson, N. B., Zheng, P., Manohar, K., Brunton, S. L., Kutz, J. N.,
@@ -32,12 +103,10 @@ Variable Projection. \emph{SIAM Journal on Applied Mathematics},
 80(2), 977--1002. \doi{10.1137/18M1211350}.
 }
 \seealso{
-Useful links:
-\itemize{
-  \item \url{https://github.com/erichson/spca}
-  \item Report bugs at \url{https://github.com/erichson/spca/issues}
-}
-
+The repository
+  \url{https://github.com/erichson/spca#readme} provides a tutorial,
+  application illustrations, and reproducible performance experiments.
+  See \code{\link[stats]{prcomp}} for ordinary PCA.
 }
 \author{
 N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin.

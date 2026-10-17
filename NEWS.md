@@ -74,8 +74,16 @@
 - Expand every help topic and add documentation for prediction,
   regularization paths, parameter scaling, reconstruction, and the
   interpretation of correlated sparse component scores.
-- Rewrite the README as an introduction to the model, algorithms,
-  practical parameter choices, and measured cost/accuracy tradeoffs.
+- Expand the README into a self-contained tutorial with the two-factor
+  model, parameter guidance, held-out prediction, and reproducible iris,
+  grouped-measurement, and corrupted-sensor applications. Restore all five
+  historical eigenface panels with provenance and interpretation, and
+  retain the measured performance tables and figures.
+- Deepen all seven help topics with practical guidance and independent
+  examples. Check labeled README chunks and help examples against the
+  installed public API, fail unexpected warnings, and record explicit
+  installation skips and source provenance. Save new application results
+  separately from their figure rendering.
 - Add a package citation for the final 2020 SIAM publication and update
   author and maintainer metadata.
 - Add numerical regression tests, package-check workflows, and

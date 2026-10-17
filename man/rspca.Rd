@@ -34,14 +34,13 @@ are unsupported.}
 values are reduced to that limit. A component can have zero scores
 when the data are rank deficient or its loadings are all zero.}
 
-\item{alpha}{Finite nonnegative sparsity penalty, relative to the squared
-largest singular value of the processed data. The effective penalty is
-\code{alpha * d1^2}; see Details. Increasing \code{alpha} encourages
-fewer nonzero coefficients but does not impose an exact feature count.}
+\item{alpha}{Finite nonnegative sparsity penalty (default \code{1e-4}),
+relative to the squared largest singular value of the sketch.
+Its effective value is \code{alpha * d1^2}, with \code{d1}
+computed from the sketch, not the full input.}
 
-\item{beta}{Finite nonnegative ridge penalty, using the same relative
-scaling as \code{alpha}. The default is \code{1e-4}. Ridge shrinkage
-can improve conditioning for strongly correlated variables.}
+\item{beta}{Finite nonnegative ridge penalty (default \code{1e-4}),
+using the same sketch-based relative scaling as \code{alpha}.}
 
 \item{center}{Logical; subtract column means before fitting (default
 \code{TRUE}). The fitted means are stored for prediction.}
@@ -80,11 +79,11 @@ uses an entrywise absolute-value penalty and soft thresholding;
 With \code{penalty = "l0"} and \code{beta > 0}, the combination of
 cardinality and ridge penalties is also called ZeroNet.}
 
-\item{B_init}{Optional real finite \eqn{p} by \eqn{k} matrix of initial
-loading coefficients. \code{NULL} initializes from leading right
-singular vectors. A previous fit's \code{loadings} can supply a warm
-start when variable order, component count, and preprocessing match.
-Initial loadings are not normalized.}
+\item{B_init}{Optional real finite \eqn{p} by \eqn{k} initial
+loading matrix. \code{NULL} uses the leading right singular vectors
+of the sketch. A warm start must use the same variable order,
+component count, and preprocessing. It does not reuse a sketch
+from an earlier function call; use \code{\link{spca_path}} for that.}
 }
 \value{
 A list of class \code{"rspca"} with the same components and
@@ -135,6 +134,55 @@ subspaces. A warm start reuses loading coefficients but a separate call
 creates its own sketch; \code{\link{spca_path}} reuses one sketch across
 the whole path.
 }
+\section{Understanding the compression}{
+
+Random combinations of the columns reveal a space of observation
+patterns that the data can express. The columns of \eqn{Q} describe
+that space. Projecting onto them replaces many observation rows by
+\eqn{\ell} linear combinations, while retaining all \eqn{p} original
+variable columns. The sparse coefficients therefore still refer to the
+original measured variables; the method does not select a random subset
+of variables or observations and fit only that subset.
+
+If most data energy lies in a few directions, the smaller problem can
+contain almost all the information relevant to the requested fit.
+Truncation error from choosing \code{k}, sparsity-induced error from
+choosing \code{alpha}, and approximation error from the random sketch
+are distinct. More optimizer iterations address none of the energy
+omitted by the sketch.
+}
+
+\section{Choosing and checking a sketch}{
+
+Choose \code{k} for the statistical representation first. Oversampling
+\code{o} gives the sketch extra directions in which to find it; those
+directions are not extra returned components. The defaults
+\code{o = 20} and \code{q = 2} are a useful starting point.
+Setting \code{q = 0} avoids the additional power-iteration products;
+increasing \code{q} emphasizes stronger singular directions and can
+improve accuracy when their separation is weak. Increasing either
+\code{o} or \code{q} costs extra work; increasing \code{o} also
+increases the dense sketch and basis storage.
+
+On a manageable problem, compare full-data reconstruction error with
+\code{\link{spca}} at the same rank, preprocessing, and relative
+penalties, remembering that their effective penalties can differ
+slightly because the sketch estimates \code{d1}. For a pure PCA
+approximation check, set both penalties to zero and compare with
+\code{\link[stats]{prcomp}}. For a large problem, repeat a fit with
+a larger sketch or more power iterations and compare the represented
+model and selected-variable patterns. Repeating selected seeds can
+reveal sketch sensitivity; signs or rotations within tied subspaces
+alone are not evidence of a bad fit.
+
+A dense full-data residual is convenient for a small diagnostic, as
+in the example below. For large sparse input, evaluate residuals in
+row blocks using the fitted means and scales rather than densifying
+the entire matrix just to assess a sparse-memory fit. A small residual
+and stable support are useful evidence, not a guarantee of statistical
+generalization or a global sparse-PCA optimum.
+}
+
 \section{Sparse input and memory}{
 
 For sparse input, products with the centered/scaled matrix are evaluated
@@ -151,6 +199,11 @@ Sparse input and sparse loading coefficients are separate concepts:
 \code{rspca} supports both, but zero coefficients in the returned
 loadings are stored in an ordinary matrix. See \code{\link{spca}} and
 \code{\link{robspca}} for methods that use dense input workspace.
+Common sparse storage formats are converted to a general compressed
+column representation before fitting. That conversion and intermediate
+products can make copies; sparse support is not a promise of zero-copy
+execution. Memory savings diminish when \eqn{\ell} approaches the
+input dimensions or when the dense score matrix itself is large.
 }
 
 \examples{
@@ -163,6 +216,13 @@ fit <- rspca(X, k = 3, alpha = 0.005, scale = TRUE,
 colSums(fit$loadings != 0)
 summary(fit)
 predict(fit, X[1:3, , drop = FALSE])
+
+# This example is small enough for an explicit dense quality check.
+# Keep the same training preprocessing for both the data and residual.
+processed <- scale(as.matrix(X), center = fit$center, scale = fit$scale)
+reconstructed <- tcrossprod(fit$scores, fit$transform)
+norm(processed - reconstructed, "F") / norm(processed, "F")
+c(iterations = fit$iterations, converged = fit$converged)
 }
 \references{
 Erichson, N. B., Zheng, P., Manohar, K., Brunton, S. L., Kutz, J. N.,

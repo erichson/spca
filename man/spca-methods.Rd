@@ -57,10 +57,53 @@ summarize the score map and do not measure the amount of outlier
 contamination removed. Inspect \code{objective}, \code{iterations},
 and \code{converged} for optimization diagnostics.
 }
+\section{Reading the summary}{
+
+Each column describes one fitted score coordinate. The adjusted
+variance measures the part of that score not explained by earlier
+score columns, with the fitted loading scale retained. Therefore
+component order matters, the values need not decrease, and their
+proportions need not sum to one. The historical labels are retained
+for compatibility with existing code.
+
+The sum of adjusted variance proportions is not generally
+\eqn{1-\|X-XBA^T\|_F^2/\|X\|_F^2}. The former describes score
+geometry; the latter measures the reconstruction produced by the
+fitted reconstruction factor. Use the actual residual to assess
+reconstruction and \code{cor(object$scores)} to inspect score
+correlations when no score column is constant. Neither statistic chooses a scientifically
+appropriate number of components automatically.
+}
+
+\section{Display precision and computation}{
+
+Printing and summaries round values to three decimal places. A small
+nonzero loading can therefore look like zero on screen. Count selected
+coefficients with \code{object$loadings != 0}, using the stored
+full-precision matrix, and use \code{object$eigenvalues},
+\code{object$score_variance}, and \code{object$var} for numerical work.
+For a higher-precision display, call
+\code{print(object$loadings, digits = 6)} directly.
+
+The print methods invisibly return the rounded loading matrix for
+compatibility; they do not return the complete fit. Keep the fitted
+object rather than replacing it with the result of \code{print}.
+Arguments in \code{...}, including a requested number of digits,
+are currently ignored by these fitted-object methods.
+}
+
 \examples{
-fit <- spca(iris[, 1:4], k = 2, scale = TRUE, verbose = FALSE)
+X <- as.matrix(iris[, 1:4])
+fit <- spca(X, k = 2, alpha = 0.01, scale = TRUE, verbose = FALSE)
 print(fit)
 summary(fit)
+cbind(adjusted = fit$eigenvalues, marginal = fit$score_variance)
+colSums(fit$loadings != 0)
+
+# Full-model reconstruction answers a different question to score variance.
+processed <- scale(X, center = fit$center, scale = fit$scale)
+residual <- processed - tcrossprod(fit$scores, fit$transform)
+1 - sum(residual^2) / sum(processed^2)
 }
 \seealso{
 \code{\link{spca}}, \code{\link{rspca}},

@@ -1,0 +1,17 @@
+"method","variable","component","raw_loading","display_loading"
+"ordinary","Sepal.Length",1,0.52106591467012,0.52106591467012
+"ordinary","Sepal.Width",1,-0.269347442505943,-0.269347442505943
+"ordinary","Petal.Length",1,0.580413095796295,0.580413095796295
+"ordinary","Petal.Width",1,0.564856535779361,0.564856535779361
+"ordinary","Sepal.Length",2,-0.377417615564567,0.377417615564567
+"ordinary","Sepal.Width",2,-0.923295659540715,0.923295659540715
+"ordinary","Petal.Length",2,-0.0244916090855861,0.0244916090855861
+"ordinary","Petal.Width",2,-0.0669419869680586,0.0669419869680586
+"sparse","Sepal.Length",1,0.57660848258321,0.57660848258321
+"sparse","Sepal.Width",1,0,0
+"sparse","Petal.Length",1,0.579337059624828,0.579337059624828
+"sparse","Petal.Width",1,0.54224910220018,0.54224910220018
+"sparse","Sepal.Length",2,0,0
+"sparse","Sepal.Width",2,-0.996221187209033,0.996221187209033
+"sparse","Petal.Length",2,0,0
+"sparse","Petal.Width",2,0,0
