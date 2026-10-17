@@ -41,9 +41,11 @@ when the data are rank deficient or its loadings are all zero.}
 sparsity penalties. Fits follow this order without sorting. Increasing
 penalties from a weakly regularized fit is a convenient starting point.}
 
-\item{beta}{Finite nonnegative ridge penalty, using the same relative
-scaling as \code{alpha}. The default is \code{1e-4}. Ridge shrinkage
-can improve conditioning for strongly correlated variables.}
+\item{beta}{Finite nonnegative relative ridge penalty (default
+\code{1e-4}), shared by all fits. Both penalties are scaled by the
+squared leading singular value of the processed input for
+\code{method = "spca"}, or of the shared sketch for
+\code{method = "rspca"}.}
 
 \item{center}{Logical; subtract column means before fitting (default
 \code{TRUE}). The fitted means are stored for prediction.}
@@ -86,8 +88,9 @@ uses an entrywise absolute-value penalty and soft thresholding;
 With \code{penalty = "l0"} and \code{beta > 0}, the combination of
 cardinality and ridge penalties is also called ZeroNet.}
 
-\item{B_init}{Optional \eqn{p} by \eqn{k} loading matrix for the first
-fit. Later fits initialize from the preceding fit's raw loadings.}
+\item{B_init}{Optional real finite \eqn{p} by \eqn{k} loading matrix
+for the first fit. Later fits initialize from the preceding fit's
+raw loadings.}
 
 \item{x}{An object returned by \code{spca_path}.}
 
@@ -103,7 +106,9 @@ A list of class \code{"spca_path"} with:
     column per component, containing \code{colSums(loadings != 0)}.}
   \item{selected_features}{The number of variables with a nonzero
     loading in at least one component, for each fit.}
-  \item{iterations}{The number of optimization iterations for each fit.}
+  \item{iterations}{The number of stored objective values for each fit;
+    this equals the completed iterations except for the single zero
+    value used for zero-energy input.}
   \item{method, penalty}{The selected fitting method and sparsity penalty.}
 }
 The print method displays a compact table of penalties, selected
@@ -135,19 +140,76 @@ chosen penalty type are shared across fits. For randomized paths,
 result class, variance conventions, and convergence diagnostics of the
 selected method. Predict with an individual element of \code{fits}.
 }
+\section{Choosing a member of the path}{
+
+A path is a collection of candidate models, not an automatic model
+selection procedure. Inspect the tradeoff between reconstruction,
+interpretable variables, and the purpose of the analysis. Compare
+validation rows in the shared training-centered/scaled coordinates;
+do not estimate a separate transformation for each validation batch.
+The example below reports validation reconstruction error beside the
+number of selected variables without claiming a universally best penalty.
+
+Penalized objectives at different \code{alpha} values are different
+criteria, so the smallest recorded objective does not by itself select
+the best path member. A small number of active coefficients is not
+sufficient either: an all-zero loading matrix is sparse but uninformative.
+\code{nonzero} counts active coefficients per component, while
+\code{selected_features} counts the union of variables used anywhere.
+For example, two components with three coefficients each can together
+use only four variables if their supports overlap.
+
+Warm starts follow the supplied sequence, even if it decreases or
+repeats penalties. They can lead to a different fit than
+restarting from the default singular vectors. If the path settles on
+an implausible representation, compare a shortlisted penalty with an
+independent fresh fit using the same settings. When comparing component
+patterns across fits, account for possible sign changes, reordering,
+and tied subspaces rather than relying on signed elementwise equality.
+}
+
+\section{Computation and storage}{
+
+All members share one training transformation and one deterministic
+factorization or random sketch. Their effective penalties use the same
+spectral scale, which makes the supplied \code{alpha} sequence easy
+to interpret. The function still returns a complete fit for every
+member, including an \eqn{n} by \eqn{k} dense score matrix and two
+\eqn{p} by \eqn{k} factors. Long paths can therefore use substantial
+output memory even when input storage is sparse. A concise initial
+grid followed by closer investigation of useful values is often more
+informative than retaining a very long grid.
+}
+
 \examples{
-path <- spca_path(iris[, 1:4], k = 2,
-                  alpha = c(0.001, 0.005, 0.01, 0.03),
+training <- seq_len(nrow(iris)) \%\% 5 != 0
+path <- spca_path(iris[training, 1:4], k = 2,
+                  alpha = c(0.001, 0.01, 0.1, 0.3),
                   scale = TRUE, verbose = FALSE)
 print(path)
+# A strong penalty can leave a requested component with zero loadings.
 path$nonzero
-predict(path$fits[[2]], iris[1:3, 1:4])
 
+# All candidates use the same transformation estimated on training rows.
+newX <- as.matrix(iris[!training, 1:4])
+first <- path$fits[[1]]
+processed <- scale(newX, center = first$center, scale = first$scale)
+error <- vapply(path$fits, function(fit) {
+  reconstructed <- tcrossprod(predict(fit, newX), fit$transform)
+  sqrt(mean((processed - reconstructed)^2))
+}, numeric(1))
+data.frame(alpha = path$alpha, variables = path$selected_features,
+           validation_RMSE = error)
+predict(path$fits[[2]], newX[1:3, , drop = FALSE])
+
+# A sparse-input path shares one smaller random sketch.
+X <- Matrix::bdiag(outer(1:12, 1:8), outer(1:12, 8:1),
+                   outer(1:12, 1:8))
 set.seed(42)
-randomized <- spca_path(iris[, 1:4], k = 2,
-                        alpha = c(0.001, 0.01),
-                        method = "rspca", scale = TRUE,
-                        verbose = FALSE)
+randomized <- spca_path(X, k = 3, alpha = c(0.001, 0.01),
+                        method = "rspca", o = 3, q = 2,
+                        scale = TRUE, verbose = FALSE)
+randomized$nonzero
 }
 \seealso{
 \code{\link{spca}}, \code{\link{rspca}},

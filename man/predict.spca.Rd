@@ -28,8 +28,10 @@ stored training scores.}
 }
 \value{
 A dense numeric matrix with one row per new observation and
-  one column per fitted component. With no \code{newdata}, returns
-  \code{object$scores}, including its retained training-row order.
+  one column per fitted component, including \eqn{1} by \eqn{k}
+  and \eqn{0} by \eqn{k} matrices for single-row and empty batches.
+  Available new-data row names are preserved. With no \code{newdata},
+  returns \code{object$scores}, including its retained training-row order.
 }
 \description{
 Apply a fitted sparse PCA transformation to new observations using the
@@ -50,14 +52,47 @@ coordinates. Multiplication by \code{t(object$transform)} reconstructs
 the low-rank part in processed coordinates; undo column scaling and
 centering to restore original units.
 }
+\section{Training and future observations}{
+
+Fit preprocessing and loading coefficients on the training observations.
+Then supply future observations in the same measurement units to
+\code{predict}. Re-centering each new batch by its own mean changes
+the coordinate system and removes shifts relative to the training
+population; that is not the transformation fitted by the model.
+
+For validation, keep the training and validation data separate when
+estimating means, scales, components, and tuning parameters. New rows
+need all fitted variables, even when some variables have zero loadings;
+the public input contract preserves the complete training variable set.
+An outcome or identifier column should be removed before prediction.
+
+Named variables are matched exactly, including their spelling. With
+unnamed input, the caller is responsible for the column order. One-row
+and zero-row batches are supported and retain matrix dimensions; use
+\code{drop = FALSE} when subsetting a matrix to a single row. Missing
+new observations are rejected rather than silently dropped, so output
+rows correspond one for one to the supplied batch. Missing training
+rows, by contrast, were omitted during fitting.
+}
+
 \examples{
-fit <- spca(iris[1:140, 1:4], k = 2, alpha = 0.01,
+# Hold out every fifth row for this small illustration.
+training <- seq_len(nrow(iris)) \%\% 5 != 0
+fit <- spca(iris[training, 1:4], k = 2, alpha = 0.01,
             scale = TRUE, verbose = FALSE)
-scores <- predict(fit, iris[141:150, 1:4])
+newX <- as.matrix(iris[!training, 1:4])
+scores <- predict(fit, newX)
 head(scores)
+
+# Reproduce the map with the training means, scales, and coefficients.
+processed <- scale(newX, center = fit$center, scale = fit$scale)
+all.equal(scores, processed \%*\% fit$loadings)
+
 # A complete named variable set can be supplied in a different order.
-reordered <- predict(fit, iris[141:150, 4:1])
+reordered <- predict(fit, newX[, 4:1])
 all.equal(scores, reordered)
+dim(predict(fit, newX[1, , drop = FALSE]))
+dim(predict(fit, newX[FALSE, , drop = FALSE]))
 identical(predict(fit), fit$scores)
 }
 \seealso{

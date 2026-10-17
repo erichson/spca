@@ -1,0 +1,47 @@
+Application figure validation, 2026-10-17
+
+Numerical source revision at generation:
+40413685ae1f10be6ab5296be3115f8ad449138e
+Package sparsepca 1.0.0; R 4.6.1; Matrix 1.7-6; rsvd 1.0.6.
+Full session and BLAS/LAPACK details: application-session-info.txt.
+OPENBLAS_NUM_THREADS=1, OMP_NUM_THREADS=1, MKL_NUM_THREADS=1.
+
+Generation:
+Rscript tools/documentation/application-examples.R
+Exit 0; no R warnings or errors.
+Iris SPCA: 296 iterations, objective_converged TRUE, 3/1 nonzero loadings.
+Sensor SPCA: 102 iterations, objective_converged TRUE, clean-signal error 0.42500559.
+Sensor robspca: 622 iterations, objective_converged TRUE, clean-signal error 0.09090952.
+The robust S has four entries at injected locations and two additional small entries.
+Iris reconstruction errors were then computed from the retained fits without
+refitting: PCA 0.2046165; SPCA 0.2108651, using matching centered/scaled data.
+The generator also records these errors on fresh runs.
+
+Independent arithmetic checks:
+Displayed iris scores equal standardized X times the displayed loadings,
+including each joint score/loading sign change (maximum difference < 1e-12).
+Observed sensor data equal clean truth plus simulated noise plus injected errors.
+Both retained reconstructions equal observed X %*% B %*% t(A).
+Stored relative errors agree with direct Frobenius-norm calculations.
+Raw sensor CSV reconstruction and S coordinates agree with the RDS snapshot.
+
+Plot-only reproduction:
+Rscript --vanilla tools/documentation/application-examples.R --plot-only
+Exit 0; the plotting branch does not load sparsepca or pkgload and does not refit.
+SHA-256 comparison before/after: all 11 existing application data, metadata,
+PNG, and SVG files remained byte-identical. This validation record was added
+after that comparison.
+
+Rendering:
+Both PNGs were inspected and approved by the parent reviewer.
+Both SVGs parsed as XML and were independently rendered with Inkscape, then
+visually inspected. Titles, legends, numeric labels, and axes were legible
+without clipping or overlap. Inkscape returned exit 0 for each export and
+emitted a GtkRecentManager startup warning unrelated to the SVG contents.
+The sensor reconstruction panel explicitly labels its expanded vertical scale.
+
+Scope:
+These are reproducible illustrations and numerical integrity checks, not
+performance benchmarks or a new package-wide R CMD check. Existing performance
+and loading-comparison figures were preserved. The historical face panels were
+not refitted; their provenance is documented in application-examples.md.

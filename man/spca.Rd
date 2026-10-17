@@ -34,8 +34,9 @@ computation that preserves sparse input storage.}
 values are reduced to that limit. A component can have zero scores
 when the data are rank deficient or its loadings are all zero.}
 
-\item{alpha}{Finite nonnegative sparsity penalty, relative to the squared
-largest singular value of the processed data. The effective penalty is
+\item{alpha}{Finite nonnegative sparsity penalty (default \code{1e-4}),
+relative to the squared largest singular value of the processed data.
+The effective penalty is
 \code{alpha * d1^2}; see Details. Increasing \code{alpha} encourages
 fewer nonzero coefficients but does not impose an exact feature count.}
 
@@ -84,7 +85,8 @@ A list of class \code{"spca"} containing:
   \item{transform}{A dense \eqn{p} by \eqn{k} reconstruction factor
     \eqn{A} with orthonormal columns.}
   \item{scores}{A dense \eqn{n} by \eqn{k} matrix \eqn{XB}. Rows
-    correspond to complete observations retained from the input.}
+    correspond to complete observations retained from the input;
+    available input row names are preserved.}
   \item{eigenvalues}{Numeric vector of length \eqn{k} containing
     sequentially adjusted score energies divided by \eqn{n-1}; see
     the variance discussion. The field name is retained for compatibility.}
@@ -94,11 +96,14 @@ A list of class \code{"spca"} containing:
     divided by \eqn{n-1}; sample variances when centering is enabled.}
   \item{var}{Total squared energy of the processed input divided by
     \eqn{n-1}, including directions omitted from the model.}
-  \item{center, scale}{Training means and scale factors, respectively,
-    or \code{FALSE} when the corresponding operation is disabled.}
+  \item{center, scale}{Numeric vectors of length \eqn{p} containing
+    training means and scale factors, respectively, or \code{FALSE}
+    when the corresponding operation is disabled. They describe the
+    preprocessing performed by the function, in training variable order.}
   \item{objective}{Numeric vector with one penalized objective value
-    per completed optimization iteration.}
-  \item{iterations}{Number of completed iterations.}
+    per completed optimization iteration, or a single zero for
+    zero-energy input.}
+  \item{iterations}{Number of stored objective values.}
   \item{converged}{Logical indicator of objective-based convergence.
     This is not a global-optimality certificate.}
   \item{improvement}{Relative change used by the final convergence check.}
@@ -121,7 +126,8 @@ reconstruction update with a proximal step for the loading coefficients.
 }
 \details{
 Let \eqn{X} denote the retained, centered and/or scaled data, with
-\eqn{n} observations and \eqn{p} variables. The default method minimizes
+\eqn{n} observations and \eqn{p} variables. The default method seeks
+to minimize
 \deqn{\frac{1}{2}\|X-XBA^T\|_F^2 +
       \lambda_1\|B\|_1 + \frac{\lambda_2}{2}\|B\|_F^2}
 subject to \eqn{A^T A=I}. Here \eqn{A} and \eqn{B} are \eqn{p} by
@@ -172,6 +178,98 @@ singular values from an auxiliary Procrustes update, which were not the
 variances of the returned scores. Loading signs and bases within tied
 singular subspaces may differ between valid numerical implementations.
 }
+\section{Two matrices with different jobs}{
+
+Ordinary PCA uses orthogonal loading vectors to make component scores
+and reconstruct the observations. Sparse PCA separates those jobs.
+Each column of \code{loadings} is a recipe for one score: a zero
+coefficient means that the corresponding variable is not directly used
+in that recipe. Each row of \code{scores} contains the resulting
+\eqn{k} coordinates for one observation. The dense \code{transform}
+maps those coordinates back to the \eqn{p} measured variables.
+
+This distinction lets a component use a short, interpretable list of
+variables while its reconstruction describes relationships with many
+variables. A variable omitted from \code{loadings} can still have a
+nonzero reconstructed value through \code{transform}. Variables can
+contribute to more than one component. Sparsity concerns individual
+coefficients, so the total number of selected variables can be smaller
+than the sum of the per-component nonzero counts.
+
+The fitted scale of \code{loadings} is part of the model. Normalizing
+its columns afterward changes scores, prediction, and the penalized
+objective. Use the original fitted coefficients for calculations;
+make a separate normalized copy only if a particular display requires it.
+A coefficient's magnitude or sign is not a significance test or a
+causal effect.
+}
+
+\section{Preparing data and choosing parameters}{
+
+Decide first what an observation and a variable represent. For example,
+rows might be repeated measurements and columns might be sensors.
+Transposing the data changes which objects receive sparse coefficients.
+Supply only numeric measurements; identifiers and outcome labels should
+not be included accidentally as additional variables. Missing rows are
+omitted, not imputed. Keep their original row identifiers if scores must
+later be joined to other data.
+
+Centering asks for variation around the training means. Use
+\code{center = FALSE} when the origin itself has a meaningful role in
+the analysis. Scaling makes variables comparable in standardized units;
+it is useful when measurement units differ, but it also gives small
+variations in an otherwise nearly constant variable more influence.
+With \code{center = FALSE}, scaling uses uncentered squared norms with
+divisor \eqn{n-1}, not centered standard deviations. The absolute
+\code{1e-8} scale cutoff is retained for compatibility, so constant or
+extremely small columns are not divided by a near-zero number.
+
+A practical tuning workflow is:
+\enumerate{
+  \item Choose \code{k} for the representation you need, using domain
+    knowledge and, where appropriate, held-out performance. It is the
+    number of score coordinates, not the number of selected variables.
+    The default \code{k = NULL} requests the full available count;
+    it does not select a useful rank automatically.
+  \item Fit a weakly penalized model, then examine a range of
+    \code{alpha} values with \code{\link{spca_path}}. Inspect both
+    nonzero counts and what the selected variables mean. A grid such as
+    \code{c(0.0001, 0.001, 0.01, 0.1)} is an exploration of scales,
+    not a generally optimal set of penalties.
+  \item Use \code{beta} to control ridge shrinkage and conditioning,
+    particularly with correlated or redundant measurements. Increasing
+    it also reduces loading magnitudes, so it changes the fitted model.
+    The small default is a starting point, not an automatic selection rule.
+  \item Inspect \code{converged}, the objective history, and
+    reconstruction quality. If the iteration limit was reached, a larger
+    \code{max_iter} permits more work. A tighter \code{tol} refines
+    objective stopping but does not repair an unsuitable rank or penalty.
+}
+
+Compare fits under the same preprocessing. Objectives at different
+penalties contain different costs and should not be ranked as if they
+were the same goodness-of-fit measure. Reconstruction error and
+validation performance answer complementary questions to sparsity.
+Hard thresholding can give abrupt support changes; the same numeric
+\code{alpha} should not be interpreted as equivalent to soft thresholding.
+Zero processed data return zero loadings and scores with a single zero
+objective value and \code{converged = TRUE}.
+}
+
+\section{Sparse coefficients and sparse storage}{
+
+A sparse loading matrix has many zero coefficients. A sparse input
+matrix is stored using a class from \pkg{Matrix} to avoid storing its
+many zero entries. Neither property implies the other.
+\code{spca} accepts sparse input but makes a dense working matrix for
+the deterministic factorization. Use \code{\link{rspca}} when retaining
+sparse input storage is important and a small randomized sketch is
+appropriate. Both methods return ordinary dense loading and score
+matrices. Forming \code{tcrossprod(scores, transform)} also allocates
+an \eqn{n} by \eqn{p} dense reconstruction; retaining the factors is
+often preferable until a reconstruction is actually needed.
+}
+
 \section{Variance and loading interpretation}{
 
 Sparse component scores can be correlated. The historical
@@ -202,7 +300,15 @@ Loadings are coefficients, not variable--component correlations.
 For complete training data, correlations can be computed directly as
 \code{cor(as.matrix(X), fit$scores)}. Multiplying loadings by
 \code{sdev} does not generally produce these correlations for sparse
-components.
+components. A constant variable or an all-zero score has no defined
+correlation, so exclude such columns when calculating correlations.
+
+Adjusted score energy is not generally the same as the reduction in
+reconstruction error from the fitted reconstruction factor. To assess
+reconstruction, evaluate the residual of
+\code{tcrossprod(scores, transform)} in the same processed units as
+the fit. Keep an ordinary PCA reference at the
+same rank and preprocessing when judging the price of interpretability.
 }
 
 \examples{
@@ -216,6 +322,16 @@ summary(fit)
 reconstructed <- tcrossprod(fit$scores, fit$transform)
 reconstructed <- sweep(reconstructed, 2, fit$scale, "*")
 reconstructed <- sweep(reconstructed, 2, fit$center, "+")
+
+# Measure reconstruction error in the units used by the objective.
+processed <- scale(X, center = fit$center, scale = fit$scale)
+residual <- processed - tcrossprod(fit$scores, fit$transform)
+norm(residual, "F") / norm(processed, "F")
+
+# Read a component as a list of original variables and coefficients.
+setNames(fit$loadings[, 1], colnames(X))
+colnames(X)[fit$loadings[, 1] != 0]
+cor(X, fit$scores)
 
 # Hard thresholding with a ridge penalty (ZeroNet).
 hard <- spca(X, k = 2, alpha = 0.005, beta = 0.001,

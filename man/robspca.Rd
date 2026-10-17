@@ -32,8 +32,9 @@ complex values are unsupported.}
 values are reduced to that limit. A component can have zero scores
 when the data are rank deficient or its loadings are all zero.}
 
-\item{alpha}{Finite nonnegative sparsity penalty, relative to the squared
-largest singular value of the processed data. The effective penalty is
+\item{alpha}{Finite nonnegative sparsity penalty (default \code{1e-4}),
+relative to the squared largest singular value of the processed data.
+The effective penalty is
 \code{alpha * d1^2}; see Details. Increasing \code{alpha} encourages
 fewer nonzero coefficients but does not impose an exact feature count.}
 
@@ -86,8 +87,10 @@ A list of class \code{"robspca"} with the components documented
   for \code{\link{spca}}, plus \code{sparse}: a dense \eqn{n} by
   \eqn{p} matrix \eqn{S} of estimated sparse errors in processed input
   units. Its rows correspond to retained complete observations.
-  \code{objective} includes the complete squared residual and all
-  three penalties. The \code{print} and \code{summary} methods follow
+  The additional scalar \code{gamma} records the unscaled error
+  threshold supplied by the user. \code{objective} includes the
+  complete squared residual and all three penalties.
+  The \code{print} and \code{summary} methods follow
   the corresponding \code{spca} methods.
 }
 \description{
@@ -96,7 +99,7 @@ reduce the influence of large individual reconstruction residuals.
 The method combines variable projection with an entrywise Huber loss.
 }
 \details{
-For processed data \eqn{X}, robust SPCA minimizes
+For processed data \eqn{X}, robust SPCA seeks to minimize
 \deqn{\frac{1}{2}\|X-XBA^T-S\|_F^2 +
       \lambda_1 P(B) + \frac{\lambda_2}{2}\|B\|_F^2 +
       \gamma\|S\|_1}
@@ -147,6 +150,53 @@ Version 1.0.0 corrects an objective bookkeeping error reported by
   Robust fits with nonzero \code{sparse} can therefore run longer and
   return different fitted values after the correction.
 }
+\section{Interpreting the sparse error matrix}{
+
+The two sparse objects have different roles. Zeros in \code{loadings}
+simplify the recipes for the component scores. Zeros in \code{sparse}
+say that a particular observation-variable residual remains entirely
+in the quadratic loss. For a low-rank residual \eqn{r}, the fitted
+error is zero when \eqn{|r|\leq\gamma}; otherwise it is
+\eqn{\mathrm{sign}(r)(|r|-\gamma)}. The remaining residual is thus
+limited in magnitude to \code{gamma} at the completed error update.
+
+A nonzero error is a model-based assignment, not a formal outlier test.
+It may reflect a recording error, an unusual observation, a component
+missing because \code{k} is too small, or an inappropriate scale or
+penalty. Inspect its pattern across observations and variables together
+with the low-rank reconstruction. A good low-rank fit and plausible
+error structure are both needed for a useful interpretation.
+}
+
+\section{Choosing gamma and measurement units}{
+
+\code{alpha} encourages zeros in the loading coefficients;
+\code{gamma} determines which reconstruction residuals are expensive
+to leave in the squared loss. They are not interchangeable controls.
+The historical default \code{gamma = 100} is not an automatically
+calibrated threshold, especially after standardizing variables.
+Consider plausible measurement-error sizes in the processed units,
+inspect residuals, and compare a small range of scientifically meaningful
+thresholds. Residuals from an ordinary fit can provide context, but
+they also include low-rank truncation and regularization error.
+
+A small \code{gamma} allows more of the observations to be explained
+by \code{sparse}; making it arbitrarily small is not necessarily an
+improvement. A large value approaches the ordinary squared-loss fit.
+If all measurements are multiplied by a nonzero constant \eqn{c}
+and column scaling is disabled, preserve the same model by multiplying
+\code{gamma} by \eqn{|c|}. The relative \code{alpha} and
+\code{beta} stay unchanged because their effective coefficients
+already scale with the squared data singular value.
+
+Robust location or scale estimates can be applied externally when
+justified by the analysis. In that case, retain those transformations
+separately, fit with \code{center = FALSE, scale = FALSE}, and apply
+the same external transformation to future observations. The fit stores
+only preprocessing performed by the function itself; \code{predict}
+cannot recover an external preprocessing step automatically.
+}
+
 \examples{
 set.seed(42)
 signal <- matrix(rnorm(120 * 2), 120, 2)
@@ -161,8 +211,20 @@ summary(fit)
 sum(fit$sparse != 0)
 low_rank <- tcrossprod(fit$scores, fit$transform)
 processed_fit <- low_rank + fit$sparse
-# Here scale = FALSE; add the training means to restore input units.
+# Here scale = FALSE; add the training means only once.
+# The sparse matrix represents differences, so it receives no mean.
 reconstructed <- sweep(processed_fit, 2, fit$center, "+")
+low_rank_in_original_units <- sweep(low_rank, 2, fit$center, "+")
+head(which(fit$sparse != 0, arr.ind = TRUE))
+
+# Recompute the complete default elastic-net objective from the outputs.
+processed <- scale(X, center = fit$center, scale = fit$scale)
+remaining <- processed - low_rank - fit$sparse
+criterion <- 0.5 * sum(remaining^2) +
+  fit$alpha * sum(abs(fit$loadings)) +
+  0.5 * fit$beta * sum(fit$loadings^2) +
+  fit$gamma * sum(abs(fit$sparse))
+all.equal(criterion, tail(fit$objective, 1))
 }
 \references{
 Erichson, N. B., Zheng, P., Manohar, K., Brunton, S. L., Kutz, J. N.,
