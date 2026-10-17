@@ -1,0 +1,71 @@
+Exact case density: 0.01666667
+exact center FALSE scale FALSE seed 8 q 0 relative residual 4.657475e-16 score centered err NA
+exact center FALSE scale FALSE seed 8 q 2 relative residual 4.167275e-16 score centered err NA
+exact center FALSE scale FALSE seed 21 q 0 relative residual 4.949781e-16 score centered err NA
+exact center FALSE scale FALSE seed 21 q 2 relative residual 3.81348e-16 score centered err NA
+exact center FALSE scale FALSE seed 79 q 0 relative residual 3.00872e-16 score centered err NA
+exact center FALSE scale FALSE seed 79 q 2 relative residual 4.151466e-16 score centered err NA
+exact center FALSE scale TRUE seed 8 q 0 relative residual 7.305118e-16 score centered err NA
+exact center FALSE scale TRUE seed 8 q 2 relative residual 7.055523e-16 score centered err NA
+exact center FALSE scale TRUE seed 21 q 0 relative residual 1.225721e-15 score centered err NA
+exact center FALSE scale TRUE seed 21 q 2 relative residual 1.382009e-15 score centered err NA
+exact center FALSE scale TRUE seed 79 q 0 relative residual 8.655396e-16 score centered err NA
+exact center FALSE scale TRUE seed 79 q 2 relative residual 7.209873e-16 score centered err NA
+exact center TRUE scale FALSE seed 8 q 0 relative residual 4.657475e-16 score centered err 0
+exact center TRUE scale FALSE seed 8 q 2 relative residual 4.167275e-16 score centered err 0
+exact center TRUE scale FALSE seed 21 q 0 relative residual 4.949781e-16 score centered err 0
+exact center TRUE scale FALSE seed 21 q 2 relative residual 3.81348e-16 score centered err 0
+exact center TRUE scale FALSE seed 79 q 0 relative residual 3.00872e-16 score centered err 0
+exact center TRUE scale FALSE seed 79 q 2 relative residual 4.151466e-16 score centered err 0
+exact center TRUE scale TRUE seed 8 q 0 relative residual 7.305118e-16 score centered err 0
+exact center TRUE scale TRUE seed 8 q 2 relative residual 7.055523e-16 score centered err 0
+exact center TRUE scale TRUE seed 21 q 0 relative residual 1.225721e-15 score centered err 0
+exact center TRUE scale TRUE seed 21 q 2 relative residual 1.382009e-15 score centered err 0
+exact center TRUE scale TRUE seed 79 q 0 relative residual 8.655396e-16 score centered err 0
+exact center TRUE scale TRUE seed 79 q 2 relative residual 7.209873e-16 score centered err 0
+tail center FALSE seed 8 q 0 ratio 1.249146 approx model obj ratio 0.1692084
+tail center FALSE seed 8 q 1 ratio 1.060938 approx model obj ratio 0.2923911
+tail center FALSE seed 8 q 2 ratio 1.020038 approx model obj ratio 0.3504362
+tail center FALSE seed 8 q 4 ratio 1.001722 approx model obj ratio 0.423495
+tail center FALSE seed 21 q 0 ratio 1.11087 approx model obj ratio 0.2272969
+tail center FALSE seed 21 q 1 ratio 1.036765 approx model obj ratio 0.3444524
+tail center FALSE seed 21 q 2 ratio 1.010567 approx model obj ratio 0.3929596
+tail center FALSE seed 21 q 4 ratio 1.000793 approx model obj ratio 0.4210166
+tail center FALSE seed 79 q 0 ratio 1.141063 approx model obj ratio 0.1557549
+tail center FALSE seed 79 q 1 ratio 1.019323 approx model obj ratio 0.3669829
+tail center FALSE seed 79 q 2 ratio 1.001708 approx model obj ratio 0.4197191
+tail center FALSE seed 79 q 4 ratio 1.00002 approx model obj ratio 0.4366194
+tail center FALSE seed 235 q 0 ratio 1.159227 approx model obj ratio 0.1945656
+tail center FALSE seed 235 q 1 ratio 1.091867 approx model obj ratio 0.298042
+tail center FALSE seed 235 q 2 ratio 1.066832 approx model obj ratio 0.3369545
+tail center FALSE seed 235 q 4 ratio 1.010836 approx model obj ratio 0.4006483
+tail center FALSE seed 417 q 0 ratio 1.11622 approx model obj ratio 0.2051764
+tail center FALSE seed 417 q 1 ratio 1.02497 approx model obj ratio 0.3245897
+tail center FALSE seed 417 q 2 ratio 1.007261 approx model obj ratio 0.3582595
+tail center FALSE seed 417 q 4 ratio 1.000638 approx model obj ratio 0.3883951
+tail center TRUE seed 8 q 0 ratio 1.234979 approx model obj ratio 0.1732778
+tail center TRUE seed 8 q 1 ratio 1.052816 approx model obj ratio 0.2984263
+tail center TRUE seed 8 q 2 ratio 1.014868 approx model obj ratio 0.3574646
+tail center TRUE seed 8 q 4 ratio 1.001036 approx model obj ratio 0.4255597
+tail center TRUE seed 21 q 0 ratio 1.111044 approx model obj ratio 0.2302361
+tail center TRUE seed 21 q 1 ratio 1.037632 approx model obj ratio 0.3474357
+tail center TRUE seed 21 q 2 ratio 1.011044 approx model obj ratio 0.3938374
+tail center TRUE seed 21 q 4 ratio 1.0009 approx model obj ratio 0.4208838
+tail center TRUE seed 79 q 0 ratio 1.143096 approx model obj ratio 0.156414
+tail center TRUE seed 79 q 1 ratio 1.019559 approx model obj ratio 0.3661956
+tail center TRUE seed 79 q 2 ratio 1.001805 approx model obj ratio 0.4195558
+tail center TRUE seed 79 q 4 ratio 1.000024 approx model obj ratio 0.4370191
+tail center TRUE seed 235 q 0 ratio 1.157155 approx model obj ratio 0.1965915
+tail center TRUE seed 235 q 1 ratio 1.090535 approx model obj ratio 0.3030817
+tail center TRUE seed 235 q 2 ratio 1.064278 approx model obj ratio 0.3465966
+tail center TRUE seed 235 q 4 ratio 1.007423 approx model obj ratio 0.410258
+tail center TRUE seed 417 q 0 ratio 1.116039 approx model obj ratio 0.2063823
+tail center TRUE seed 417 q 1 ratio 1.026702 approx model obj ratio 0.3236737
+tail center TRUE seed 417 q 2 ratio 1.008131 approx model obj ratio 0.3579696
+tail center TRUE seed 417 q 4 ratio 1.000832 approx model obj ratio 0.3873199
+
+Compressed sparse/dense same-seed reconstruction quality comparison:
+center FALSE scale FALSE ratios 1.066831971/1.066831971
+center FALSE scale TRUE ratios 1/1
+center TRUE scale FALSE ratios 1.06427769009/1.06427769009
+center TRUE scale TRUE ratios 1/1

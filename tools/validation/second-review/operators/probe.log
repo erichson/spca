@@ -1,0 +1,70 @@
+Runtime: R version 4.6.1 (2026-06-24) ; Matrix 1.7.6
+
+CASE: mixed sparse/constant/tiny columns class: dgCMatrix
+center FALSE scale FALSE : forward 4.44089e-16; adjoint 2.66454e-15; energy 0
+center FALSE scale TRUE : forward 4.44089e-16; adjoint 8.88178e-16; energy 0
+center TRUE scale FALSE : forward 4.44089e-16; adjoint 1.77636e-15; energy 0
+center TRUE scale TRUE : forward 6.66134e-16; adjoint 1.77636e-15; energy 0
+
+CASE: explicit stored zeros class: dgCMatrix
+center FALSE scale FALSE : forward 4.44089e-16; adjoint 2.66454e-15; energy 0
+center FALSE scale TRUE : forward 4.44089e-16; adjoint 8.88178e-16; energy 0
+center TRUE scale FALSE : forward 4.44089e-16; adjoint 1.77636e-15; energy 0
+center TRUE scale TRUE : forward 8.88178e-16; adjoint 2.66454e-15; energy 1.42109e-14
+
+CASE: symmetric missing offdiagonal and diagonal class: dgCMatrix
+center FALSE scale FALSE : forward 2.22045e-16; adjoint 2.22045e-16; energy 3.55271e-15
+center FALSE scale TRUE : forward 4.44089e-16; adjoint 2.22045e-16; energy 0
+center TRUE scale FALSE : forward 4.44089e-16; adjoint 3.33067e-16; energy 0
+center TRUE scale TRUE : forward 1.33227e-15; adjoint 4.44089e-16; energy 0
+
+CASE: unit triangular missing stored entry class: dtCMatrix
+center FALSE scale FALSE : forward 0; adjoint 0; energy 0
+center FALSE scale TRUE : forward 0; adjoint 0; energy 7.10543e-15
+center TRUE scale FALSE : forward 2.22045e-16; adjoint 2.22045e-16; energy 0
+center TRUE scale TRUE : forward 8.88178e-16; adjoint 4.44089e-16; energy 0
+
+CASE: triplet duplicates plus missing row class: dgTMatrix
+center FALSE scale FALSE : forward 0; adjoint 0; energy 0
+center FALSE scale TRUE : forward 0; adjoint 0; energy 3.55271e-15
+center TRUE scale FALSE : forward 4.44089e-16; adjoint 4.44089e-16; energy 0
+center TRUE scale TRUE : forward 2.22045e-16; adjoint 4.44089e-16; energy 1.77636e-15
+
+CASE: constant large offset class: dgCMatrix
+center FALSE scale FALSE : forward 2.27137e+133; adjoint 4.54274e+134; energy 1.90338e+286
+center FALSE scale TRUE : forward 2.22045e-16; adjoint 4.44089e-16; energy 0
+center TRUE scale FALSE : forward 0; adjoint 0; energy 0
+center TRUE scale TRUE : forward 0; adjoint 0; energy 0
+
+Predictions with zero rows:
+matrix -> 0x2 ; names
+dgCMatrix -> 0x2 ; names
+dgTMatrix -> 0x2 ; names
+dgRMatrix -> 0x2 ; names
+
+Incomplete/duplicate training and prediction names:
+names: NA,f2,f3,f4,f5,f6,f7 -> accepted, scores max error 0
+names: ,f2,f3,f4,f5,f6,f7 -> accepted, scores max error 0
+names: f,f,f,f,f,f,f -> ERROR: newdata must contain the same unique column names as the training data.
+
+Extreme scaling behavior (not assumed a correctness bug):
+1e-160 dense : energy 1.59998218749229e-319
+1e-160 sparse : energy 1.59998218749229e-319
+1e-150 dense : energy 1.6e-299
+1e-150 sparse : energy 1.6e-299
+1e+140 dense : energy 4
+1e+140 sparse : energy 4
+1e+150 dense : energy 4
+1e+150 sparse : energy 4
+1e+153 dense : energy 4
+1e+153 sparse : energy 4
+1e+154 dense : The column scales are not finite; rescale X.
+1e+154 sparse : The column scales are not finite; rescale X.
+
+ALL explicit operator comparisons passed.
+
+CASE: structurally symmetric missing offdiagonal class: dsCMatrix
+center FALSE scale FALSE : forward 0; adjoint 0; energy 0
+center FALSE scale TRUE : forward 0; adjoint 0; energy 3.55271e-15
+center TRUE scale FALSE : forward 4.44089e-16; adjoint 4.44089e-16; energy 7.10543e-15
+center TRUE scale TRUE : forward 4.44089e-16; adjoint 8.88178e-16; energy 3.55271e-15

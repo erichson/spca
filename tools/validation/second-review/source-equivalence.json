@@ -1,0 +1,49 @@
+{
+  "review_baseline_commit": "62412f258465829d3f7110e1050d739374103781",
+  "runtime_files": [
+    {
+      "file": "R/methods.R",
+      "sha256": "70e704c13f280cfafb8d1b7adc068c1e5577991fb78c22730c7542af63f8ba23",
+      "byte_identical_to_review_baseline": true
+    },
+    {
+      "file": "R/preprocess.R",
+      "sha256": "d9e61abce7dcb90d8792dd167bc70996fd4dd1d20eb4387893448d0ab96f04b4",
+      "byte_identical_to_review_baseline": true
+    },
+    {
+      "file": "R/robspca.R",
+      "sha256": "80d3e137ebbcc9f25f13249b63e62d6a7a389dc368ed668e138b483d47f269f5",
+      "byte_identical_to_review_baseline": true
+    },
+    {
+      "file": "R/rspca.R",
+      "sha256": "ef5cc163d6129493a824fb92279da3959fc8d751116f07804fe39e4431d30973",
+      "byte_identical_to_review_baseline": true
+    },
+    {
+      "file": "R/solver.R",
+      "sha256": "9ff3b7a734a32d0a782befc135f2da66642a254f52eefaaf27fdb47519c9b00c",
+      "byte_identical_to_review_baseline": true
+    },
+    {
+      "file": "R/spca.R",
+      "sha256": "a97e7773ed49f5065591de1708dc7b57f2cccea806687e8937539cead96d62e8",
+      "byte_identical_to_review_baseline": true
+    },
+    {
+      "file": "R/spca_path.R",
+      "sha256": "ff1eae827bbde974647d17127d277239f21f03551e2414b5ef0c56710a277ec5",
+      "byte_identical_to_review_baseline": true
+    },
+    {
+      "file": "R/utils.R",
+      "sha256": "cefa1d3b9c5c7b4b08df6248a4a9f3332b28199d51817f63e7509e668dd39f96",
+      "byte_identical_to_review_baseline": true
+    }
+  ],
+  "description_and_namespace_unchanged": true,
+  "documentation_R_change": "Comments only; parsed-expression equivalence checked separately",
+  "downstream_evidence": "Prior downstream comparisons transfer because all executed runtime functions and metadata are unchanged. No fresh downstream package checks claimed.",
+  "benchmark_evidence": "Prior timings and memory measurements transfer because every fitting/preprocessing/method implementation is byte-identical. No fresh benchmark claimed."
+}
