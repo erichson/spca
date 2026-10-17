@@ -25,14 +25,12 @@ spca_path(
 \method{print}{spca_path}(x, ...)
 }
 \arguments{
-\item{X}{A real numeric matrix, data frame with numeric columns, or
-real \pkg{Matrix} object. Rows are observations and columns are
-variables. Rows containing missing values are omitted with a warning;
-at least two complete observations and one variable are required.
-Logical inputs are treated as zero/one. Infinite and complex values
-are not supported. \code{spca} converts
-\pkg{Matrix} input to a dense matrix; see \code{\link{rspca}} for
-computation that preserves sparse input storage.}
+\item{X}{A real numeric matrix, numeric data frame, or real
+\pkg{Matrix} object, with observations in rows and variables in columns.
+The deterministic method uses dense workspace; the randomized method
+preserves sparse input storage for products and implicit preprocessing.
+Missing rows are omitted with a warning. At least two complete rows
+are required; infinite and complex values are unsupported.}
 
 \item{k}{Positive integer number of components. \code{NULL} uses
 \code{min(nrow(X), ncol(X))} after incomplete rows are omitted. Larger
@@ -101,7 +99,7 @@ A list of class \code{"spca_path"} with:
   \item{fits}{A list of fitted \code{spca} or \code{rspca} objects in
     the supplied penalty order.}
   \item{alpha}{The user-supplied penalties before singular-value scaling.}
-  \item{nonzero}{An integer matrix with one row per penalty and one
+  \item{nonzero}{A matrix of counts with one row per penalty and one
     column per component, containing \code{colSums(loadings != 0)}.}
   \item{selected_features}{The number of variables with a nonzero
     loading in at least one component, for each fit.}

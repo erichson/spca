@@ -1,0 +1,4 @@
+"method","n","p","k","nonzero","total_coefficients","relative_reconstruction_error","alpha","beta","iterations","converged"
+"Ordinary PCA",400,12,3,36,36,0.101764516457376,0,0,NA,TRUE
+"Elastic net SPCA",400,12,3,12,36,0.120710315840364,0.02,0.001,172,TRUE
+"Hard-threshold SPCA",400,12,3,20,36,0.101779597795265,0.02,0.001,11,TRUE

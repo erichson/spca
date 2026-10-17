@@ -100,10 +100,10 @@ For processed data \eqn{X}, robust SPCA minimizes
 \deqn{\frac{1}{2}\|X-XBA^T-S\|_F^2 +
       \lambda_1 P(B) + \frac{\lambda_2}{2}\|B\|_F^2 +
       \gamma\|S\|_1}
-subject to \eqn{A^T A=I}. The function \eqn{P} is the entrywise
-absolute-value sum for \code{penalty = "elasticnet"} or the number
-of nonzero entries for \code{penalty = "l0"}. As in
-\code{\link{spca}}, \eqn{\lambda_1} and \eqn{\lambda_2} are the
+subject to \eqn{A^T A=I}. The default penalty \eqn{P(B)} is the sum
+of absolute entries. With \code{penalty = "l0"}, it counts nonzero
+entries. As in \code{\link{spca}}, \eqn{\lambda_1} and
+\eqn{\lambda_2} are the
 user-supplied \code{alpha} and \code{beta} multiplied by the squared
 leading singular value of the processed input.
 

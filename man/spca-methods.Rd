@@ -30,9 +30,9 @@
 }
 \value{
 \code{summary} returns a numeric matrix with one column per
-component and rows named \code{"Explained variance"},
-\code{"Standard deviations"}, \code{"Proportion of variance"}, and
-\code{"Cumulative proportion"}, rounded to three decimal places.
+component and rows named \dQuote{Explained variance},
+\dQuote{Standard deviations}, \dQuote{Proportion of variance}, and
+\dQuote{Cumulative proportion}, rounded to three decimal places.
 The print methods display standard deviations, adjusted variances,
 and sparse loadings and invisibly return the rounded loading matrix.
 }
@@ -41,12 +41,12 @@ Print sparse loading coefficients and adjusted score statistics, or
 return a compact variance-summary matrix for a fitted model.
 }
 \details{
-All three fit classes use the variance conventions described in
-\code{\link{spca}}. The historical labels \code{eigenvalues} and
-``Standard deviations'' refer to sequentially adjusted score energies
-and their square roots. Sparse components can be correlated, and these
-are not generally covariance eigenvalues or marginal score standard
-deviations. The summary divides by total processed input energy,
+Statistics use the conventions in \code{\link{spca}}. The field
+\code{eigenvalues} contains adjusted score energies. Their square roots
+appear under the historical label \dQuote{Standard deviations}.
+Sparse components can be correlated. These values generally differ
+from covariance eigenvalues and marginal score standard deviations.
+The summary divides by total processed input energy,
 including directions omitted from the model, rather than by the sum
 of retained values. For zero input energy it displays zero proportions
 by convention.

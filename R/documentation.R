@@ -77,11 +77,12 @@
 #'
 #' Relative improvement divides the decrease in objective by the magnitude
 #' of the current objective, with a positive machine denominator at zero.
-#' Objective increases within \code{64 * .Machine$double.eps} times the
-#' largest magnitude of the consecutive objectives or squared data norm
-#' are treated as numerical stagnation. Larger increases stop with a
-#' warning and \code{converged = FALSE}. For \code{rspca}, the squared
-#' data norm in this allowance is that of the sketch.
+#' The allowance for numerical stagnation is 64 times machine precision
+#' times the largest of the consecutive objective magnitudes and the
+#' squared data norm. Machine precision is \code{.Machine$double.eps}.
+#' Larger increases stop with a warning and \code{converged = FALSE}.
+#' For \code{rspca}, the squared data norm in this allowance is that of
+#' the sketch.
 #'
 #' Scores are \eqn{Z=XB}; reconstruction in processed coordinates is
 #' \eqn{ZA^T}. The loading matrix \eqn{B} retains its penalized scale.
@@ -147,8 +148,8 @@
 #'   \item{converged}{Logical indicator of objective-based convergence.
 #'     This is not a global-optimality certificate.}
 #'   \item{improvement}{Relative change used by the final convergence check.}
-#'   \item{alpha, beta}{Effective penalty coefficients after multiplication
-#'     by the squared leading singular value.}
+#'   \item{alpha, beta}{Effective penalties, scaled by the squared leading
+#'     singular value.}
 #'   \item{penalty}{The selected sparsity penalty.}
 #'   \item{feature_names}{Training column names used for prediction, or
 #'     \code{NULL} for unnamed input.}
@@ -243,7 +244,10 @@ NULL
 #' Variance statistics are calculated from the full-data scores using the
 #' conventions documented for \code{\link{spca}}. Use full-data residuals
 #' or another common reference when comparing randomized and deterministic
-#' fit quality.
+#' fit quality. The \code{converged} flag concerns optimization on the
+#' sketch; it does not certify the accuracy of that sketch. Oversampling
+#' and power iterations control subspace approximation, whereas
+#' \code{tol} and \code{max_iter} control optimizer stopping.
 #'
 #' Randomized compression is most useful when \eqn{k+o} is much smaller
 #' than the matrix dimensions and the data have a useful low-rank
@@ -335,10 +339,10 @@ NULL
 #' \deqn{\frac{1}{2}\|X-XBA^T-S\|_F^2 +
 #'       \lambda_1 P(B) + \frac{\lambda_2}{2}\|B\|_F^2 +
 #'       \gamma\|S\|_1}
-#' subject to \eqn{A^T A=I}. The function \eqn{P} is the entrywise
-#' absolute-value sum for \code{penalty = "elasticnet"} or the number
-#' of nonzero entries for \code{penalty = "l0"}. As in
-#' \code{\link{spca}}, \eqn{\lambda_1} and \eqn{\lambda_2} are the
+#' subject to \eqn{A^T A=I}. The default penalty \eqn{P(B)} is the sum
+#' of absolute entries. With \code{penalty = "l0"}, it counts nonzero
+#' entries. As in \code{\link{spca}}, \eqn{\lambda_1} and
+#' \eqn{\lambda_2} are the
 #' user-supplied \code{alpha} and \code{beta} multiplied by the squared
 #' leading singular value of the processed input.
 #'
@@ -427,12 +431,12 @@ NULL
 #'   \code{\link{rspca}}, or \code{\link{robspca}}.
 #' @param ... Additional arguments; currently ignored.
 #' @details
-#' All three fit classes use the variance conventions described in
-#' \code{\link{spca}}. The historical labels \code{eigenvalues} and
-#' ``Standard deviations'' refer to sequentially adjusted score energies
-#' and their square roots. Sparse components can be correlated, and these
-#' are not generally covariance eigenvalues or marginal score standard
-#' deviations. The summary divides by total processed input energy,
+#' Statistics use the conventions in \code{\link{spca}}. The field
+#' \code{eigenvalues} contains adjusted score energies. Their square roots
+#' appear under the historical label \dQuote{Standard deviations}.
+#' Sparse components can be correlated. These values generally differ
+#' from covariance eigenvalues and marginal score standard deviations.
+#' The summary divides by total processed input energy,
 #' including directions omitted from the model, rather than by the sum
 #' of retained values. For zero input energy it displays zero proportions
 #' by convention.
@@ -444,9 +448,9 @@ NULL
 #' and \code{converged} for optimization diagnostics.
 #'
 #' @return \code{summary} returns a numeric matrix with one column per
-#' component and rows named \code{"Explained variance"},
-#' \code{"Standard deviations"}, \code{"Proportion of variance"}, and
-#' \code{"Cumulative proportion"}, rounded to three decimal places.
+#' component and rows named \dQuote{Explained variance},
+#' \dQuote{Standard deviations}, \dQuote{Proportion of variance}, and
+#' \dQuote{Cumulative proportion}, rounded to three decimal places.
 #' The print methods display standard deviations, adjusted variances,
 #' and sparse loadings and invisibly return the rounded loading matrix.
 #' @seealso \code{\link{spca}}, \code{\link{rspca}},
@@ -519,6 +523,12 @@ NULL
 #' @aliases print.spca_path
 #' @inheritParams spca
 #' @inheritParams rspca
+#' @param X A real numeric matrix, numeric data frame, or real
+#'   \pkg{Matrix} object, with observations in rows and variables in columns.
+#'   The deterministic method uses dense workspace; the randomized method
+#'   preserves sparse input storage for products and implicit preprocessing.
+#'   Missing rows are omitted with a warning. At least two complete rows
+#'   are required; infinite and complex values are unsupported.
 #' @param alpha A nonempty numeric vector of finite nonnegative relative
 #'   sparsity penalties. Fits follow this order without sorting. Increasing
 #'   penalties from a weakly regularized fit is a convenient starting point.
@@ -554,7 +564,7 @@ NULL
 #'   \item{fits}{A list of fitted \code{spca} or \code{rspca} objects in
 #'     the supplied penalty order.}
 #'   \item{alpha}{The user-supplied penalties before singular-value scaling.}
-#'   \item{nonzero}{An integer matrix with one row per penalty and one
+#'   \item{nonzero}{A matrix of counts with one row per penalty and one
 #'     column per component, containing \code{colSums(loadings != 0)}.}
 #'   \item{selected_features}{The number of variables with a nonzero
 #'     loading in at least one component, for each fit.}

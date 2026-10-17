@@ -49,6 +49,11 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+      - name: Install build requirements for the minimum R test tools
+        if: ${{ matrix.config.minimum }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libcurl4-openssl-dev pkg-config
       - name: Install the minimum supported dependency combination
         if: ${{ matrix.config.minimum }}
         shell: Rscript {0}
@@ -57,14 +62,16 @@ jobs:
           # The package's actual runtime dependencies are pinned separately.
           options(repos = c(CRAN = "https://packagemanager.posit.co/cran/2023-02-01"),
                   timeout = 300)
-          install.packages(c("testthat", "rcmdcheck"))
+          install.packages(c("testthat", "rcmdcheck"), Ncpus = 2L)
           install.packages(c(
             "https://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.3-0.tar.gz",
             "https://cran.r-project.org/src/contrib/Archive/rsvd/rsvd_1.0.5.tar.gz"
           ), repos = NULL, type = "source")
           stopifnot(getRversion() == package_version("4.0.0"),
                     packageVersion("Matrix") == package_version("1.3-0"),
-                    packageVersion("rsvd") == package_version("1.0.5"))
+                    packageVersion("rsvd") == package_version("1.0.5"),
+                    requireNamespace("testthat", quietly = TRUE),
+                    requireNamespace("rcmdcheck", quietly = TRUE))
       - name: Record the tested environment
         shell: Rscript {0}
         run: |

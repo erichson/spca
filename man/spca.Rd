@@ -102,8 +102,8 @@ A list of class \code{"spca"} containing:
   \item{converged}{Logical indicator of objective-based convergence.
     This is not a global-optimality certificate.}
   \item{improvement}{Relative change used by the final convergence check.}
-  \item{alpha, beta}{Effective penalty coefficients after multiplication
-    by the squared leading singular value.}
+  \item{alpha, beta}{Effective penalties, scaled by the squared leading
+    singular value.}
   \item{penalty}{The selected sparsity penalty.}
   \item{feature_names}{Training column names used for prediction, or
     \code{NULL} for unnamed input.}
@@ -144,11 +144,12 @@ up to signs and bases within repeated singular subspaces.
 
 Relative improvement divides the decrease in objective by the magnitude
 of the current objective, with a positive machine denominator at zero.
-Objective increases within \code{64 * .Machine$double.eps} times the
-largest magnitude of the consecutive objectives or squared data norm
-are treated as numerical stagnation. Larger increases stop with a
-warning and \code{converged = FALSE}. For \code{rspca}, the squared
-data norm in this allowance is that of the sketch.
+The allowance for numerical stagnation is 64 times machine precision
+times the largest of the consecutive objective magnitudes and the
+squared data norm. Machine precision is \code{.Machine$double.eps}.
+Larger increases stop with a warning and \code{converged = FALSE}.
+For \code{rspca}, the squared data norm in this allowance is that of
+the sketch.
 
 Scores are \eqn{Z=XB}; reconstruction in processed coordinates is
 \eqn{ZA^T}. The loading matrix \eqn{B} retains its penalized scale.

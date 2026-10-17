@@ -76,6 +76,17 @@ They need not have unit length or be orthogonal, and the component scores
 can be correlated. Their signs can flip without changing the represented
 model.
 
+![Loading coefficients for ordinary PCA, elastic net SPCA, and hard-threshold SPCA on twelve simulated variables.](man/figures/sparse-loadings.svg)
+
+This self-contained example has three correlated groups of four variables.
+Ordinary PCA uses all 36 coefficients. The illustrated elastic net fit uses
+12, isolating the groups, with reconstruction error increasing from 10.2%
+to 12.1%. The hard-threshold fit uses 20 coefficients and retains a different
+basis with 10.2% error. These are three-component fits of the same processed
+data; different penalties need not select the same variables. White cells
+are zero coefficients. [Reproduce the figure and inspect the saved
+coefficients](tools/documentation/README.md).
+
 ## Two factors with different jobs
 
 A low-rank approximation represents a large matrix using a small number of
@@ -212,7 +223,9 @@ The sketch width is `min(k + o, nrow(X), ncol(X))`. Oversampling `o` gives
 the basis extra room. Power iterations `q` improve separation between
 dominant and weaker directions, at the cost of additional matrix products.
 The defaults are `o = 20` and `q = 2`; **1.0.0 now honors `q`**, which
-older code inadvertently fixed at two.
+older code inadvertently fixed at two. A converged fit can still have
+an inaccurate sketch: `o` and `q` control subspace approximation, while
+`tol` and `max_iter` control optimization on that sketch.
 
 The advantage is largest when the sketch is much smaller than the input
 and the singular values decay. It diminishes for small matrices, large
@@ -343,9 +356,89 @@ they do not estimate a new sparse corruption matrix.
 ## Measured performance
 
 <!-- BEGIN BENCHMARK RESULTS -->
-Benchmark results will be inserted from the saved measurements before
-release. The benchmark guide records fixtures, matched objectives,
-environment, elapsed time, allocation definitions, and accuracy.
+The following experiments use ten components and identical centering, with
+no column scaling. Times are medians of three fresh R processes on a shared
+Linux virtual machine, using **one BLAS thread**. Speedup is the reference
+median divided by the randomized median. Error is the Frobenius norm of the
+**full-input** reconstruction residual divided by the input norm, so it
+includes information missed by a sketch.
+
+### Comparison with ordinary PCA
+
+Setting `alpha = beta = 0` makes sparsepca solve the ordinary PCA problem.
+This gives a matched external reference in `stats::prcomp(rank. = 10)`:
+
+| Data | `prcomp` seconds | `rspca` seconds | Speedup | Relative error, PCA / RSPCA |
+| --- | ---: | ---: | ---: | ---: |
+| Low-rank signal, 10,000 × 3,000 | 36.939 | 7.283 | 5.07× | 0.07107 / 0.07107 |
+| Gaussian noise, 2,000 × 600 | 0.967 | 0.256 | 3.78× | 0.98073 / 0.98261 |
+
+`prcomp` uses R's deterministic SVD; requesting ten components limits the
+returned vectors but does not make its factorization a randomized truncated
+SVD. Both methods return scores. These measurements concern the unpenalized
+special case and do not compare ordinary PCA with a sparsity-penalized fit.
+
+The noisy low-rank case retains the same reconstruction accuracy to the
+reported precision. The Gaussian case has no small dominant subspace:
+PCA captures 3.816% of input energy, while the randomized fit captures
+3.448%. The modest difference between two large residuals conceals a
+meaningful loss of leading-subspace accuracy. Every optimizer converged;
+that fact alone does not establish a sufficiently accurate sketch.
+
+### Acceleration of sparse fitting
+
+For sparse loadings, the appropriate within-package reference is `spca()`.
+Both methods use `alpha = 0.001`, `beta = 0.0001`, `tol = 1e-5`, and at
+most 500 iterations. Randomized fits use `o = 20`, `q = 2`.
+
+| Matrix | `spca` seconds | `rspca` seconds | Speedup | Relative error, SPCA / RSPCA |
+| --- | ---: | ---: | ---: | ---: |
+| 2,000 × 600 | 1.462 | 0.192 | 7.61× | 0.07282 / 0.07282 |
+| 5,000 × 1,500 | 7.446 | 1.624 | 4.58× | 0.07735 / 0.07739 |
+| 10,000 × 3,000 | 45.386 | 4.850 | 9.36× | 0.08365 / 0.08365 |
+
+These simulated inputs contain ten loading groups plus noise. Both methods
+produce 90% zero loading coefficients. They use the same relative penalties;
+the saved results also compare full-input objectives under one common
+spectral scale, because the randomized solver estimates its scale from the
+sketch. Noise and sparsity both leave nonzero reconstruction residuals.
+
+![Absolute fitting time with observed ranges across three processes](inst/figures/benchmark-time.png)
+
+![Speedup of randomized fits relative to each matched reference](inst/figures/benchmark-speedup.png)
+
+The plots include observed timing ranges, which are substantial on this
+shared machine and are not confidence intervals. Smaller cases do not
+necessarily have smoother or more predictable speedups.
+
+### Memory with sparse input
+
+On a 10,000 × 3,000 input with 10% stored entries, implicit preprocessing
+also avoids the full dense conversion:
+
+| Input path | Seconds | Peak resident memory | Relative error |
+| --- | ---: | ---: | ---: |
+| `rspca(as.matrix(X))` | 7.065 | 1,354.3 MiB | 0.05559 |
+| `rspca(X)` | 2.733 | 342.2 MiB | 0.05559 |
+
+![Resident memory for dense fitting and sparse-preserving preprocessing](inst/figures/benchmark-memory.png)
+
+Memory is the **whole R process high-water mark through fit completion**,
+including the runtime, namespaces, input storage, a small warm-up,
+preprocessing, fitting, and the result. It is not incremental memory or
+cumulative allocation. Timing includes preprocessing and result construction;
+the dense branch also includes `as.matrix(X)`. Input generation, loading,
+warm-up, and subsequent quality calculations are outside the timer.
+
+The recorded environment is R 4.6.1, Matrix 1.7-6, rsvd 1.0.6, Ubuntu
+24.04.3, and OpenBLAS 0.3.26/LAPACK 3.12.0 on a virtualized Intel Xeon
+Platinum 8573C system. All 36 measured fits converged without warnings.
+The [benchmark guide](tools/benchmarks/README.md) records seeds, hardware,
+thread settings, reference work, and all measurement definitions;
+[raw measurements](tools/benchmarks/results/measurements.csv),
+[summary tables](tools/benchmarks/results/tables.md), and the generating
+scripts are retained. These are reproducible measurements of this software
+and machine, not universal speed or memory guarantees.
 <!-- END BENCHMARK RESULTS -->
 
 ## Documentation, examples, and development

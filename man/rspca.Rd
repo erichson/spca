@@ -115,7 +115,10 @@ sketched optimization problem, not the full-data reconstruction loss.
 Variance statistics are calculated from the full-data scores using the
 conventions documented for \code{\link{spca}}. Use full-data residuals
 or another common reference when comparing randomized and deterministic
-fit quality.
+fit quality. The \code{converged} flag concerns optimization on the
+sketch; it does not certify the accuracy of that sketch. Oversampling
+and power iterations control subspace approximation, whereas
+\code{tol} and \code{max_iter} control optimizer stopping.
 
 Randomized compression is most useful when \eqn{k+o} is much smaller
 than the matrix dimensions and the data have a useful low-rank

@@ -1,0 +1,71 @@
+{
+  "compared_utc": "2026-10-17T20:43:06.364419+00:00",
+  "candidate_git_head": "9c4cd016533644b2e259161768e93054e4424fe3",
+  "benchmark_source_fingerprint": "d29e56ad6c4b578184d367b23002473f0df9267f474d85d03de5557ede9342c6",
+  "scope": "Comparison of working R sources to the frozen benchmark snapshot. This transfers implementation evidence; it is not a fresh benchmark of a final built archive.",
+  "files": [
+    {
+      "file": "R/documentation.R",
+      "benchmark_sha256": "4bb2089a15fcbf4491ceb865c0986a73d5f1b69c342d9e330b08831a2d5c58dd",
+      "candidate_sha256": "000d71ec1b01a989c670535db6e3fcc8ecc8c77bba3a905f2712da50c22923fa",
+      "identical_bytes": false,
+      "identical_noncomment_lines": true
+    },
+    {
+      "file": "R/methods.R",
+      "benchmark_sha256": "21385e0d223babfd46e86169ba7a0bf48ef65d9b75657189cc245dae3c2459f6",
+      "candidate_sha256": "21385e0d223babfd46e86169ba7a0bf48ef65d9b75657189cc245dae3c2459f6",
+      "identical_bytes": true,
+      "identical_noncomment_lines": true
+    },
+    {
+      "file": "R/preprocess.R",
+      "benchmark_sha256": "d9e61abce7dcb90d8792dd167bc70996fd4dd1d20eb4387893448d0ab96f04b4",
+      "candidate_sha256": "d9e61abce7dcb90d8792dd167bc70996fd4dd1d20eb4387893448d0ab96f04b4",
+      "identical_bytes": true,
+      "identical_noncomment_lines": true
+    },
+    {
+      "file": "R/robspca.R",
+      "benchmark_sha256": "80d3e137ebbcc9f25f13249b63e62d6a7a389dc368ed668e138b483d47f269f5",
+      "candidate_sha256": "80d3e137ebbcc9f25f13249b63e62d6a7a389dc368ed668e138b483d47f269f5",
+      "identical_bytes": true,
+      "identical_noncomment_lines": true
+    },
+    {
+      "file": "R/rspca.R",
+      "benchmark_sha256": "ef5cc163d6129493a824fb92279da3959fc8d751116f07804fe39e4431d30973",
+      "candidate_sha256": "ef5cc163d6129493a824fb92279da3959fc8d751116f07804fe39e4431d30973",
+      "identical_bytes": true,
+      "identical_noncomment_lines": true
+    },
+    {
+      "file": "R/solver.R",
+      "benchmark_sha256": "9ff3b7a734a32d0a782befc135f2da66642a254f52eefaaf27fdb47519c9b00c",
+      "candidate_sha256": "9ff3b7a734a32d0a782befc135f2da66642a254f52eefaaf27fdb47519c9b00c",
+      "identical_bytes": true,
+      "identical_noncomment_lines": true
+    },
+    {
+      "file": "R/spca.R",
+      "benchmark_sha256": "a97e7773ed49f5065591de1708dc7b57f2cccea806687e8937539cead96d62e8",
+      "candidate_sha256": "a97e7773ed49f5065591de1708dc7b57f2cccea806687e8937539cead96d62e8",
+      "identical_bytes": true,
+      "identical_noncomment_lines": true
+    },
+    {
+      "file": "R/spca_path.R",
+      "benchmark_sha256": "ff1eae827bbde974647d17127d277239f21f03551e2414b5ef0c56710a277ec5",
+      "candidate_sha256": "ff1eae827bbde974647d17127d277239f21f03551e2414b5ef0c56710a277ec5",
+      "identical_bytes": true,
+      "identical_noncomment_lines": true
+    },
+    {
+      "file": "R/utils.R",
+      "benchmark_sha256": "cefa1d3b9c5c7b4b08df6248a4a9f3332b28199d51817f63e7509e668dd39f96",
+      "candidate_sha256": "cefa1d3b9c5c7b4b08df6248a4a9f3332b28199d51817f63e7509e668dd39f96",
+      "identical_bytes": true,
+      "identical_noncomment_lines": true
+    }
+  ]
+}

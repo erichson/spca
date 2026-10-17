@@ -50,6 +50,22 @@ test_that("the default penalty remains elastic net", {
   }
 })
 
+test_that("adjusted variances stay with the original component after a zero column", {
+  X <- rbind(diag(c(4, 3, 2)), -diag(c(4, 3, 2)))
+  initial <- cbind(c(0, 0, 0), c(1, 0, 0))
+  # The leading zero column cannot cross the l0 threshold along either
+  # remaining direction; the second column retains the leading PCA direction.
+  for (fun in list(spca, rspca, robspca)) {
+    fit <- fun(X, 2, alpha = 0.2, beta = 0, penalty = "l0", B_init = initial,
+               tol = 1e-12, verbose = FALSE)
+    expect_equal(fit$scores[, 1], rep(0, nrow(X)), ignore_attr = TRUE)
+    expect_equal(fit$eigenvalues, c(0, 32/5), tolerance = 1e-10,
+                 ignore_attr = TRUE)
+    expect_equal(fit$score_variance, c(0, 32/5), tolerance = 1e-10,
+                 ignore_attr = TRUE)
+  }
+})
+
 test_that("a loading warm start retains the requested mathematical convention", {
   set.seed(640)
   X <- matrix(rnorm(35 * 7), 35, 7)

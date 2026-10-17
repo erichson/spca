@@ -13,3 +13,4 @@
 ^inst/figures$
 ^.*\.Rcheck$
 ^sparsepca_.*\.tar\.gz$
+^Rplots\.pdf$
