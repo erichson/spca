@@ -437,7 +437,8 @@ warm-up, and subsequent quality calculations are outside the timer.
 
 The recorded environment is R 4.6.1, Matrix 1.7-6, rsvd 1.0.6, Ubuntu
 24.04.3, and OpenBLAS 0.3.26/LAPACK 3.12.0 on a virtualized Intel Xeon
-Platinum 8573C system. All 36 measured fits converged without warnings.
+Platinum 8573C system. All 36 measured runs completed without warnings;
+all iterative fits converged.
 The [benchmark guide](tools/benchmarks/README.md) records seeds, hardware,
 thread settings, reference work, and all measurement definitions;
 [raw measurements](tools/benchmarks/results/measurements.csv),
