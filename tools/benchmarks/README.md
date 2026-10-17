@@ -144,3 +144,15 @@ These runs execute a frozen snapshot of candidate R source. The release review
 must compare the benchmarked implementations with the final source and explain
 any transferred evidence. They should not be described as a fresh benchmark of
 a later archive merely because its version number is the same.
+
+The recorded source comparison in `results/source-equivalence.json` includes
+the later compatibility correction for older Matrix releases. All seven
+fitting and support files remain byte-identical to the benchmark snapshot.
+`R/methods.R` differs by one executable line in `.spca_predict`, which converts
+empty dimension names to the usual unnamed dense-matrix representation.
+The fitting functions never call that prediction helper, and the benchmark
+worker reads returned scores, loadings, and transforms directly for its quality
+calculations. Its measured code paths are therefore unchanged. This carries
+the existing fitting evidence forward; it adds no measurement of prediction
+performance and is not a fresh benchmark of the final archive. The remaining
+`R/documentation.R` differences are comments only.

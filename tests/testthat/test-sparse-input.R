@@ -37,8 +37,12 @@ test_that("fully stored sparse columns retain accuracy under large offsets", {
     dense_p <- sparsepca:::.spca_preprocess(X, TRUE, scale)
     W <- matrix(rnorm(7 * 3), 7, 3)
     Y <- matrix(rnorm(50 * 3), 50, 3)
-    expect_equal(sparse_p$forward(W), dense_p$forward(W), tolerance = 1e-12)
-    expect_equal(sparse_p$adjoint(Y), dense_p$adjoint(Y), tolerance = 1e-12)
+    # Matrix versions differ in their representation of empty dimnames.
+    # Retain checks of matrix shape and values while ignoring only names.
+    expect_equal(unname(sparse_p$forward(W)), unname(dense_p$forward(W)),
+                 tolerance = 1e-12)
+    expect_equal(unname(sparse_p$adjoint(Y)), unname(dense_p$adjoint(Y)),
+                 tolerance = 1e-12)
     expect_equal(sparse_p$energy, dense_p$energy, tolerance = 1e-12)
   }
 })

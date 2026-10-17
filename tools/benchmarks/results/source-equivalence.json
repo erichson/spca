@@ -1,8 +1,31 @@
 {
-  "compared_utc": "2026-10-17T20:43:06.364419+00:00",
-  "candidate_git_head": "9c4cd016533644b2e259161768e93054e4424fe3",
+  "compared_utc": "2026-10-17T20:58:38.150474+00:00",
+  "candidate_git_head_before_pending_commit": "7c5e4a153ddc88ffbf4f8999182ae7f04a299e5a",
+  "candidate_snapshot": "Reviewed working R sources including the pending minimum-Matrix prediction-metadata compatibility fix; per-file hashes identify this snapshot independently of later commit metadata.",
+  "candidate_R_source_fingerprint": "ec7bed3e3040b1238557e5934008872db5d2b228ef2c74776a38da59fd839b50",
   "benchmark_source_fingerprint": "d29e56ad6c4b578184d367b23002473f0df9267f474d85d03de5557ede9342c6",
-  "scope": "Comparison of working R sources to the frozen benchmark snapshot. This transfers implementation evidence; it is not a fresh benchmark of a final built archive.",
+  "scope": "Transferred fitting-performance evidence after source and call-path inspection. No numerical benchmark was rerun and these measurements are not fresh measurements of a later source archive.",
+  "fitting_implementations_byte_identical": true,
+  "reviewed_call_paths": {
+    "benchmark_entry_points": [
+      "spca",
+      "rspca",
+      "stats::prcomp"
+    ],
+    "unchanged_package_fitting_files": [
+      "R/preprocess.R",
+      "R/robspca.R",
+      "R/rspca.R",
+      "R/solver.R",
+      "R/spca.R",
+      "R/spca_path.R",
+      "R/utils.R"
+    ],
+    "changed_function": ".spca_predict",
+    "changed_function_reached_by_benchmark": false,
+    "quality_evaluation": "worker.R reads fit$scores, fit$loadings and fit$transform directly and evaluates blocked full-input residuals; prediction methods are not used.",
+    "limits": "The measurements cover fitting and returned-factor quality. They provide no timing evidence for prediction. Documentation-only and prediction-metadata changes do not justify claiming a new archive benchmark."
+  },
   "files": [
     {
       "file": "R/documentation.R",
@@ -14,9 +37,11 @@
     {
       "file": "R/methods.R",
       "benchmark_sha256": "21385e0d223babfd46e86169ba7a0bf48ef65d9b75657189cc245dae3c2459f6",
-      "candidate_sha256": "21385e0d223babfd46e86169ba7a0bf48ef65d9b75657189cc245dae3c2459f6",
-      "identical_bytes": true,
-      "identical_noncomment_lines": true
+      "candidate_sha256": "70e704c13f280cfafb8d1b7adc068c1e5577991fb78c22730c7542af63f8ba23",
+      "identical_bytes": false,
+      "identical_noncomment_lines": false,
+      "reviewed_change": "One executable line in .spca_predict normalizes empty dimnames to NULL only when both row and column names are absent. All other executable lines are unchanged.",
+      "benchmark_effect": "Not executed by the benchmark: worker.R calls fitting functions and reads returned scores/loadings/transform directly; it never calls predict or .spca_predict."
     },
     {
       "file": "R/preprocess.R",

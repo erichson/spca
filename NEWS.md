@@ -42,7 +42,8 @@
 - Add `predict()` methods for all three fitted classes. Predictions use
   stored centering and scaling, accept numeric data frames and Matrix
   inputs, and align a complete set of named variables with the training
-  columns. Calling `predict()` without new data returns the training scores.
+  columns. Empty dimension names are normalized across supported Matrix
+  versions. Calling `predict()` without new data returns the training scores.
 - Support sparse Matrix input in `rspca()` with implicit centering and
   scaling. Dense sketches, loadings, and scores are still needed;
   `spca()` and `robspca()` explicitly use dense working matrices.

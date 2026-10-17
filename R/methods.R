@@ -64,6 +64,9 @@ summary.robspca <- function(object, ...) .spca_summary(object)
     out <- X %*% object$loadings
   }
   rownames(out) <- rownames(X)
+  # Older Matrix releases can retain list(NULL, NULL) after as.matrix().
+  # Use the same unnamed dense-matrix representation as base multiplication.
+  if (is.null(rownames(out)) && is.null(colnames(out))) dimnames(out) <- NULL
   out
 }
 
