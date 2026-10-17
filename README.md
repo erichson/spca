@@ -1,318 +1,380 @@
-<img src="https://raw.githubusercontent.com/erichson/spca/master/spca.png" width="550">
+<img src="spca.png" width="550" alt="sparsepca: sparse principal component analysis">
 
-[![Build Status](https://travis-ci.org/erichson/spca.svg?branch=master)](https://travis-ci.org/erichson/spca)
+[![R-CMD-check](https://github.com/erichson/spca/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/erichson/spca/actions/workflows/R-CMD-check.yaml)
+[![CRAN version](https://www.r-pkg.org/badges/version/sparsepca)](https://CRAN.R-project.org/package=sparsepca)
 
+# Sparse PCA: fewer variables, clearer components
 
+Principal component analysis compresses many measurements into a few useful
+directions. A component might summarize a pattern shared by hundreds of
+genes, pixels, sensors, or survey responses. That compression is valuable,
+but ordinary PCA usually assigns a nonzero coefficient to every variable.
+Understanding what a component represents can become difficult.
 
-# SPCA via Variable Projection
+**sparsepca** fits components that use only a subset of the original
+variables. Zero coefficients make the contributing variables explicit.
+The tradeoff is deliberate: a simpler component may retain less variation
+than its ordinary PCA counterpart. Sparsity can help interpretation and
+regularization; it does not by itself guarantee a stable scientific finding
+or prevent overfitting.
 
-Sparse principal component analysis (SPCA) is a modern variant of PCA. Specifically, SPCA attempts to find sparse 
-weight vectors (loadings), i.e., a weight vector with only a few `active' (nonzero) values. This approach 
-leads to an improved interpretability of the model, because the principal components are formed as a 
-linear combination of only a few of the original variables. Further, SPCA avoids overfitting in a 
-high-dimensional data setting where the number of variables is greater than the number of observations.
+The package provides three related methods:
 
-This package provides robust and randomized accelerated SPCA routines in R:
- 
-* Sparse PCA: ``spca()``.
-* Randomized SPCA: ``rspca()``.
-* Robust SPCA: ``robspca()``.
+| Function | Useful when |
+| --- | --- |
+| `spca()` | You want a deterministic sparse fit and the matrix fits comfortably in memory. |
+| `rspca()` | The data are large, a small number of components is useful, and a randomized approximation is appropriate. |
+| `robspca()` | Some individual entries may be grossly corrupted, and a sparse additive error model is meaningful. |
 
-## Problem Formulation
-
-Such a parsimonious model is obtained by introducing prior information like sparsity promoting regularizers.
-More concreatly, given a data matrix ``X`` with shape ``(m,p)``, SPCA attemps to minimize the following
-optimization problem:
-
-```
-minimize f(A,B) = 1/2⋅‖X - X⋅B⋅Aᵀ‖² + α⋅‖B‖₁ + 1/2⋅β‖B‖², subject to AᵀA = I.
-```
-
-The matrix ``B`` is the sparse weight (loadings) matrix and ``A`` is an orthonormal matrix.
-Here we use a combination of the l1 and l2 norm as a sparsity-promoting regularizer, also known as the elastic net. 
-Then, the principal components ``Z`` are then formed as
-
-```
-Z = X %*% B.
-```
-
-Specifically, the interface of the SPCA function is:
-
-```R
-spca(X, k, alpha=1e-4, beta=1e-4, center=TRUE, scale=TRUE,  max_iter=1000, tol=1e-4, verbose=TRUE)
-```
-The description of the arguments is listed in the following:
-
-* ``X`` is a real ``n`` by ``p`` data matrix (or data frame), where ``n`` denotes the number of observations and ``p`` the number of variables.
-
-* ``k`` specifies the target rank, i.e., number of components to be computed.
-
-* ``alpha`` is a sparsity controlling parameter. Higher values lead to sparser components.
-
-* `` beta`` controls the amount of ridge shrinkage to apply in order to improve conditioning.
-
-* ``center`` logical value which indicates whether the variables should be shifted to be zero centered (TRUE by default).
-
-* ``scale``logical value which indicates whether the variables should be scaled to have unit variance (FALSE by default).
-
-* ``max_iter`` maximum number of iterations to perform before exiting.
-
-* ``tol`` stopping tolerance for reconstruction error.
-
-* ``verbose`` logical value which indicates whether progress is printed.
-
-A list with the following components is returned:
-
-* ``loadings`` sparse loadings (weight) vector.
-* ``transform`` the approximated inverse transform to rotate the scores back to high-dimensional space.
-* ``scores`` the principal component scores.
-* ``eigenvalues`` the approximated eigenvalues; 
-* ``center, scale`` the centering and scaling used.
-
+All three use variable projection, developed in the
+[package paper](https://doi.org/10.1137/18M1211350). They share loading,
+score, reconstruction, and prediction conventions.
 
 ## Installation
 
-Install the sparsepca package via CRAN
-```R
+```r
 install.packages("sparsepca")
+
+# Development version:
+# install.packages("remotes")
+# remotes::install_github("erichson/spca")
+
+library(sparsepca)
 ```
 
-You can also install the development version from GitHub using [devtools](https://cran.r-project.org/package=devtools):
+The repository is named **spca**; the R package is **sparsepca**.
+The development version is **1.0.0**; the CRAN badge shows the published
+version. Runtime requirements are R 4.0.0 or later, Matrix 1.3-0 or later,
+and rsvd 1.0.5 or later.
+Matrix does not need to be attached with `library(Matrix)`.
+
+## A first fit
+
+Each row is an observation and each column is a measured variable. Here we
+fit two sparse components to the four measurements in `iris`:
 
 ```r
-devtools::install_github("erichson/spca")
+X <- as.matrix(iris[, 1:4])
+fit <- spca(X, k = 2, alpha = 0.01, beta = 0.001,
+            center = TRUE, scale = TRUE, verbose = FALSE)
+
+round(fit$loadings, 3)       # Variable coefficients
+colSums(fit$loadings != 0)   # Active variables in each component
+head(fit$scores)            # Observations in component coordinates
+summary(fit)
 ```
 
+`alpha` encourages zeros. `beta` adds ridge shrinkage, which can stabilize
+the fit when variables are strongly correlated. The default is to center
+columns and **not** scale them. Scaling is enabled above because the choice
+between covariance and correlation analysis should be explicit. Keep the
+original units when their relative magnitudes carry meaning; scale when
+variables should have comparable weight despite different units.
 
+The returned loadings retain the scale chosen by the penalized optimization.
+They need not have unit length or be orthogonal, and the component scores
+can be correlated. Their signs can flip without changing the represented
+model.
 
-## Example: Sparse PCA
+## Two factors with different jobs
 
-One of the most striking demonstrations of PCA are eigenfaces. The aim is to extract the most dominant correlations between different faces from a large set of facial images. Specifically, the resulting columns of the rotation matrix (i.e., the eigenvectors) represent `shadows' of the faces, the so-called eigenfaces. Specifically, the eigenfaces reveal both inner face features (e.g., eyes, nose, mouth) and outer features (e.g., head shape, hairline, eyebrows). These features can then be used for facial recognition and classification.
+A low-rank approximation represents a large matrix using a small number of
+shared patterns. For a processed data matrix X with `n` observations and
+`p` variables, sparsepca uses two `p`-by-`k` factors:
 
-In the following we use the down-sampled cropped Yale face database B. The dataset comprises 2410 grayscale images of 38 different people, cropped and aligned, and can be loaded as 
-
-```r
-utils::download.file('https://github.com/erichson/data/blob/master/R/faces.RData?raw=true', 'faces.RData', "wget")
-load("faces.RData")
-```
-For computational convenience the 96x84 faces images are stored as column vectors of the data matrix. For instance, the first face can be displayed as
-
-```r
-face <- matrix(rev(faces[ , 1]), nrow = 84, ncol = 96)
-image(face, col = gray(0:255 / 255))
-```
-
-In order to approximate the ``k=25`` dominant eigenfaces you can use the standard PCA function in R:
-
-```r
-faces.pca <- prcomp(t(faces), k = 25, center = TRUE, scale. = TRUE)
+```math
+Z = XB, \qquad \widehat{X} = ZA^{T}.
 ```
 
-Note, that the data matrix needs to be transposed, so that each column corresponds to a pixel location rather than to a person. Here, the analysis is performed on the correlation matrix by setting the argument \code{scale = TRUE}. The mean face is provided as the attribute ``center``.
+**B**, returned as `loadings`, tells us how to combine measured variables
+into scores **Z**. **A**, returned as `transform`, combines those scores
+back into the original variable coordinates. A has orthonormal columns;
+B is encouraged to contain zeros. `transform` is a reconstruction factor,
+not an exact inverse of `loadings`.
 
-In the following, we use the SPCA package:
+The default elastic net fit minimizes
 
-```r
-library("spca")
+```math
+\frac{1}{2}\|X-XBA^{T}\|_F^2
++ \lambda_1\|B\|_1 + \frac{\lambda_2}{2}\|B\|_F^2,
+\qquad A^{T}A=I.
 ```
 
-First, we set the tuning parameters ``alpha=0`` and ``beta=0``, which reduces to PCA:
+The squared Frobenius norm is the sum of squared residual entries. The
+absolute-value penalty encourages zero coefficients; the squared penalty
+shrinks them. Internally, `lambda_1 = alpha * d1^2` and
+`lambda_2 = beta * d1^2`, where `d1` is the largest singular value of the
+processed matrix, or of its sketch for `rspca()`. Returned `alpha` and
+`beta` contain these **effective penalties**. The arguments are relative
+penalty strengths, not the literal coefficients in the displayed objective.
+
+With `alpha = beta = 0`, deterministic `spca()` recovers ordinary PCA with
+matching centering and scaling, up to signs and basis choices in tied
+singular subspaces. Sparse fits accept extra reconstruction error in
+exchange for simpler coefficients. Keeping only `k` components also
+discards information, even if no sparsity penalty is used.
+
+Scores and the reconstruction factor require `k * (n + p)` numeric entries;
+a reconstructed matrix requires `n * p`. The fitted object also retains
+the `p * k` loading entries and diagnostics. Factors are useful without
+forming a full reconstruction, but requesting one allocates a dense matrix:
 
 ```r
-spca.results <- spca(t(faces), k=25, alpha=0, beta=0, center=TRUE, scale=TRUE)
-```
-
-The summary of the analysis is as follows:
-
-```r
-summary(spca.results) 
-
-                            PC1       PC2      PC3      PC4      PC5    ...    
-Explained variance       2901.541  2706.701  388.080  227.062  118.407  ...
-Standard deviations        53.866    52.026   19.700   15.069   10.882  ... 
-Proportion of variance      0.360     0.336    0.048    0.028    0.015  ...
-Cumulative proportion       0.360     0.695    0.744    0.772    0.786  ... 
-```
-
-Just the first 5 PCs explain about 79% of the total variation in the data, while the first 25 PCs explain more then 90%. Finally, the eigenvectors can be visualized as eigenfaces, e.g., the first eigenvector (eigenface) is displayed as follows
-
-```r
-layout(matrix(1:25, 5, 5, byrow = TRUE))
-for(i in 1:25) {
-  par(mar = c(0.5,0.5,0.5,0.5))
-  img <- matrix(spca.results$loadings[,i], nrow=84, ncol=96)
-  image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
+reconstructed <- tcrossprod(fit$scores, fit$transform)
+if (!isFALSE(fit$scale)) {
+  reconstructed <- sweep(reconstructed, 2, fit$scale, "*")
+}
+if (!isFALSE(fit$center)) {
+  reconstructed <- sweep(reconstructed, 2, fit$center, "+")
 }
 ```
 
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/eigenfaces.png" width="500">
+## How variable projection fits the model
 
-The eigenfaces encode the holistic facial features as well as the illumination. 
+Once B is fixed, the best orthogonal reconstruction factor A comes from a
+small singular value decomposition of `crossprod(X, X %*% B)`. The solver
+can therefore eliminate that part of the optimization analytically. It then
+takes a gradient step for B and applies a threshold that encourages zeros.
+Repeating these steps improves the penalized reconstruction objective.
 
-In  many application, however, it is favorable to obtain a sparse representation. This is because a sparse representation is easier to interpret.  Further, this avoids overfitting in a high-dimensional data setting where the number of variables is greater than the number of observations. SPCA attempts to find sparse weight vectors (loadings), i.e., the approximate eigenvecotrs with only a few `active' (nonzero) values. We can compute the sparse eigenvectors as follows:
+This structure makes each update inexpensive after the initial matrix
+factorization. It also makes the penalty interchangeable: the default
+`penalty = "elasticnet"` uses soft thresholding;
+`penalty = "l0"` uses hard thresholding and penalizes the **number** of
+nonzero coefficients. With `penalty = "l0"` and `beta > 0`, the combination
+is often called *ZeroNet*. These penalties use different units, so the
+same `alpha` does not imply comparable sparsity across them.
 
-```r
-rspca.results <- rspca(t(faces), k=25, alpha=1e-4, beta=1e-1, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
-```
-
-the objective values for each iteration can be plotted as:
-
-```r
-plot(log(rspca.results$objective), col='red', xlab='Number of iterations', ylab='Objective value')
-```
-
-Note, that we have use here the randomized accelerated SPCA algorithm! The randomized algorithm eases the computational demands and is suitable if the input data feature some low-rank structure. For more details about randomized methods see, for instance, [Randomized Matrix Decompositions using R](http://arxiv.org/abs/1608.02148).
-Now, ``summary(rspca.results)`` reveals that the first 5 PCs only explain about 67% of the total variation. However, we yield a parsimonious representation of the data:
-
-```r
-layout(matrix(1:25, 5, 5, byrow = TRUE))
-for(i in 1:25) {
-    par(mar = c(0.5,0.5,0.5,0.5))
-    img <- matrix(rspca.results$loadings[,i], nrow=84, ncol=96)
-    image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
-}
-```
-
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparseeigenfaces.png" width="500">
-
-Unlike PCA, the sparse loadings contextualize localized features. If desired the solution can be made even sparser by increasing the tuning parameter ``alpha``:
+The joint optimization is nonconvex. A fit is a solution reached from its
+initialization, not a guarantee of the global optimum. Inspect the
+recorded history and work limit:
 
 ```r
-rspca.results <- rspca(t(faces), k=25, alpha=2e-4, beta=2e-1, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
+plot(fit$objective, type = "l", xlab = "Iteration",
+     ylab = "Penalized objective")
+c(iterations = fit$iterations, converged = fit$converged)
 ```
-We yield the following sparse loadings:
+
+`converged` records the objective-based stopping criterion. Tightening
+`tol` or increasing `max_iter` may refine the fit; neither is a test of
+scientific validity or a guarantee of a global solution.
+
+## Choosing a sparsity level
+
+Start with the number of components your analysis can use, then examine a
+range of penalties. A path reuses preprocessing and the initial matrix
+factorization, and passes each fitted loading matrix to the next fit:
 
 ```r
-layout(matrix(1:25, 5, 5, byrow = TRUE))
-for(i in 1:25) {
-    par(mar = c(0.5,0.5,0.5,0.5))
-    img <- matrix(rspca.results$loadings[,i], nrow=84, ncol=96)
-    image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
-}
+path <- spca_path(X, k = 2, alpha = c(0.001, 0.005, 0.01, 0.03),
+                  beta = 0.001, scale = TRUE, verbose = FALSE)
+print(path)
+path$nonzero             # Active coefficients per component
+path$selected_features   # Variables active in at least one component
+candidate <- path$fits[[3]]
 ```
 
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparsereigenfaces.png" width="500">
+The supplied order is preserved. Starting with a weak penalty and increasing
+it is often convenient. Reusing a previous fit can change the local solution
+relative to a fresh SVD initialization. A warm start is also available
+directly through `B_init = previous_fit$loadings` when the variable order,
+component count, and preprocessing match.
 
+`alpha` encourages sparsity rather than enforcing a chosen feature count.
+Counts can jump, and paths need not be monotone because the problem is
+nonconvex. Inspect both per-component counts and the union of selected
+variables: one variable can contribute to several components. Compare
+held-out reconstruction, interpretability, and stability across sensible
+data splits. For a randomized fit, also check sensitivity to the sketch seed.
 
+## Randomized SPCA: solve a smaller problem
 
-## Computational Comparison
+`rspca()` first finds an orthonormal basis Q that captures much of the
+data's dominant variation. It projects the observations into that basis:
 
-Now, let us evaluate the computatinal performace. Here we consider for comparision also the SPCA function from the ``elasticnet`` package. First, we create some artificial data where we know the ground truth: 
+```math
+C = Q^{T}X.
+```
+
+The expensive optimization then uses the smaller matrix C. The original
+variables remain columns, so sparse coefficients retain their meaning.
+Final scores are computed from the full processed data as `X %*% B`.
+The recorded objective is the **sketch objective**; compare full-data
+reconstruction when assessing approximation quality against `spca()`.
 
 ```r
-m <- 100000
-V1 <- rnorm(m, 0, 290)
-V2 <- rnorm(m, 0, 300)
-V3 <- -0.1*V1 + 0.1*V2 + rnorm(m,0,100)
-X <- cbind(V1,V1,V1,V1, V2,V2,V2,V2, V3,V3)
-X <- X + matrix(rnorm(length(X),0,1), ncol = ncol(X), nrow = nrow(X))
+set.seed(42)
+fast <- rspca(X, k = 2, alpha = 0.01, scale = TRUE,
+              o = 20, q = 2, verbose = FALSE)
 ```
-Hence, we expect to find 3 components. The first and second should have 4 non-zero loadings and the third 2 non-zero loadings. As a sanity check you can plot the loadings:
+
+The sketch width is `min(k + o, nrow(X), ncol(X))`. Oversampling `o` gives
+the basis extra room. Power iterations `q` improve separation between
+dominant and weaker directions, at the cost of additional matrix products.
+The defaults are `o = 20` and `q = 2`; **1.0.0 now honors `q`**, which
+older code inadvertently fixed at two.
+
+The advantage is largest when the sketch is much smaller than the input
+and the singular values decay. It diminishes for small matrices, large
+requested ranks, or spectra with no dominant subspace. More power
+iterations cannot make a very small rank explain an intrinsically
+high-dimensional signal. Set the seed before calling `rspca()` for
+reproducible random draws; numerical libraries can still choose different
+signs or bases in tied subspaces.
+
+## Sparse data and sparse loadings are different
+
+Sparse **input** stores many zeros efficiently. Sparse **loadings** use few
+variables in each component. You can have either without the other.
+
+Centering usually turns input zeros into nonzeros. `rspca()` avoids storing
+that full centered matrix: it computes a sparse product and subtracts the
+corresponding mean correction. Scaling is also applied through the products.
 
 ```r
-out <- rspca(X, k=3, alpha=1e-4, beta=1e-4, center = TRUE, scale = FALSE, verbose=0)
-print(out)
-
-Standard deviations:
-[1] 599.686 578.621 137.740
-
-Eigenvalues:
-[1] 359623.56 334802.29  18972.17
-
-Sparse loadings:
-        [,1]   [,2]  [,3]
- [1,]  0.000 -0.498 0.000
- [2,]  0.000 -0.498 0.000
- [3,]  0.000 -0.498 0.000
- [4,]  0.000 -0.498 0.000
- [5,] -0.499  0.000 0.000
- [6,] -0.499  0.000 0.000
- [7,] -0.499  0.000 0.000
- [8,] -0.499  0.000 0.000
- [9,]  0.000  0.000 0.678
-[10,]  0.000  0.000 0.678
+X_sparse <- Matrix::bdiag(outer(1:20, 1:6),
+                           outer(1:20, 6:1),
+                           outer(1:20, 1:6))
+set.seed(42)
+sparse_fit <- rspca(X_sparse, k = 3, alpha = 0.005,
+                    scale = TRUE, o = 5, verbose = FALSE)
 ```
 
-Next, we use the ``microbenchmark`` package for timing:
+| Routine | Input storage and dense work |
+| --- | --- |
+| `rspca()` | Preserves sparse input for products and implicit preprocessing. The basis, sketch, loading factors, and returned scores are dense. |
+| `spca()` | Converts sparse input to a dense matrix for deterministic preprocessing and factorization. |
+| `robspca()` | Uses dense input, residuals, and an `n`-by-`p` sparse-error array stored as an ordinary matrix. |
+| `predict()` | Uses the fitted transformation; predicted scores are dense. |
+
+For sketch width `ell`, the main randomized arrays have dimensions
+`n * ell`, `ell * p`, `p * k`, and `n * k`, in addition to input storage
+and factorization workspace. A large `k` or large oversampling value can
+still require substantial memory. The zero coefficients in `loadings`
+are represented in an ordinary R matrix rather than a compressed sparse
+output class.
+
+## Robust SPCA: separate unusual entries
+
+`robspca()` introduces an additive error matrix S:
+
+```math
+X \approx XBA^{T} + S.
+```
+
+Its objective uses the squared residual `X - XBA' - S`, the loading
+penalties, and `gamma * sum(abs(S))`. Minimizing over S is equivalent to
+applying an entrywise Huber loss to the reconstruction residual. This is
+appropriate when an additive sparse-error model describes the problem;
+it is not a general guarantee against every kind of outlier or model error.
+Centering and scaling themselves use ordinary means and sums of squares.
 
 ```r
-library("microbenchmark")
-
-timing_spca = microbenchmark(
-  'Elastinet SPCA' = elasticnet::spca(X, K = 3, type = "predictor", sparse = "varnum", para = c(4, 4, 2)),
-  'Deterministic SPCA' = spca(X, k=3, alpha=1e-4, beta=1e-4, verbose=0),
-  'Randomized SPCA'  = rspca(X, k=3, alpha=1e-4, beta=1e-4, verbose=0, o=0, q=0),
-  times = 20
-)
-
-autoplot(timing_spca, log = TRUE, y_max = 1.05 * max(timing_spca$time))
+set.seed(42)
+signal <- matrix(rnorm(120 * 2), 120, 2)
+weights <- matrix(0, 8, 2)
+weights[1:4, 1] <- 1
+weights[5:8, 2] <- 1
+noisy <- tcrossprod(signal, weights) + matrix(rnorm(120 * 8, sd = 0.1), 120)
+noisy[cbind(c(3, 40, 99), c(1, 6, 4))] <- c(8, -10, 9)
+robust <- robspca(noisy, k = 2, alpha = 0.001, gamma = 0.5,
+                  verbose = FALSE)
+low_rank <- tcrossprod(robust$scores, robust$transform)
+processed_model <- low_rank + robust$sparse
 ```
-The performance is summarized in the following plot.
 
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/timeing_art.png" width="800">
+`gamma` is measured in the **processed data units** and is not multiplied
+by the leading singular value. Smaller values allow more residual entries
+into S; sufficiently large values leave S zero and recover the ordinary
+loss. The returned sparse component is also in processed units. Undo
+column scaling for both components, and add the training means only once
+when reconstructing original observations.
 
-We clearly see the computational advantage of the SPCA algorithm using variable projection compare to the implementation provided by the elastinet package. Further, we see that there is little difference between the randomized and the deterministic algorithms here. However, the performance is pronaunced for bigger datasets such as the face data. 
+Version 1.0.0 corrects an objective bookkeeping error reported by Maria
+Sans-Fuentes: previous code omitted S from the squared reconstruction
+loss while charging its penalty. That could stop a fit as soon as the
+recorded objective rose. The corrected residual follows the published
+model, and regression tests check both the objective and continued
+optimization when S is nonzero.
+
+## What does “variance explained” mean here?
+
+Ordinary PCA produces uncorrelated scores. Sparse components can overlap,
+so adding their marginal variances can count the same variation more than
+once. sparsepca uses the sequential adjustment of
+[Zou, Hastie, and Tibshirani (2006)](https://doi.org/10.1198/106186006X113430):
+each score column is residualized against preceding score columns, then
+its squared norm is divided by `n - 1`.
+
+The adjusted values retain the historical field name `eigenvalues`;
+`sdev` is their square root. They are generally **not eigenvalues of a
+covariance matrix**. Adjustment depends on component order and the scale
+of the fitted coefficients. `score_variance` gives the unadjusted marginal
+score quantities. With `center = FALSE`, these are uncentered squared
+energies divided by `n - 1`, rather than centered sample variances.
+
+`fit$var` is the corresponding total energy of the entire processed input,
+including directions omitted from the fit. Summary proportions divide
+by this total, not by the sum of retained components. They need not add
+up to one. These statistics were corrected in 1.0.0; see
+[NEWS](NEWS.md) for their differences from the old auxiliary-SVD values.
+
+Loadings are coefficients, not variable–component correlations. If
+correlations are the quantity you want, calculate them directly, for
+example `cor(X, fit$scores)` for the complete training data above.
+Multiplying loadings by `sdev` does not generally give these correlations
+for a sparse fit.
+
+## Predicting new observations
 
 ```r
-timing_spca = microbenchmark(
-  'Deterministic SPCA' = spca(t(faces), k=25, alpha=1e-4, beta=1e-1, verbose=0, max_iter=1000, tol=1e-4),
-  'Randomized SPCA'  = rspca(t(faces), k=25, alpha=1e-4, beta=1e-1, verbose=0, max_iter=1000, tol=1e-4),
-  times = 15
-)
-
-autoplot(timing_spca, log = FALSE, y_max = 1.2 * max(timing_spca$time))
-```
-Clearly, the randomized algorithm shows some substantial speedups over the deterministic algorithm.
-
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/timeing.png" width="800">
-
-
-
-
-
-
-## Example: Robust SPCA
-
-In the following we demonstrate the robust SCPA which allows to capture some grossly corrupted entries in the data. The idea is to separate the input data into a low-rank component and a sparse component. The latter aims to capture potential outliers in the data. For the face data, we proceed as follows:
-
-```r
-robspca.results <- robspca(t(faces), k=25, alpha=1e-4, beta=1e-2, gamma=0.9, verbose=1, max_iter=1000, tol=1e-4, center=TRUE, scale=TRUE)
+training <- spca(iris[1:140, 1:4], k = 2, alpha = 0.01,
+                 scale = TRUE, verbose = FALSE)
+new_scores <- predict(training, iris[141:150, 1:4])
 ```
 
-The tuning parameter ``gamma`` is the sparsity controlling parameter for the sparse error matrix. Smaller values lead to a larger amount of noise removeal. We yield the following sparse loadings:
+Prediction applies the training means and scales before multiplying by
+the fitted loadings. Named variables are aligned to the complete training
+column set; unnamed matrices must use training order. No new preprocessing
+parameters are estimated. With no `newdata`, `predict(training)` returns
+stored training scores. Robust predictions use the same linear score map;
+they do not estimate a new sparse corruption matrix.
 
-```r
-layout(matrix(1:25, 5, 5, byrow = TRUE))
-for(i in 1:25) {
-    par(mar = c(0.5,0.5,0.5,0.5))
-    img <- matrix(robspca.results$loadings[,i], nrow=84, ncol=96)
-    image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
-}
-```
+## Measured performance
 
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/robustsparseeigenfaces.png" width="500">
+<!-- BEGIN BENCHMARK RESULTS -->
+Benchmark results will be inserted from the saved measurements before
+release. The benchmark guide records fixtures, matched objectives,
+environment, elapsed time, allocation definitions, and accuracy.
+<!-- END BENCHMARK RESULTS -->
 
+## Documentation, examples, and development
 
-Further, we can visualize the captured outliers for each face. Here we show the outliers for the first 25 faces:
+`?spca`, `?rspca`, `?robspca`, `?spca_path`, and `?predict.spca` document
+the full public contract and include small runnable examples.
+[CONTRIBUTING](CONTRIBUTING.md) describes tests and documentation generation;
+[NEWS](NEWS.md) records behavior changes.
 
-```r
-layout(matrix(1:25, 5, 5, byrow = TRUE))
-for(i in 1:25) {
-  par(mar = c(0.5,0.5,0.5,0.5))
-  img <- matrix(robspca.results$sparse[i,], nrow=84, ncol=96)
-  image(img[,96:1], col = gray((255:0)/255), axes=FALSE, xaxs="i", yaxs="i", xaxt='n', yaxt='n',ann=FALSE )
-}
-```
+The repository also retains the original
+[ordinary](plots/eigenfaces.png), [sparse](plots/sparseeigenfaces.png), and
+[robust sparse](plots/robustsparseeigenfaces.png) eigenface illustrations.
+They are historical examples based on cropped Extended Yale Face Database B
+images, not newly computed 1.0.0 results. The original research dataset has
+its own distribution conditions; these retained illustrations do not grant
+additional rights to the source photographs. The self-contained examples
+above require no face-data download.
 
-<img src="https://raw.githubusercontent.com/erichson/spca/master/plots/sparsecomp.png" width="500">
+## References and citation
 
-It can be seen that the robust SPCA algorithms captures some of the specularities and other errors in the data. 
+- Erichson, N. B., Zheng, P., Manohar, K., Brunton, S. L., Kutz, J. N., and
+  Aravkin, A. Y. (2020). [Sparse Principal Component Analysis via Variable
+  Projection](https://doi.org/10.1137/18M1211350). *SIAM Journal on Applied
+  Mathematics*, 80(2), 977–1002.
+- Zou, H., Hastie, T., and Tibshirani, R. (2006). [Sparse Principal Component
+  Analysis](https://doi.org/10.1198/106186006X113430). *Journal of Computational
+  and Graphical Statistics*, 15(2), 265–286.
+- Erichson, N. B., Voronin, S., Brunton, S. L., and Kutz, J. N. (2019).
+  [Randomized Matrix Decompositions Using R](https://doi.org/10.18637/jss.v089.i11).
+  *Journal of Statistical Software*, 89(11), 1–48.
 
-
-
-
-## References
-
-* [N. Benjamin Erichson, et al. "Sparse Principal Component Analysis via Variable Projection." (2018)](https://arxiv.org/abs/1804.00341)
-
-* [N. Benjamin Erichson, et al. "Randomized Matrix Decompositions using R." (2016)](http://arxiv.org/abs/1608.02148)
+Run `citation("sparsepca")` for a citation and BibTeX entry.

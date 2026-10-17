@@ -1,0 +1,15 @@
+^\.github$
+^\.gitignore$
+^\.travis\.yml$
+^\.Rbuildignore$
+^README\.md$
+^CONTRIBUTING\.md$
+^cran-comments\.md$
+^tools$
+^check-results$
+^plots$
+^spca\.png$
+^man/figures$
+^inst/figures$
+^.*\.Rcheck$
+^sparsepca_.*\.tar\.gz$

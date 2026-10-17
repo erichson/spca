@@ -1,0 +1,27 @@
+bibentry(
+    bibtype = "Article",
+    header = "To cite sparsepca in publications use:",
+    title = "Sparse Principal Component Analysis via Variable Projection",
+    author = c(
+        as.person("N. Benjamin Erichson"),
+        as.person("Peng Zheng"),
+        as.person("Krithika Manohar"),
+        as.person("Steven L. Brunton"),
+        as.person("J. Nathan Kutz"),
+        as.person("Aleksandr Y. Aravkin")
+    ),
+    journal = "SIAM Journal on Applied Mathematics",
+    year = "2020",
+    volume = "80",
+    number = "2",
+    pages = "977--1002",
+    doi = "10.1137/18M1211350",
+    url = "https://doi.org/10.1137/18M1211350",
+    textVersion = paste(
+        "Erichson, N. B., Zheng, P., Manohar, K., Brunton, S. L.,",
+        "Kutz, J. N., and Aravkin, A. Y. (2020).",
+        "Sparse Principal Component Analysis via Variable Projection.",
+        "SIAM Journal on Applied Mathematics, 80(2), 977-1002.",
+        "https://doi.org/10.1137/18M1211350"
+    )
+)
