@@ -1,0 +1,369 @@
+{
+  "browserVersion": "155.0.8059.84",
+  "networkNote": "The isolated browser context ignores certificate errors for public CDN resources because this container browser does not trust its HTTPS proxy certificate; the initial failures are retained separately. No signed-in session or credentials are used.",
+  "results": [
+    {
+      "topic": "predict.spca.html",
+      "title": "R: Predict sparse principal component scores",
+      "footer": "[Package sparsepca version 1.0.0 Index]",
+      "unexpandedRdMacros": false,
+      "width": 1200,
+      "scrollWidth": 1200,
+      "height": 1319,
+      "mathExpressions": 0,
+      "mathRendered": 0,
+      "mathErrors": [],
+      "missingImages": [],
+      "headings": [
+        {
+          "text": "Predict sparse principal component scores",
+          "y": 49.328125
+        },
+        {
+          "text": "Description",
+          "y": 86.75
+        },
+        {
+          "text": "Usage",
+          "y": 185.359375
+        },
+        {
+          "text": "Arguments",
+          "y": 383.875
+        },
+        {
+          "text": "Details",
+          "y": 681.234375
+        },
+        {
+          "text": "Value",
+          "y": 907.796875
+        },
+        {
+          "text": "See Also",
+          "y": 1006.40625
+        },
+        {
+          "text": "Examples",
+          "y": 1082.625
+        }
+      ],
+      "failedRequests": [],
+      "pageErrors": []
+    },
+    {
+      "topic": "robspca.html",
+      "title": "R: Robust sparse principal component analysis",
+      "footer": "[Package sparsepca version 1.0.0 Index]",
+      "unexpandedRdMacros": false,
+      "width": 1200,
+      "scrollWidth": 1200,
+      "height": 3142,
+      "mathExpressions": 24,
+      "mathRendered": 24,
+      "mathErrors": [],
+      "missingImages": [],
+      "headings": [
+        {
+          "text": "Robust sparse principal component analysis",
+          "y": 49.328125
+        },
+        {
+          "text": "Description",
+          "y": 86.75
+        },
+        {
+          "text": "Usage",
+          "y": 185.359375
+        },
+        {
+          "text": "Arguments",
+          "y": 493
+        },
+        {
+          "text": "Details",
+          "y": 1651.734375
+        },
+        {
+          "text": "Value",
+          "y": 2294.15625
+        },
+        {
+          "text": "Note",
+          "y": 2437.546875
+        },
+        {
+          "text": "References",
+          "y": 2580.9375
+        },
+        {
+          "text": "See Also",
+          "y": 2701.9375
+        },
+        {
+          "text": "Examples",
+          "y": 2778.15625
+        }
+      ],
+      "failedRequests": [],
+      "pageErrors": []
+    },
+    {
+      "topic": "rspca.html",
+      "title": "R: Randomized sparse principal component analysis",
+      "footer": "[Package sparsepca version 1.0.0 Index]",
+      "unexpandedRdMacros": false,
+      "width": 1200,
+      "scrollWidth": 1200,
+      "height": 3183,
+      "mathExpressions": 24,
+      "mathRendered": 24,
+      "mathErrors": [],
+      "missingImages": [],
+      "headings": [
+        {
+          "text": "Randomized sparse principal component analysis",
+          "y": 49.328125
+        },
+        {
+          "text": "Description",
+          "y": 86.75
+        },
+        {
+          "text": "Usage",
+          "y": 185.359375
+        },
+        {
+          "text": "Arguments",
+          "y": 511.1875
+        },
+        {
+          "text": "Details",
+          "y": 1773.09375
+        },
+        {
+          "text": "Value",
+          "y": 2300.34375
+        },
+        {
+          "text": "Sparse input and memory",
+          "y": 2421.34375
+        },
+        {
+          "text": "References",
+          "y": 2670.296875
+        },
+        {
+          "text": "See Also",
+          "y": 2852.078125
+        },
+        {
+          "text": "Examples",
+          "y": 2928.296875
+        }
+      ],
+      "failedRequests": [],
+      "pageErrors": []
+    },
+    {
+      "topic": "sparsepca-package.html",
+      "title": "R: Sparse principal component analysis via variable projection",
+      "footer": "[Package sparsepca version 1.0.0 Index]",
+      "unexpandedRdMacros": false,
+      "width": 1200,
+      "scrollWidth": 1200,
+      "height": 900,
+      "mathExpressions": 0,
+      "mathRendered": 0,
+      "mathErrors": [],
+      "missingImages": [],
+      "headings": [
+        {
+          "text": "Sparse principal component analysis via variable projection",
+          "y": 49.328125
+        },
+        {
+          "text": "Description",
+          "y": 86.75
+        },
+        {
+          "text": "Details",
+          "y": 185.359375
+        },
+        {
+          "text": "Author(s)",
+          "y": 434.3125
+        },
+        {
+          "text": "References",
+          "y": 510.53125
+        },
+        {
+          "text": "See Also",
+          "y": 631.53125
+        }
+      ],
+      "failedRequests": [],
+      "pageErrors": []
+    },
+    {
+      "topic": "spca-methods.html",
+      "title": "R: Display and summarize sparse PCA fits",
+      "footer": "[Package sparsepca version 1.0.0 Index]",
+      "unexpandedRdMacros": false,
+      "width": 1200,
+      "scrollWidth": 1200,
+      "height": 1333,
+      "mathExpressions": 1,
+      "mathRendered": 1,
+      "mathErrors": [],
+      "missingImages": [],
+      "headings": [
+        {
+          "text": "Display and summarize sparse PCA fits",
+          "y": 49.328125
+        },
+        {
+          "text": "Description",
+          "y": 86.75
+        },
+        {
+          "text": "Usage",
+          "y": 185.359375
+        },
+        {
+          "text": "Arguments",
+          "y": 547.5625
+        },
+        {
+          "text": "Details",
+          "y": 719.359375
+        },
+        {
+          "text": "Value",
+          "y": 968.3125
+        },
+        {
+          "text": "See Also",
+          "y": 1111.703125
+        },
+        {
+          "text": "Examples",
+          "y": 1187.921875
+        }
+      ],
+      "failedRequests": [],
+      "pageErrors": []
+    },
+    {
+      "topic": "spca.html",
+      "title": "R: Sparse principal component analysis",
+      "footer": "[Package sparsepca version 1.0.0 Index]",
+      "unexpandedRdMacros": false,
+      "width": 1200,
+      "scrollWidth": 1200,
+      "height": 4514,
+      "mathExpressions": 45,
+      "mathRendered": 45,
+      "mathErrors": [],
+      "missingImages": [],
+      "headings": [
+        {
+          "text": "Sparse principal component analysis",
+          "y": 49.328125
+        },
+        {
+          "text": "Description",
+          "y": 86.75
+        },
+        {
+          "text": "Usage",
+          "y": 185.359375
+        },
+        {
+          "text": "Arguments",
+          "y": 474.8125
+        },
+        {
+          "text": "Details",
+          "y": 1552.765625
+        },
+        {
+          "text": "Value",
+          "y": 2157.515625
+        },
+        {
+          "text": "Variance and loading interpretation",
+          "y": 3157.21875
+        },
+        {
+          "text": "Note",
+          "y": 3639.6875
+        },
+        {
+          "text": "References",
+          "y": 3760.6875
+        },
+        {
+          "text": "See Also",
+          "y": 3942.46875
+        },
+        {
+          "text": "Examples",
+          "y": 4041.078125
+        }
+      ],
+      "failedRequests": [],
+      "pageErrors": []
+    },
+    {
+      "topic": "spca_path.html",
+      "title": "R: Sparse PCA regularization paths",
+      "footer": "[Package sparsepca version 1.0.0 Index]",
+      "unexpandedRdMacros": false,
+      "width": 1200,
+      "scrollWidth": 1200,
+      "height": 3158,
+      "mathExpressions": 3,
+      "mathRendered": 3,
+      "mathErrors": [],
+      "missingImages": [],
+      "headings": [
+        {
+          "text": "Sparse PCA regularization paths",
+          "y": 49.328125
+        },
+        {
+          "text": "Description",
+          "y": 86.75
+        },
+        {
+          "text": "Usage",
+          "y": 185.359375
+        },
+        {
+          "text": "Arguments",
+          "y": 583.9375
+        },
+        {
+          "text": "Details",
+          "y": 1976.234375
+        },
+        {
+          "text": "Value",
+          "y": 2285.96875
+        },
+        {
+          "text": "See Also",
+          "y": 2773.171875
+        },
+        {
+          "text": "Examples",
+          "y": 2849.390625
+        }
+      ],
+      "failedRequests": [],
+      "pageErrors": []
+    }
+  ]
+}

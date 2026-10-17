@@ -44,7 +44,20 @@ blocks changed in that step.
 ## Generated help and PDF manual
 
 All seven HTML help topics were generated with `tools::Rd2HTML` without
-warnings. Local browser inspection is recorded separately after rendering.
+warnings. Source-checkout rendering evaluates the build, install, and render
+stages and supplies a link map derived from Rd aliases, so DOI macros and
+intra-package links appear as they do after normal installation. The candidate
+package is loaded with `pkgload` so version footers identify 1.0.0.
+
+All seven pages were inspected in Chrome Headless Shell 155.0.8059.84 at a
+1200-pixel viewport. All 97 mathematical expressions rendered successfully,
+with no KaTeX errors, page errors, failed requests, or horizontal page overflow.
+The mathematical sections, reference links, argument tables, and example
+layout were visually checked. `html-rendering.json` retains per-topic counts,
+headings, version footers, and browser diagnostics. An initial preview-harness
+omission of build-stage DOI expansion was corrected; the package Rd source
+itself did not require a change. Installed-package HTML and cross-package link
+validation remain part of the separate release archive checks.
 
 The full indexed manual was built with:
 
@@ -86,3 +99,32 @@ Benchmark figures and raw performance measurements have their own scripts,
 source hashes, and methodology under `tools/benchmarks`. Historical eigenface
 illustrations are retained with an explicit provenance and reuse caveat;
 they are not presented as newly computed 1.0.0 results.
+
+## Actual GitHub README rendering
+
+The complete article was inspected at
+<https://github.com/erichson/spca/blob/6a0afd350b557f3dc52083ababdc206451bc3606/README.md>
+using official Chrome Headless Shell 155.0.8059.84 at a 1440 by 1000 desktop
+viewport. GitHub returned HTTP 200. All four displayed equations, four content
+figures, tables, code blocks, and references rendered successfully. The
+complete article was reviewed in seven screenshot sections, with no page
+errors or failed resource requests. All eight page images, including badges
+and GitHub's avatar, loaded successfully. Fourteen repository-relative links
+were also checked against the source tree, with none missing.
+
+The inspection found thin antialiasing seams in the SVG illustration's color
+legend in Chromium. The existing PNG version has a smooth legend and was
+chosen for README embedding afterward; the SVG export remains available.
+This changes a README asset reference only and does not affect the package
+archive or numerical results. The CRAN badge correctly displayed the currently
+published 0.1.2 version; the text explicitly distinguishes development 1.0.0.
+The workflow badge reflected its live remote status and is not evidence of a
+completed package check.
+
+`github-rendering.json` retains the inspected commit URL, browser version,
+HTTP status, resource and page-error results, headings, and image dimensions.
+Full HTML and screenshots remain in the separate validation directory.
+The isolated browser context needed certificate-error tolerance for this
+container's HTTPS proxy certificate. It used public resources only, with no
+signed-in session or credentials; this is a browser-environment limitation,
+not a package documentation error.

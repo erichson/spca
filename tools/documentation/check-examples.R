@@ -37,6 +37,15 @@ run_code <- function(code, label, environment) {
 }
 
 rd_files <- list.files(file.path(root, "man"), pattern = "[.]Rd$", full.names = TRUE)
+# Build local links from the source aliases. Installation normally supplies
+# this map and evaluates build/install-time Rd macros such as DOI links.
+html_links <- character()
+for (rd in rd_files) {
+  parsed <- tools::parse_Rd(rd)
+  aliases <- vapply(Filter(function(x) identical(attr(x, "Rd_tag"), "\\alias"),
+                           parsed), paste, collapse = "", FUN.VALUE = character(1))
+  html_links[aliases] <- sub("[.]Rd$", ".html", basename(rd))
+}
 for (rd in rd_files) {
   label <- tools::file_path_sans_ext(basename(rd))
   code_path <- file.path(out, paste0(label, "-examples.R"))
@@ -50,7 +59,8 @@ for (rd in rd_files) {
       warnings = "", error = "", stringsAsFactors = FALSE)
   }
   tools::Rd2HTML(rd, out = file.path(out, paste0(label, ".html")),
-                  package = "sparsepca")
+                  package = "sparsepca", Links = html_links,
+                  stages = c("build", "install", "render"))
 }
 
 readme <- readLines(file.path(root, "README.md"), warn = FALSE)

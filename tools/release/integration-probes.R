@@ -111,8 +111,13 @@ for (algorithm in c("var_proj", "rand_var_proj")) {
     ans <- scPCA::scPCA(target = X, background = background,
       n_eigen = 2L, alg = algorithm, contrasts = 0.1, penalties = 0.01,
       n_centers = 2L, parallel = FALSE)
-    stopifnot(identical(dim(ans$rotation), c(8L, 2L)),
-              identical(dim(ans$x), c(120L, 2L)), all(is.finite(ans$rotation)))
+    # scPCA returns one matrix per selected hyperparameter pair, even when
+    # only one contrast and one penalty were supplied.
+    stopifnot(is.list(ans$rotation), length(ans$rotation) == 1L,
+              is.list(ans$x), length(ans$x) == 1L,
+              identical(dim(ans$rotation[[1L]]), c(8L, 2L)),
+              identical(dim(ans$x[[1L]]), c(120L, 2L)),
+              all(is.finite(ans$rotation[[1L]])))
     ans
   })
 }
