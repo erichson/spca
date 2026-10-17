@@ -1,0 +1,17 @@
+Standard deviations:
+[1] 1.708 0.956
+
+Eigenvalues (adjusted score variances):
+[1] 2.917 0.913
+
+Sparse loadings:
+       [,1]   [,2]
+[1,]  0.521 -0.377
+[2,] -0.269 -0.923
+[3,]  0.580 -0.024
+[4,]  0.565 -0.067
+                         PC1   PC2
+Explained variance     2.917 0.913
+Standard deviations    1.708 0.956
+Proportion of variance 0.729 0.228
+Cumulative proportion  0.729 0.958

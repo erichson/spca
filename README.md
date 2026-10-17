@@ -76,7 +76,7 @@ They need not have unit length or be orthogonal, and the component scores
 can be correlated. Their signs can flip without changing the represented
 model.
 
-![Loading coefficients for ordinary PCA, elastic net SPCA, and hard-threshold SPCA on twelve simulated variables.](man/figures/sparse-loadings.svg)
+![Loading coefficients for ordinary PCA, elastic net SPCA, and hard-threshold SPCA on twelve simulated variables.](man/figures/sparse-loadings.png)
 
 This self-contained example has three correlated groups of four variables.
 Ordinary PCA uses all 36 coefficients. The illustrated elastic net fit uses
