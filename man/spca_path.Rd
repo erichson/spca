@@ -133,6 +133,8 @@ the number of active coefficients in each component, whereas
 \code{selected_features} counts variables active in at least one
 component. These answer different questions when components overlap.
 Inspect reconstruction quality and stability in addition to counts.
+Use \code{\link{spca_target}} to search penalties for an approximate
+desired number of variables without retaining every candidate fit.
 
 Centering, scaling, the component count, the ridge penalty, and the
 chosen penalty type are shared across fits. For randomized paths,
@@ -213,5 +215,6 @@ randomized$nonzero
 }
 \seealso{
 \code{\link{spca}}, \code{\link{rspca}},
+  \code{\link{spca_target}},
   \code{\link{predict.spca}}.
 }

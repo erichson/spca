@@ -1,0 +1,2 @@
+"observations","variables","components","requested_features","selected_features","target_met","count_tol","selected_relative_alpha","evaluations","selected_evaluation","selected_fit_iterations","selected_fit_converged","nonzero_coefficients","relative_reconstruction_error","stop_reason"
+150,4,2,3,3,TRUE,0,0.237137370566165,16,16,195,TRUE,3,0.561699821364799,"target_met"

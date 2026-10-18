@@ -39,6 +39,13 @@
   factorization or randomized sketch. Paths retain the supplied order and
   report per-component nonzero counts and the union of selected variables.
   Penalty paths do not impose an exact requested cardinality.
+- Add `spca_target()` to search for an approximate requested number of
+  distinct variables across components. The bounded search shares one
+  factorization or randomized sketch and uses warm starts. It selects the
+  closest converged fit found, reports the achieved count and full search
+  diagnostics, and returns no recommendation when every candidate fails
+  to converge. Count tolerance is separate from objective tolerance;
+  support need not change monotonically or attain the requested count.
 - Add `predict()` methods for all three fitted classes. Predictions use
   stored centering and scaling, accept numeric data frames and Matrix
   inputs, and align a complete set of named variables with the training
@@ -72,14 +79,15 @@
   preserve the intended optimization updates while reducing allocation
   and repeated work.
 - Expand every help topic and add documentation for prediction,
-  regularization paths, parameter scaling, reconstruction, and the
-  interpretation of correlated sparse component scores.
+  regularization paths, approximate feature targeting, parameter scaling,
+  reconstruction, and the interpretation of correlated sparse component scores.
 - Expand the README into a self-contained tutorial with the two-factor
   model, parameter guidance, held-out prediction, and reproducible iris,
-  grouped-measurement, and corrupted-sensor applications. Restore all five
-  historical eigenface panels with provenance and interpretation, and
-  retain the measured performance tables and figures.
-- Deepen all seven help topics with practical guidance and independent
+  grouped-measurement, and corrupted-sensor applications. Recompute all five
+  eigenface panels using 1.0.0, with provenance and interpretation, and
+  retain the measured performance tables and figures. Add an iris example
+  of selecting an approximate number of variables with `spca_target()`.
+- Deepen all eight help topics with practical guidance and independent
   examples. Check labeled README chunks and help examples against the
   installed public API, fail unexpected warnings, and record explicit
   installation skips and source provenance. Save new application results

@@ -156,6 +156,8 @@
 #'     nonzero counts and what the selected variables mean. A grid such as
 #'     \code{c(0.0001, 0.001, 0.01, 0.1)} is an exploration of scales,
 #'     not a generally optimal set of penalties.
+#'     If the application suggests a desired number of measured variables,
+#'     \code{\link{spca_target}} searches for a fit with a nearby count.
 #'   \item Use \code{beta} to control ridge shrinkage and conditioning,
 #'     particularly with correlated or redundant measurements. Increasing
 #'     it also reduces loading magnitudes, so it changes the fitted model.
@@ -872,6 +874,8 @@ NULL
 #' \code{selected_features} counts variables active in at least one
 #' component. These answer different questions when components overlap.
 #' Inspect reconstruction quality and stability in addition to counts.
+#' Use \code{\link{spca_target}} to search penalties for an approximate
+#' desired number of variables without retaining every candidate fit.
 #'
 #' Centering, scaling, the component count, the ridge penalty, and the
 #' chosen penalty type are shared across fits. For randomized paths,
@@ -935,6 +939,7 @@ NULL
 #' per-component nonzero counts are available in \code{nonzero}.
 #'
 #' @seealso \code{\link{spca}}, \code{\link{rspca}},
+#'   \code{\link{spca_target}},
 #'   \code{\link{predict.spca}}.
 #'
 #' @examples
@@ -968,10 +973,159 @@ NULL
 #' randomized$nonzero
 NULL
 
+#' Sparse PCA with an approximate number of selected variables
+#'
+#' Search sparsity penalties for a fitted representation using approximately
+#' a requested number of variables. The search reuses preprocessing and one
+#' deterministic factorization or randomized sketch, then returns the closest
+#' converged candidate and a record of every evaluated penalty.
+#'
+#' @name spca_target
+#' @aliases print.spca_target
+#' @inheritParams spca_path
+#' @inheritParams spca
+#' @inheritParams rspca
+#' @param n_features Integer desired number of input variables, between zero
+#'   and \code{ncol(X)}. A variable is selected if its loading is nonzero in
+#'   at least one component. This counts the union across components, not
+#'   the number of coefficients in each component.
+#' @param alpha Optional nonempty numeric vector of finite nonnegative
+#'   relative penalties for the initial search. Values are evaluated in the
+#'   supplied order, with warm starts. \code{NULL} uses an increasing grid
+#'   containing zero and logarithmically spaced positive penalties up to one,
+#'   with at most 13 initial values. A supplied grid must contain no more than
+#'   \code{max_evals} values. Refinement stays within the initial grid's range.
+#' @param B_init Optional real finite \eqn{p} by \eqn{k} loading matrix for
+#'   the first candidate. \code{NULL} uses the shared factorization's leading
+#'   right singular vectors. Subsequent initial-grid candidates use the
+#'   preceding candidate's loadings; refinement uses the best converged
+#'   candidate so far, or the closest candidate if none has converged.
+#' @param max_evals Positive integer maximum number of candidate fits,
+#'   including the initial grid and refinement. The default is 30. Each
+#'   candidate has its own \code{max_iter} optimization limit.
+#' @param count_tol Nonnegative integer acceptable absolute difference
+#'   between the requested and achieved variable counts. The default zero
+#'   searches for an exact match, while still returning the closest
+#'   converged candidate if no exact match is found. This controls the
+#'   search stopping rule; \code{tol} controls each fit's objective stopping
+#'   rule.
+#' @param x An object returned by \code{spca_target}.
+#' @param ... Additional arguments; currently ignored by the print method.
+#'
+#' @details
+#' The number of score coordinates \code{k} and the number of measured
+#' variables \code{n_features} answer different questions. For example,
+#' two components can each use three measurements while together using
+#' only four distinct measurements. This function searches the total
+#' number of variables needed to calculate all requested scores.
+#'
+#' Each candidate solves the unchanged penalized objective of
+#' \code{\link{spca}} or \code{\link{rspca}}. The procedure evaluates
+#' an initial penalty grid, then prioritizes intervals whose observed
+#' endpoint counts lie on either side of the request, followed by intervals
+#' near the closest counts. It stops when a converged candidate meets
+#' \code{count_tol}, the evaluation budget is exhausted, or there are no
+#' further penalties to
+#' evaluate. It does not assume that the count is monotone in \code{alpha}.
+#' Counts can jump over the requested value, and the nonconvex optimization
+#' can reach different solutions under different warm starts. An exact
+#' count need not be attainable within the explored candidates.
+#'
+#' Only candidates with \code{converged = TRUE} are eligible for selection.
+#' The selected candidate minimizes the absolute count difference, with
+#' ties resolved by fewer selected variables and then earlier evaluation.
+#' Its penalized objective is not compared with objectives at other penalty
+#' strengths. A count within \code{count_tol} ends the search immediately;
+#' the procedure does not compare all representations having that count.
+#' If no candidate converges, the function warns and returns
+#' \code{fit = NULL}, with the attempted fits still recorded in
+#' \code{search}. A larger \code{max_iter} or revised fit settings may
+#' be needed in that case.
+#'
+#' The result reports both the requested and achieved counts. A nonzero
+#' mismatch is an ordinary search outcome and leaves \code{target_met}
+#' false when it exceeds \code{count_tol}. Increasing \code{max_evals}
+#' permits more refinement, and supplying \code{alpha} changes the range
+#' and starting sequence explored. Neither change guarantees an exact
+#' count or a globally optimal subset. Coefficients are the fitted values;
+#' the function does not trim or pad the final loading matrix.
+#'
+#' @section Computation and sparse input:
+#' All candidates share the training means, scales, component count,
+#' ridge penalty, penalty type, and spectral penalty scale. The randomized
+#' method uses one sketch, so \code{set.seed} controls the shared
+#' approximation. With \code{method = "rspca"}, sparse \pkg{Matrix}
+#' input retains the implicit centering and scaling behavior described in
+#' \code{\link{rspca}}. The deterministic method uses dense workspace.
+#'
+#' The search stores candidate counts and optimization summaries, with
+#' full-data scores constructed only for the selected fit. Use
+#' \code{\link{spca_path}} when every complete candidate fit is needed.
+#' The returned \code{fit} has the usual class, prediction methods,
+#' variance conventions, and loading scale of the selected method.
+#'
+#' @section Interpreting the selected representation:
+#' Reaching a desired count is a computational convenience. Inspect the
+#' variables and reconstruction quality, and assess stability or validation
+#' performance when these matter to the analysis. The count does not
+#' establish that the selected measurements are unique, necessary, or
+#' causally important. A component can have zero loadings, and fewer than
+#' \code{k} selected variables cannot produce \code{k} independent scores.
+#' Zero processed data have zero selected variables regardless of the
+#' requested count.
+#'
+#' @return A list of class \code{"spca_target"} with:
+#' \describe{
+#'   \item{fit}{The selected \code{spca} or \code{rspca} object, or
+#'     \code{NULL} if none of the evaluated candidates converged.}
+#'   \item{n_features}{The requested number of variables.}
+#'   \item{selected_features}{The achieved number of selected variables,
+#'     or \code{NA} when no candidate was eligible.}
+#'   \item{alpha}{The selected relative penalty before spectral scaling,
+#'     or \code{NA}. In contrast, \code{fit$alpha} contains the effective
+#'     coefficient used in the objective.}
+#'   \item{target_met}{Whether an eligible candidate's count is within
+#'     \code{count_tol} of \code{n_features}.}
+#'   \item{count_tol}{The allowed absolute difference in variable count.}
+#'   \item{index}{Row of \code{search} identifying the selected candidate,
+#'     or \code{NA} when none was eligible.}
+#'   \item{search}{A data frame in evaluation order with columns
+#'     \code{alpha}, \code{selected_features}, \code{difference},
+#'     \code{iterations}, \code{converged}, and \code{warm_start}.
+#'     \code{difference} is the achieved count minus the requested count;
+#'     negative values mean that fewer variables were selected.
+#'     \code{warm_start} is the index of the earlier candidate supplying
+#'     initial loadings, or zero for the caller-supplied/default start.}
+#'   \item{nonzero}{A matrix of nonzero counts, with one row per
+#'     evaluated candidate and one column per component.}
+#'   \item{method, penalty}{The chosen fitting method and sparsity penalty.}
+#'   \item{stop_reason}{One of \code{"target_met"}, \code{"max_evals"},
+#'     \code{"no_refinement"}, or \code{"no_converged_fit"}.}
+#' }
+#' The print method reports the requested and achieved counts, selected
+#' penalty, target status, and number of evaluated candidates.
+#'
+#' @seealso \code{\link{spca_path}}, \code{\link{spca}},
+#'   \code{\link{rspca}}, \code{\link{predict.spca}}.
+#'
+#' @examples
+#' X <- as.matrix(iris[, 1:4])
+#' target <- spca_target(X, k = 2, n_features = 3,
+#'                       beta = 0.001, scale = TRUE,
+#'                       tol = 1e-8, max_iter = 3000, verbose = FALSE)
+#' print(target)
+#' target$search
+#' if (!is.null(target$fit)) {
+#'   colnames(X)[rowSums(target$fit$loadings != 0) > 0]
+#'   predict(target$fit, X[1:3, , drop = FALSE])
+#' }
+NULL
+
 #' Sparse principal component analysis via variable projection
 #'
 #' Deterministic, randomized, and robust sparse PCA with loading penalties,
-#' prediction, and shared-factorization regularization paths.
+#' prediction, shared-factorization regularization paths, and searches for
+#' an approximate number of selected variables.
 #'
 #' @name sparsepca-package
 #' @aliases sparsepca
@@ -1014,6 +1168,8 @@ NULL
 #'     residual entries from the low-rank part and uses dense workspaces.}
 #'   \item{\code{\link{spca_path}}}{A sequence of candidate penalties
 #'     sharing preprocessing and a factorization or sketch, with warm starts.}
+#'   \item{\code{\link{spca_target}}}{A bounded penalty search returning
+#'     the closest converged candidate to a desired number of variables.}
 #'   \item{\code{\link{predict.spca}}}{The fitted training transformation
 #'     applied to future observations, with no refitting.}
 #' }
@@ -1031,6 +1187,9 @@ NULL
 #' tradeoff between loading sparsity and reconstruction with a short
 #' \code{alpha} path, keeping the preprocessing fixed. Inspect the
 #' actual coefficients and score correlations, not only a rounded summary.
+#' When an application suggests a desired number of measurements,
+#' \code{spca_target} searches for a nearby count and reports the achieved
+#' count explicitly.
 #' Use training-only preprocessing and \code{predict} for validation or
 #' downstream predictive models.
 #'

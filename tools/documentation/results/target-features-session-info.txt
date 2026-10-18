@@ -1,0 +1,66 @@
+R version 4.6.1 (2026-06-24)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 24.04.3 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+
+locale:
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
+
+time zone: Africa/Gaborone
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base
+
+other attached packages:
+[1] sparsepca_1.0.0 testthat_3.3.2
+
+loaded via a namespace (and not attached):
+ [1] desc_1.4.3      R6_2.6.1        Matrix_1.7-6    lattice_0.22-9
+ [5] rsvd_1.0.6      magrittr_2.0.5  lifecycle_1.0.5 cli_3.6.6
+ [9] grid_4.6.1      pkgload_1.5.3   compiler_4.6.1  rprojroot_2.1.1
+[13] tools_4.6.1     pkgbuild_1.4.8  brio_1.1.5      otel_0.2.0
+[17] rlang_1.3.0
+
+Generation thread settings:
+OPENBLAS_NUM_THREADS=1
+OMP_NUM_THREADS=1
+MKL_NUM_THREADS=1
+
+Source revision at generation:
+55942b52306c893bedcae9753eb1b158829a1f14
+Working tree at generation:
+ M DESCRIPTION
+ M NAMESPACE
+ M NEWS.md
+ M R/documentation.R
+ M README.md
+ M man/sparsepca-package.Rd
+ M man/spca.Rd
+ M man/spca_path.Rd
+ M tools/documentation/README.md
+?? R/spca_target.R
+?? man/figures/target-features-iris.png
+?? man/figures/target-features-iris.svg
+?? man/spca_target.Rd
+?? tests/testthat/test-target-features.R
+?? tools/documentation/results/target-features-iris.rds
+?? tools/documentation/results/target-features-loadings.csv
+?? tools/documentation/results/target-features-search.csv
+?? tools/documentation/results/target-features-session-info.txt
+?? tools/documentation/results/target-features-summary.csv
+?? tools/documentation/target-features.R
+?? tools/documentation/target-features.md
+
+Source MD5 checksums (identify the working-tree code):
+R/spca_target.R 1da01b211c054cb8a975678ed0047858
+R/solver.R 47643305322a90122a3ef892314422cc
+R/utils.R 8988859c310e33a1b186f924495f5f03
+R/preprocess.R e2e559c9c6a7c0046efded05d03cf564
+tools/documentation/target-features.R 588c6725312d282e27057670c15c2033
