@@ -1,0 +1,16 @@
+{
+  "byte_identical_redraw": true,
+  "figure_count": 10,
+  "sha256": {
+    "man/figures/eigenfaces-errors.png": "b469d3464bdfc38b56ae667c4a180390c2cb254e67df2033d9383527d641c59b",
+    "man/figures/eigenfaces-errors.svg": "a7fd5ef6434742c11806ee9946a8aa3fa36ca2e0ead26ad6d8f61bfc107465b6",
+    "man/figures/eigenfaces-ordinary.png": "723bd809e8730aadc88215fc3e45a5fa82b6522071aef9c9e84c0e1ed1ec5612",
+    "man/figures/eigenfaces-ordinary.svg": "6e73b151a266a29fb53fc31f2935b6b41f64be880703fe81daf1ee353b5a3d87",
+    "man/figures/eigenfaces-robust.png": "12f7c2bbeedfea57f2651f4d92fd0fe6c752317271a9383a8a79630c766f4bd2",
+    "man/figures/eigenfaces-robust.svg": "5d642346428ca43c10d82cc5a3728afeb66e55511509ac3624d019f654838a1e",
+    "man/figures/eigenfaces-sparse.png": "02ef8cabc5aa353c8b02437e4223f57e688add79a4c22b7835aceb410055f697",
+    "man/figures/eigenfaces-sparse.svg": "44b907c8a573835f76a9f8247748813423622f61cc2983f2ab90c7f283ff07eb",
+    "man/figures/eigenfaces-stronger.png": "799cf9e3ea441351909916e964c8efffe305b1da41f7c76366a3faf4b5e35a6c",
+    "man/figures/eigenfaces-stronger.svg": "095c7857b30087a6a48e553a856ba4415b0cd5c44384bcd3933b7523480f89fd"
+  }
+}

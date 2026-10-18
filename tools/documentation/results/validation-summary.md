@@ -1,4 +1,11 @@
-# Documentation validation for sparsepca 1.0.0
+# Initial documentation validation for sparsepca 1.0.0
+
+This record identifies the initial release-documentation checks and their
+source hashes. Later tutorial checks are recorded in
+`readme-example-results.csv` and `readme-example-source-manifest.csv`.
+The recomputed face application has its own `eigenfaces-*` results and
+[reproduction guide](../eigenfaces.md). Actual GitHub rendering and CI for
+the tutorial revision are recorded in its pull request.
 
 ## Scope and source identity
 
@@ -96,9 +103,10 @@ Signs are changed only for display. The common legend, group labels, and
 sparsity/error annotations are readable and do not overlap.
 
 Benchmark figures and raw performance measurements have their own scripts,
-source hashes, and methodology under `tools/benchmarks`. Historical eigenface
-illustrations are retained with an explicit provenance and reuse caveat;
-they are not presented as newly computed 1.0.0 results.
+source hashes, and methodology under `tools/benchmarks`. The face application
+has since been recomputed with the 1.0.0 implementation; its saved factors,
+measurements, and independent numerical checks use the `eigenfaces-` prefix
+in this directory.
 
 ## Actual GitHub README rendering
 
