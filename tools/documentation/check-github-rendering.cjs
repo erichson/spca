@@ -26,7 +26,9 @@ async function launchBrowser() {
 function collectDOM() {
   const article = document.querySelector('article.markdown-body');
   if (!article) return { missingArticle: true };
-  const errors = /(?:following macros are not allowed|macro[^\n]{0,60}not allowed|unknown (?:command|macro)|undefined control sequence|parse\s*error|error (?:rendering|parsing) (?:math|latex)|(?:failed|unable) to render)/i;
+  // Word boundaries distinguish a renderer's ParseError/parse error from
+  // ordinary prose such as "sparse error term S".
+  const errors = /(?:following macros are not allowed|macro[^\n]{0,60}not allowed|unknown (?:command|macro)|undefined control sequence|\bparse\s*error\b|error (?:rendering|parsing) (?:math|latex)|(?:failed|unable) to render)/i;
   const errorSelector = '.flash-error, .katex-error, .MathJax_Error, merror, [data-mjx-error], [role="alert"]';
   const box = element => {
     const bounds = element.getBoundingClientRect();

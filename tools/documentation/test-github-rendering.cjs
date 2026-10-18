@@ -31,10 +31,14 @@ async function check() {
       { name: 'Empty SVG wrapper', html: '<svg width="100" height="30" viewBox="0 0 100 30"></svg>', pass: false, expected: /empty or broken SVG/ },
       { name: 'Broken SVG use reference', html: '<svg width="100" height="30" viewBox="0 0 100 30"><use href="#missing-glyph" /></svg>', pass: false, expected: /empty or broken SVG/ },
       { name: 'Visible formula with wrong semantics', html: '<math><mi>x</mi><mo>=</mo><mn>1</mn></math>', pass: false, expected: /formula lacks/ },
-      { name: 'Correct rendered soft-threshold formula', html: correctFormula, pass: true }
+      { name: 'Correct rendered soft-threshold formula', html: correctFormula, pass: true },
+      { name: 'Ordinary sparse error prose', prose: 'The sparse error term S absorbs large residuals.', html: correctFormula, pass: true },
+      { name: 'ParseError message', prose: 'ParseError: invalid expression.', html: correctFormula, pass: false, expected: /math error or macro-rejection/ },
+      { name: 'Spaced parse error message', prose: 'Parse error: invalid expression.', html: correctFormula, pass: false, expected: /math error or macro-rejection/ }
     ];
     for (const fixture of cases) {
-      await page.setContent('<article class="markdown-body"><math-renderer>' + fixture.html + '</math-renderer></article>');
+      await page.setContent('<article class="markdown-body"><p>' + (fixture.prose || '') +
+        '</p><math-renderer>' + fixture.html + '</math-renderer></article>');
       const data = await page.evaluate(collectDOM);
       const problems = assess(data, source);
       assert.strictEqual(!problems.length, fixture.pass, fixture.name + ': ' + problems.join('; '));
