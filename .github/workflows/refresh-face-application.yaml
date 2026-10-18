@@ -1,0 +1,115 @@
+name: Refresh the face application
+
+on:
+  push:
+    branches: [docs/readme-style-faces]
+    paths: [.github/workflows/refresh-face-application.yaml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-face-application
+  cancel-in-progress: false
+
+env:
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.6.1'
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::digest
+            any::pkgload
+          needs: check
+      - name: Obtain the checksum-identified research input
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/faces.RData" \
+            https://raw.githubusercontent.com/erichson/data/fca24620977d21f5230ca9cc7a6107b25847d6fa/R/faces.RData
+          printf '%s  %s\n' 82674d0785f38c4c57eb688992eaf0fb2453e8c0409ef1f25b40da8de6a979a5 "$RUNNER_TEMP/faces.RData" | sha256sum --check
+      - name: Fit the application and tolerance comparison
+        shell: bash
+        run: |
+          set -euo pipefail
+          Rscript tools/documentation/eigenfaces.R --fit \
+            "$RUNNER_TEMP/faces.RData" "$RUNNER_TEMP/face-checkpoints"
+          Rscript tools/documentation/eigenfaces.R --fit-model sparse --tol=1e-5 \
+            "$RUNNER_TEMP/faces.RData" "$RUNNER_TEMP/face-stricter"
+          cp "$RUNNER_TEMP/face-stricter/sparse.rds" \
+            tools/documentation/results/eigenfaces-sparse-stricter.rds
+          Rscript - <<'RSCRIPT'
+          directory <- "tools/documentation/results"
+          main <- readRDS(file.path(directory, "eigenfaces-data.rds"))
+          strict <- readRDS(file.path(directory, "eigenfaces-sparse-stricter.rds"))
+          expected <- c(ordinary = 0.316257581019205, sparse = 0.473287172034182,
+                        stronger = 0.524256508695703, robust = 0.38434086428231,
+                        robust_control = 0.376815927311305)
+          measured <- setNames(main$summary$relative_reconstruction_error,
+                               main$summary$model)
+          stopifnot(isTRUE(all.equal(measured[names(expected)], expected,
+                                    tolerance = 1e-8)))
+          stopifnot(identical(as.integer(main$summary$nonzero_loadings),
+                              c(201600L, 103256L, 63649L, 73852L, 77660L)),
+                    main$summary$iterations[main$summary$model == "robust"] == 181L,
+                    main$summary$nonzero_sparse_errors[main$summary$model == "robust"] == 723283L)
+          rows <- rbind(main$summary[main$summary$model == "sparse", ], strict$metrics)
+          rows$tolerance <- c(1e-4, 1e-5)
+          write.csv(rows, file.path(directory, "eigenfaces-tolerance-comparison.csv"),
+                    row.names = FALSE)
+          RSCRIPT
+      - name: Verify saved factors and figure reproduction
+        shell: bash
+        run: |
+          set -euo pipefail
+          Rscript tools/documentation/check-eigenfaces.R "$RUNNER_TEMP/faces.RData" \
+            > tools/documentation/results/eigenfaces-verification.txt
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          import hashlib, json, subprocess
+          files = sorted(Path("man/figures").glob("eigenfaces-*"))
+          assert len(files) == 10
+          def hashes():
+              return {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+          before = hashes()
+          subprocess.run(["Rscript", "tools/documentation/eigenfaces.R", "--plot-only"], check=True)
+          after = hashes()
+          assert before == after
+          result = {"byte_identical_redraw": True, "figure_count": len(files),
+                    "sha256": after}
+          Path("tools/documentation/results/eigenfaces-figure-checks.json").write_text(
+              json.dumps(result, indent=2) + "\n")
+          PYTHON
+      - name: Publish only the verified derived assets to the documentation branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add man/figures/eigenfaces-* tools/documentation/results/eigenfaces-*
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -m 'Regenerate and verify the sparsepca face application'
+          git push origin HEAD:docs/readme-style-faces
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: sparsepca-face-application
+          path: |
+            man/figures/eigenfaces-*
+            tools/documentation/results/eigenfaces-*
+          if-no-files-found: warn
+          retention-days: 90
