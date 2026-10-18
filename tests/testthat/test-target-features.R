@@ -304,7 +304,9 @@ test_that("sparse and dense inputs give equivalent randomized selections", {
   dense_reconstruction <- tcrossprod(dense$fit$scores, dense$fit$transform)
   expect_equal(sparse_reconstruction, dense_reconstruction, tolerance = 1e-6)
   expect_equal(sparse$fit$objective, dense$fit$objective, tolerance = 1e-6)
-  expect_equal(predict(sparse$fit, X), sparse$fit$scores, tolerance = 1e-12)
+  # Matrix versions represent absent dimnames as NULL or list(NULL, NULL).
+  expect_equal(unname(predict(sparse$fit, X)), unname(sparse$fit$scores),
+               tolerance = 1e-12)
 })
 
 test_that("feature targeting rejects invalid counts and search controls", {
