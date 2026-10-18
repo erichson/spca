@@ -7,7 +7,8 @@
 \title{Sparse principal component analysis via variable projection}
 \description{
 Deterministic, randomized, and robust sparse PCA with loading penalties,
-prediction, and shared-factorization regularization paths.
+prediction, shared-factorization regularization paths, and searches for
+an approximate number of selected variables.
 }
 \details{
 Principal components summarize many measured variables in a few score
@@ -49,6 +50,8 @@ interpretation conventions in detail.
     residual entries from the low-rank part and uses dense workspaces.}
   \item{\code{\link{spca_path}}}{A sequence of candidate penalties
     sharing preprocessing and a factorization or sketch, with warm starts.}
+  \item{\code{\link{spca_target}}}{A bounded penalty search returning
+    the closest converged candidate to a desired number of variables.}
   \item{\code{\link{predict.spca}}}{The fitted training transformation
     applied to future observations, with no refitting.}
 }
@@ -68,6 +71,9 @@ Choose \code{k} as the number of score coordinates. Explore the
 tradeoff between loading sparsity and reconstruction with a short
 \code{alpha} path, keeping the preprocessing fixed. Inspect the
 actual coefficients and score correlations, not only a rounded summary.
+When an application suggests a desired number of measurements,
+\code{spca_target} searches for a nearby count and reports the achieved
+count explicitly.
 Use training-only preprocessing and \code{predict} for validation or
 downstream predictive models.
 

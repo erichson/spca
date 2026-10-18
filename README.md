@@ -42,7 +42,8 @@ input storage helps manage memory. The two can be used together, as the
 
 The repository is named **spca** and the R package is **sparsepca**. This
 README describes version **1.0.0**, including prediction, penalty paths,
-and support for sparse input. The CRAN badge shows the published version,
+approximate feature-count selection, and support for sparse input. The
+CRAN badge shows the published version,
 which may be older. Install the repository version to run the complete
 tutorial.
 
@@ -73,8 +74,9 @@ errors you expect.
 | `rspca()` | Large matrices for which a randomized approximation with relatively few components is appropriate. |
 | `robspca()` | Measurements with gross errors in individual entries, modeled as sparse additive corruption. |
 
-Use `spca_path()` to compare sparsity penalties and `predict()` to calculate
-scores for new observations. The fitting algorithms use variable projection,
+Use `spca_path()` to compare sparsity penalties, `spca_target()` to search
+for a desired number of variables, and `predict()` to calculate scores for
+new observations. The fitting algorithms use variable projection,
 as developed in the [package paper](https://doi.org/10.1137/18M1211350).
 
 ## A first application: four measurements, two coordinates
@@ -394,6 +396,61 @@ the penalty changes. Treat `alpha` as a penalty strength rather than an
 exact feature-count request. Inspect both the count in each component and
 the union of selected variables, since one variable can contribute to
 several components.
+
+### Start with a desired number of measurements
+
+An application may suggest how many measurements the representation should
+use before it suggests a penalty strength. Suppose we want to calculate
+two scores using about three of the four iris measurements. `spca_target()`
+searches for a penalty that produces that count. The `n_features` argument
+counts variables used by at least one component, so a measurement used in
+both components is counted once.
+
+<!-- example: target-features -->
+```r
+target <- spca_target(X, k = 2, n_features = 3,
+                      beta = 0.001, scale = TRUE,
+                      tol = 1e-8, max_iter = 3000, verbose = FALSE)
+
+print(target)
+target$search
+selected <- target$fit
+colnames(X)[rowSums(selected$loadings != 0) > 0]
+```
+
+The search shares preprocessing and one factorization, or one random
+sketch with `method = "rspca"`. It starts with a small penalty grid and
+uses warm starts to refine promising intervals if needed. Only converged
+fits are eligible. By default, at most 30 fits are evaluated, and the
+search stops when it finds the requested count. A supplied `alpha` grid
+sets the initial sequence and range; `max_evals` controls the total search
+budget.
+
+Check `target$selected_features` and `target$target_met` to see what was
+achieved. Counts can jump over the request, so a completed search can
+return the closest converged candidate with `target_met = FALSE`.
+`count_tol = 1` accepts a count within one variable of the request, while
+`tol` controls numerical convergence within each fit. If no candidate
+converges, the function warns and returns `fit = NULL`; the search record
+shows which fits reached their iteration limits. The chosen fit retains
+its estimated coefficients and supports the usual prediction methods.
+
+![Penalty search and the selected iris loading coefficients](man/figures/target-features-iris.png)
+
+**The search finds three measurements after 16 candidate fits.** Its two
+components use two and one nonzero coefficients, respectively. The left
+panel follows evaluation order; the open circle marks a candidate that
+reached its iteration limit and was ineligible for selection. The right
+panel shows coefficients applied to standardized measurements, with
+component signs chosen for display.
+
+The selected variables are sepal width, petal length, and petal width.
+Petal width's coefficient is only about 0.0005, so reaching a count of
+three does not imply that all three contribute equally to the scores.
+The relative reconstruction error is 0.562 on the standardized input.
+The [reproduction guide](tools/documentation/target-features.md) contains
+the complete search record and saved coefficients. Examine reconstruction
+quality and the stability of the selected variables alongside the count.
 
 ### Apply the model to held-out observations
 
@@ -1030,6 +1087,7 @@ and runnable examples.
 | `?rspca` | Sketch quality, parameters, and sparse-input memory. |
 | `?robspca` | Error model, `gamma`, and component units. |
 | `?spca_path` | Reused factorizations and penalty-path interpretation. |
+| `?spca_target` | Search for an approximate variable count and inspect the achieved result. |
 | `?predict.spca` | Training preprocessing and variable alignment. |
 | `?summary.spca`, `?print.spca` | Displayed statistics. |
 

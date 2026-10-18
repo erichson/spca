@@ -62,7 +62,7 @@ MD5 content checksums. `run-manifest.txt`, its RDS counterpart, and
 execution flags, and timestamps. The metadata labels the hash algorithm; these
 checksums identify inputs and are not the release archive's SHA-256 receipt.
 
-Open `html/00Index.html` to browse the package's seven help topics. Package
+Open `html/00Index.html` to browse the package's eight help topics. Package
 links to `stats::prcomp` resolve to `html/stats-prcomp.html` within this preview.
 Further help-topic references on that external page are rendered as plain text;
 the runner does not copy or crawl the rest of R's help system. Only that exact
@@ -178,6 +178,11 @@ sketches. Do not assert timing thresholds, monotone support along every
 nonconvex path, or general support-recovery guarantees from one simulation.
 
 ## Iris, sensors, and face images
+
+The [feature-count example](target-features.md) uses `spca_target()` to
+search for a representation based on three of the four iris measurements.
+Its script saves every evaluated penalty, the chosen coefficients, and
+session information, then draws the figure from that saved snapshot.
 
 The [application reproduction and provenance guide](application-examples.md)
 documents the iris and sensor examples and their retained data and numerical

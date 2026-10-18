@@ -236,6 +236,8 @@ A practical tuning workflow is:
     nonzero counts and what the selected variables mean. A grid such as
     \code{c(0.0001, 0.001, 0.01, 0.1)} is an exploration of scales,
     not a generally optimal set of penalties.
+    If the application suggests a desired number of measured variables,
+    \code{\link{spca_target}} searches for a fit with a nearby count.
   \item Use \code{beta} to control ridge shrinkage and conditioning,
     particularly with correlated or redundant measurements. Increasing
     it also reduces loading magnitudes, so it changes the fitted model.

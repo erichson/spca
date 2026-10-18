@@ -17,8 +17,9 @@ Description: Fits principal components with sparse loading vectors for
     the randomized algorithm also supports sparse input matrices through
     implicit centering and scaling. A robust formulation separates
     entrywise outliers from the low-rank reconstruction. Regularization
-    paths reuse matrix factorizations, and prediction applies the fitted
-    transformation to new observations. The methods are described in
+    paths and approximate feature-count searches reuse matrix factorizations,
+    and prediction applies the fitted transformation to new observations.
+    The methods are described in
     Erichson et al. (2020) <doi:10.1137/18M1211350>.
 License: GPL (>= 3)
 Depends: R (>= 4.0.0)
