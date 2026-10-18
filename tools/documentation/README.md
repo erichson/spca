@@ -76,6 +76,52 @@ Release validation still builds a source archive and runs `R CMD check
 complete PDF manual. HTML generation alone does not establish correct browser
 layout; inspect rendered mathematics, links, figures, and the PDF separately.
 
+## Inspect the actual GitHub rendering
+
+GitHub's mathematics renderer can reject a macro even when a local TeX
+renderer accepts it. The optional browser check verifies the public README
+at an immutable commit, including the output inside each equation container.
+It requires Node.js, `playwright-core`, and Chromium as development tools;
+they are separate from the R package dependencies. Set `NODE_PATH` if the
+Node module is installed outside the normal search path, and set
+`SPARSEPCA_CHROMIUM_EXECUTABLE` to an existing browser executable.
+
+First run the offline fixtures that exercise the previously missed macro
+error, incomplete renderings, and the corrected soft-threshold formula:
+
+```sh
+node tools/documentation/test-github-rendering.cjs
+```
+
+After pushing a candidate, replace `COMMIT` below with its full 40-character
+SHA. The output directory must be absent or empty.
+
+```sh
+git show COMMIT:README.md > /tmp/sparsepca-readme.md
+node tools/documentation/check-github-rendering.cjs \
+  COMMIT /tmp/sparsepca-readme.md /tmp/sparsepca-github-rendering
+```
+
+The check first requires the snapshot to match GitHub's raw source byte for
+byte. It then checks rendered mathematics, loaded images, local anchors,
+browser errors, and mobile overflow. The output contains the inspected
+source identity, rendered HTML, screenshots, and structured findings.
+Exit status 0 means these checks passed, 1 indicates findings, and 2 means
+the inspection could not complete. Inspect the screenshots as well to judge
+equation layout and figure readability.
+
+The browser uses a fresh unauthenticated context and normally verifies
+certificates. If an isolated public-browser environment cannot use its
+proxy's certificate authority, the explicit environment setting
+`SPARSEPCA_PUBLIC_BROWSER_IGNORE_HTTPS_ERRORS=1` permits that inspection
+and records the exception in its results.
+
+Keep formulas within GitHub's supported
+[mathematical-expression syntax](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions).
+The soft-threshold formula uses `\mathrm{soft}` and `\mathrm{sign}` for
+plain function labels. The browser check detects GitHub's macro-rejection
+messages as failures, even when they appear inside a normal equation wrapper.
+
 ## Mark README code explicitly
 
 Place an HTML comment immediately before each fenced R block. These comments
@@ -131,13 +177,14 @@ in processed units; and use genuine compression when illustrating randomized
 sketches. Do not assert timing thresholds, monotone support along every
 nonconvex path, or general support-recovery guarantees from one simulation.
 
-## Iris, sensors, and historical images
+## Iris, sensors, and face images
 
 The [application reproduction and provenance guide](application-examples.md)
-documents the iris and sensor examples, their retained data and numerical
-results, and the original face illustrations. Its figure script can redraw
-the new figures from saved results with `--plot-only`, without refitting.
-The historical face images remain explicitly identified as earlier results.
+documents the iris and sensor examples and their retained data and numerical
+results. Its figure script can redraw those figures from saved results with
+`--plot-only`, without refitting. The [face reproduction guide](eigenfaces.md)
+provides the corresponding workflow for the full cropped Yale face dataset,
+with saved coefficients and error maps for all five application figures.
 
 ## Retained loading illustration
 

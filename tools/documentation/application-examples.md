@@ -1,11 +1,11 @@
 # Application examples and figure provenance
 
-The README combines two freshly computed applications with the original
-face illustrations. The fresh examples require no external dataset
-download. The historical pictures are retained illustrations, not new
-version 1.0.0 fits.
+The README develops sparse PCA through flower measurements, simulated
+sensors, and face images. The iris and sensor examples run without an
+external dataset. The face application uses a separately downloaded,
+verified copy of the cropped Extended Yale Face Database B.
 
-## Reproduce the new figures
+## Reproduce the iris and sensor figures
 
 From the repository root, with the development dependency `pkgload` installed:
 
@@ -122,62 +122,26 @@ small additional estimates occur at the same sample index, 34, in different
 sensors; their markers overlap at this display scale. No error values are
 removed from the recorded data.
 
-## Historical face illustrations
+## Face images: interpret coefficients at their pixel locations
 
-The original GitHub walkthrough is preserved at
-[`fa896289a68801a4798f53948ff6c2b8f7c54e1c`](https://github.com/erichson/spca/blob/fa896289a68801a4798f53948ff6c2b8f7c54e1c/README.md)
-(April 7, 2018). The first three panels were added in
-[`b1e34c0d79e8dec2d4c2538c923fe48b495fc025`](https://github.com/erichson/spca/commit/b1e34c0d79e8dec2d4c2538c923fe48b495fc025),
-and the robust loading/error panels in
-[`0c75adf458baa6fe3762fe244232947b0324dcdb`](https://github.com/erichson/spca/commit/0c75adf458baa6fe3762fe244232947b0324dcdb)
-(both March 26, 2018). All five image files are unchanged from that history.
+The face application fits 25 components to 2,410 images with 96 x 84 pixels.
+Transposing the stored `faces` object places observations in rows and pixel
+locations in columns. All fits center and standardize each pixel. Reshaping
+the loading vectors then shows which locations contribute to each score;
+reshaping rows of the robust error matrix shows where the model assigns
+additive residuals.
 
-| Historical asset | Meaning in the original walkthrough |
-| --- | --- |
-| `plots/eigenfaces.png` | Twenty-five ordinary loading coefficient maps from a fit with `alpha = beta = 0`. |
-| `plots/sparseeigenfaces.png` | Twenty-five randomized sparse loading maps, `alpha = 1e-4`, `beta = 1e-1`. |
-| `plots/sparsereigenfaces.png` | Stronger-penalty randomized sparse maps, `alpha = 2e-4`, `beta = 2e-1`. Both penalties changed. |
-| `plots/robustsparseeigenfaces.png` | Robust sparse loading maps, `alpha = 1e-4`, `beta = 1e-2`, `gamma = 0.9`. |
-| `plots/sparsecomp.png` | Sparse errors in the first 25 observed faces: rows of `S`, reshaped into images. |
+The [face reproduction guide](eigenfaces.md) records the complete experiment,
+including the verified data source, parameter settings, convergence,
+reconstruction errors, and display conventions. Its script saves derived
+coefficients and selected error rows so that all five figures can be redrawn
+without downloading the photographs or rerunning the optimization.
 
-The original walkthrough describes 2,410 cropped/downsampled faces of 38
-people from the Extended Yale Face Database B, with 96 x 84 pixels per
-image. It uses `t(faces)` so observations are rows and pixel positions are
-columns. Those dimensions are recorded from the historical explanation;
-the current documentation refresh did not download or refit the full face
-data. The face input is dense, even though the fitted loadings can be sparse.
-
-Individual historical `image()` calls choose their own color range.
-Compare the localization of coefficients and errors, not the absolute
-gray level across components or panels. The robust images were created
-before the objective correction in 1.0.0; no claim is made that they show
-newly converged 1.0.0 results. Historical variance percentages and timings
-are not used as current numerical evidence.
-
-The original data link points to `erichson/data/R/faces.RData`. The most
-recent modifying file commit is
-[`fca24620977d21f5230ca9cc7a6107b25847d6fa`](https://github.com/erichson/data/commit/fca24620977d21f5230ca9cc7a6107b25847d6fa)
-(August 23, 2016, "cropped yale faces"). The immutable raw URL is:
-
-```text
-https://raw.githubusercontent.com/erichson/data/fca24620977d21f5230ca9cc7a6107b25847d6fa/R/faces.RData
-```
-
-The file metadata reports 17,539,054 bytes and Git blob
-`884cf6fa86db4f26adbeb22eeb019101f99585c8`. No new copies of the source face
-photographs are included in this documentation change.
-
-Dataset provenance remains with the
+The data and parameter settings follow the package's
+[face walkthrough](https://github.com/erichson/spca/blob/fa896289a68801a4798f53948ff6c2b8f7c54e1c/README.md).
+The new results use sparsepca 1.0.0, including the corrected robust objective.
+The external dataset retains the
 [Extended Yale Face Database B](https://vision.ucsd.edu/datasets/extended-yale-face-database-b-b)
-and [Yale Face Database B](https://www.cs.yale.edu/cvc/projects/yalefacesB/yalefacesB.html).
-The original Yale page describes research use, acknowledgement/citation
-requirements, and restrictions on incorporating source images into a larger
-publicly distributed database. Retaining the existing research illustrations
-does not grant additional rights to the source photographs through the
-package's software license. The old UCSD archive link is unavailable; the
-current dataset listing is used for provenance instead.
-
-The published 0.1.2 CRAN source archive contains the three function help
-pages, source, and tests, but no README, face data, or image assets. Its
-robust help example is a Gaussian factor simulation without explicit gross
-contamination. The new sensor application makes that distinction visible.
+provenance and [Yale research-use terms](https://www.cs.yale.edu/cvc/projects/yalefacesB/yalefacesB.html)
+described in the reproduction guide. Source photographs are excluded from
+the repository and the CRAN archive.
