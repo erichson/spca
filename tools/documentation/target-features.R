@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# Reproduce the README's approximate feature-count example.
+# Reproduce the README's three- and two-feature comparison.
 # From the repository root:
 #   Rscript tools/documentation/target-features.R
 #   Rscript tools/documentation/target-features.R --plot-only
@@ -24,36 +24,45 @@ if (plot_only) {
 } else {
   pkgload::load_all(root, quiet = TRUE)
   X <- as.matrix(datasets::iris[, 1:4])
-  parameters <- list(k = 2L, n_features = 3L, beta = 0.001,
+  fit_target <- function(requested) {
+    parameters <- list(k = 2L, n_features = requested, beta = 0.001,
                      center = TRUE, scale = TRUE, tol = 1e-8,
                      max_iter = 3000L, method = "spca", max_evals = 30L,
                      count_tol = 0L, verbose = FALSE)
-  target <- do.call(sparsepca::spca_target, c(list(X = X), parameters))
-  if (is.null(target$fit) || !target$fit$converged || !target$target_met) {
-    stop("The illustrative search did not produce a converged target fit.")
+    target <- do.call(sparsepca::spca_target, c(list(X = X), parameters))
+    if (is.null(target$fit) || !target$fit$converged || !target$target_met) {
+      stop("The illustrative search did not produce a converged target fit.")
+    }
+    fit <- target$fit
+    selected <- rowSums(fit$loadings != 0) > 0L
+    if (sum(selected) != target$selected_features || sum(selected) != requested ||
+        any(target$search$difference !=
+              target$search$selected_features - target$n_features)) {
+      stop("Stored feature counts disagree with the loading or search record.")
+    }
+    processed <- scale(X, center = fit$center, scale = fit$scale)
+    reconstruction <- tcrossprod(fit$scores, fit$transform)
+    relative_error <- norm(processed - reconstruction, "F") /
+      norm(processed, "F")
+    if (!isTRUE(all.equal(unname(fit$scores),
+                         unname(processed %*% fit$loadings),
+                         tolerance = 1e-12))) {
+      stop("The selected scores disagree with the fitted loading map.")
+    }
+    # Preserve raw coefficients. Orient columns separately for legible display.
+    signs <- vapply(seq_len(ncol(fit$loadings)), function(j) {
+      value <- fit$loadings[which.max(abs(fit$loadings[, j])), j]
+      if (value < 0) -1 else 1
+    }, numeric(1L))
+    display <- sweep(fit$loadings, 2L, signs, "*")
+    list(parameters = parameters, target = target,
+         selected_variable_names = colnames(X)[selected],
+         display_loadings = display, display_signs = signs,
+         relative_reconstruction_error = relative_error)
   }
-  fit <- target$fit
-  selected <- rowSums(fit$loadings != 0) > 0L
-  if (sum(selected) != target$selected_features || sum(selected) != 3L ||
-      any(target$search$difference !=
-            target$search$selected_features - target$n_features)) {
-    stop("Stored feature counts disagree with the loading or search record.")
-  }
-  processed <- scale(X, center = fit$center, scale = fit$scale)
-  reconstruction <- tcrossprod(fit$scores, fit$transform)
-  relative_error <- norm(processed - reconstruction, "F") /
-    norm(processed, "F")
-  if (!isTRUE(all.equal(unname(fit$scores),
-                       unname(processed %*% fit$loadings),
-                       tolerance = 1e-12))) {
-    stop("The selected scores disagree with the fitted loading map.")
-  }
-  # Preserve raw coefficients. Orient columns separately for legible display.
-  signs <- vapply(seq_len(ncol(fit$loadings)), function(j) {
-    value <- fit$loadings[which.max(abs(fit$loadings[, j])), j]
-    if (value < 0) -1 else 1
-  }, numeric(1L))
-  display <- sweep(fit$loadings, 2L, signs, "*")
+  # Each request starts a separate search using the same deterministic settings.
+  fits <- lapply(c(3L, 2L), fit_target)
+  names(fits) <- c("three", "two")
   source_files <- c("R/spca_target.R", "R/solver.R", "R/utils.R",
                     "R/preprocess.R", "tools/documentation/target-features.R")
   source_md5 <- tools::md5sum(file.path(root, source_files))
@@ -67,7 +76,7 @@ if (plot_only) {
                                  stdout = TRUE, stderr = FALSE),
                         error = function(e) "unavailable")
   application <- list(
-    format_version = 1L,
+    format_version = 2L,
     metadata = list(
       generated_utc = format(Sys.time(), tz = "UTC", usetz = TRUE),
       sparsepca_version = as.character(utils::packageVersion("sparsepca")),
@@ -78,31 +87,41 @@ if (plot_only) {
       thread_environment = Sys.getenv(c("OPENBLAS_NUM_THREADS",
                                          "OMP_NUM_THREADS", "MKL_NUM_THREADS")),
       generator = "tools/documentation/target-features.R"),
-    parameters = parameters, X = X, target = target,
-    selected_variable_names = colnames(X)[selected],
-    display_loadings = display, display_signs = signs,
-    relative_reconstruction_error = relative_error)
+    X = X, fits = fits)
   saveRDS(application, snapshot, compress = "xz", version = 3)
-  summary <- data.frame(
-    observations = nrow(X), variables = ncol(X), components = ncol(display),
-    requested_features = target$n_features,
-    selected_features = target$selected_features,
-    target_met = target$target_met, count_tol = target$count_tol,
-    selected_relative_alpha = target$alpha,
-    evaluations = nrow(target$search), selected_evaluation = target$index,
-    selected_fit_iterations = fit$iterations,
-    selected_fit_converged = fit$converged,
-    nonzero_coefficients = sum(fit$loadings != 0),
-    relative_reconstruction_error = relative_error,
-    stop_reason = target$stop_reason)
-  coefficients <- data.frame(
-    variable = rep(colnames(X), ncol(display)),
-    component = rep(seq_len(ncol(display)), each = ncol(X)),
-    raw_loading = as.vector(fit$loadings),
-    display_loading = as.vector(display))
+  summary <- do.call(rbind, lapply(fits, function(result) {
+    target <- result$target
+    fit <- target$fit
+    data.frame(
+      observations = nrow(X), variables = ncol(X), components = ncol(fit$loadings),
+      requested_features = target$n_features,
+      selected_features = target$selected_features,
+      selected_variables = paste(result$selected_variable_names, collapse = ", "),
+      target_met = target$target_met, count_tol = target$count_tol,
+      selected_relative_alpha = target$alpha,
+      evaluations = nrow(target$search), selected_evaluation = target$index,
+      selected_fit_iterations = fit$iterations,
+      selected_fit_converged = fit$converged,
+      nonzero_coefficients = sum(fit$loadings != 0),
+      relative_reconstruction_error = result$relative_reconstruction_error,
+      stop_reason = target$stop_reason)
+  }))
+  searches <- do.call(rbind, lapply(fits, function(result) {
+    data.frame(requested_features = result$target$n_features,
+               result$target$search)
+  }))
+  coefficients <- do.call(rbind, lapply(fits, function(result) {
+    B <- result$target$fit$loadings
+    data.frame(
+      requested_features = result$target$n_features,
+      variable = rep(colnames(X), ncol(B)),
+      component = rep(seq_len(ncol(B)), each = ncol(X)),
+      raw_loading = as.vector(B),
+      display_loading = as.vector(result$display_loadings))
+  }))
   utils::write.csv(summary, file.path(result_dir, "target-features-summary.csv"),
                     row.names = FALSE)
-  utils::write.csv(target$search,
+  utils::write.csv(searches,
                     file.path(result_dir, "target-features-search.csv"),
                     row.names = FALSE)
   utils::write.csv(coefficients,
@@ -118,7 +137,11 @@ if (plot_only) {
   writeLines(sub("[[:blank:]]+$", "", session),
                file.path(result_dir, "target-features-session-info.txt"))
   print(summary, row.names = FALSE)
-  print(target$search, row.names = FALSE)
+  print(searches, row.names = FALSE)
+}
+
+if (!identical(application$format_version, 2L)) {
+  stop("Run the fitting step to save both feature-count searches.")
 }
 
 ink <- "#19384A"
@@ -129,9 +152,9 @@ selected_color <- "#007B79"
 palette <- grDevices::colorRampPalette(c("#23638C", "#FFFFFF", "#B34949"))(201)
 
 draw_target <- function() {
-  target <- application$target
+  target <- application$fits$three$target
   search <- target$search
-  B <- application$display_loadings
+  B <- application$fits$three$display_loadings
   p <- nrow(B)
   n_eval <- nrow(search)
   par(oma = c(0, 0, 4.3, 0), family = "sans", bg = "white",

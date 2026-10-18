@@ -1,9 +1,10 @@
 # Search for an approximate number of measurements
 
-The README's feature-count example asks for two score coordinates using
-three of the four iris measurements. A measurement is counted once when
-any of its loading coefficients is nonzero. The example therefore concerns
-the measurements needed to calculate the complete representation.
+The README's feature-count example starts with two score coordinates using
+three of the four iris measurements, then repeats the search for two
+measurements. A measurement is counted once when any of its loading
+coefficients is nonzero. The example therefore concerns the measurements
+needed to calculate the complete representation.
 
 The input is the four numeric columns of R's
 [iris dataset](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/iris.html),
@@ -35,6 +36,40 @@ training-data fit diagnostic. Petal width's coefficient is approximately
 The requested count is attained, while the coefficient magnitudes show
 that those two measurements contribute very differently.
 
+## Repeat with two measurements
+
+Petal width's small coefficient suggests investigating a smaller
+representation. The second fit changes only `n_features` from 3 to 2.
+It starts a separate deterministic search with the same data, preprocessing,
+component count, ridge penalty, and convergence settings.
+
+Both searches attain the requested count with converged fits. The
+two-measurement search chooses sepal width and petal length after 15
+candidate fits, at relative `alpha = 0.270282658390516`. Its selected fit
+converges in 76 optimization iterations, with one nonzero coefficient in
+each component.
+
+| Requested and selected measurements | Relative `alpha` | Training relative reconstruction error |
+| ---: | ---: | ---: |
+| 3 | 0.237137370566165 | 0.561699821364799 |
+| 2 | 0.270282658390516 | 0.630145039902561 |
+
+The reconstruction error rises from 0.562 to 0.630. The selected penalty
+is larger, and the retained coefficients also shrink: petal length's
+magnitude changes from 0.991 to 0.901, while sepal width's changes from
+0.233 to 0.104. Raw component signs differ between fits, so magnitudes or
+the saved sign-oriented coefficients are the useful comparison.
+
+These are complete refits under different selected penalties. The first
+13 penalties and their initial warm starts are the same, but the requested
+count changes which candidate initializes the refinements. The complete
+search records preserve those differences. The errors compare the returned
+penalized models; they do not measure the isolated contribution of the
+three-measurement fit's small petal-width term or the best reconstruction
+obtainable with two measurements. A choice for future observations needs
+held-out assessment. Candidate and iteration counts are recorded for
+reproducibility and are not timing measurements.
+
 ## Reproduce the example
 
 From the repository root, with the package dependencies and development
@@ -45,9 +80,10 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   Rscript --vanilla tools/documentation/target-features.R
 ```
 
-The script checks the selected loading count and score calculation, saves
-the search result, and draws the PNG and SVG. The result snapshot retains
-the input, parameters, chosen fit, search history, and source-file
+The script checks the selected loading count and score calculation for
+both fits, saves both searches, and draws the three-measurement PNG and
+SVG. The result snapshot retains the input, parameters, chosen fits,
+search histories, and source-file
 checksums. Source commit and working-tree state are recorded together so
 an uncommitted candidate is not mistaken for the committed source alone.
 The session record identifies R, dependencies, BLAS/LAPACK, and thread
@@ -64,28 +100,35 @@ sign-oriented for display so their largest-magnitude coefficient is
 positive; both raw and displayed coefficients are retained. This display
 choice changes neither selected variables nor the saved fit.
 
+The snapshot has format version 2. Its `fits$three` and `fits$two` entries
+contain the respective parameters, target results, selected variable names,
+display coefficients, and reconstruction errors. Each CSV identifies its
+search with `requested_features`. Evaluation and warm-start indices belong
+to that search, so they restart when the requested count changes.
+
 ## Saved evidence
 
 | File | Contents |
 | --- | --- |
-| [target-features-iris.rds](results/target-features-iris.rds) | Input matrix, parameters, complete selected fit, search record, and generation metadata. |
-| [target-features-summary.csv](results/target-features-summary.csv) | Requested and achieved counts, selected penalty, iteration counts, and relative reconstruction error. |
-| [target-features-search.csv](results/target-features-search.csv) | Every penalty, signed count difference, convergence result, and source of the warm start. |
-| [target-features-loadings.csv](results/target-features-loadings.csv) | Raw and displayed coefficients, labeled by measurement and component. |
+| [target-features-iris.rds](results/target-features-iris.rds) | Input matrix, both sets of parameters, complete selected fits, search records, and generation metadata. |
+| [target-features-summary.csv](results/target-features-summary.csv) | One row per request with achieved count, selected variables and penalty, iteration counts, and relative reconstruction error. |
+| [target-features-search.csv](results/target-features-search.csv) | Every penalty, signed count difference, convergence result, and source of the warm start, grouped by requested count. |
+| [target-features-loadings.csv](results/target-features-loadings.csv) | Raw and displayed coefficients, labeled by requested count, measurement, and component. |
 | [target-features-session-info.txt](results/target-features-session-info.txt) | Environment, thread settings, and source identity. |
 
 The figure is stored as
 [PNG](../../man/figures/target-features-iris.png) and
 [SVG](../../man/figures/target-features-iris.svg).
-Its left panel follows the actual evaluation order, while the right panel
-shows which measurements enter each score. A horizontal reference marks
+The figure retains the three-measurement example. Its left panel follows
+the actual evaluation order, while the right panel shows which measurements
+enter each score. A horizontal reference marks
 the requested count. No interpolation of the penalty-to-support relation
 is assumed by the connecting line, which only links consecutive trials.
 
 ## Interpretation
 
-The example demonstrates an achieved count for one dataset and one
-optimization path. The search selects from converged candidates by
+The example demonstrates two achieved counts for one dataset under the
+stated settings. The search selects from converged candidates by
 absolute count difference, then fewer variables, then earlier evaluation.
 It does not compare penalized objective values across different penalties.
 The returned coefficients solve the original penalized model; they have

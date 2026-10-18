@@ -452,6 +452,46 @@ The [reproduction guide](tools/documentation/target-features.md) contains
 the complete search record and saved coefficients. Examine reconstruction
 quality and the stability of the selected variables alongside the count.
 
+The small petal-width coefficient suggests trying a representation with
+two measurements. We can repeat the search with `n_features = 2`, keeping
+the data and all other settings the same.
+
+<!-- example: target-features-two -->
+```r
+target_two <- spca_target(X, k = 2, n_features = 2,
+                          beta = 0.001, scale = TRUE,
+                          tol = 1e-8, max_iter = 3000, verbose = FALSE)
+
+colnames(X)[rowSums(target_two$fit$loadings != 0) > 0]
+
+relative_error <- function(fit, X) {
+  processed <- scale(X, center = fit$center, scale = fit$scale)
+  reconstruction <- tcrossprod(fit$scores, fit$transform)
+  norm(processed - reconstruction, "F") / norm(processed, "F")
+}
+
+c(three = relative_error(target$fit, X),
+  two = relative_error(target_two$fit, X))
+```
+
+**The two-measurement fit has higher training reconstruction error.** Both
+searches reach their requested counts with converged fits. The error is
+the Frobenius norm of the reconstruction residual divided by the norm of
+the standardized input.
+
+| Count | Relative `alpha` | Relative error |
+| ---: | ---: | ---: |
+| 3 | 0.23714 | 0.56170 |
+| 2 | 0.27028 | 0.63015 |
+
+The second search selects petal length for the first score and sepal width
+for the second. Their loading magnitudes decrease from 0.991 to 0.901 and
+from 0.233 to 0.104, respectively. Asking for fewer measurements selects a
+larger penalty here and refits the representation, changing the retained
+coefficients as well as removing petal width. The comparison measures the
+reconstruction quality of these two fitted models. Assessing which is
+preferable for future observations requires held-out data.
+
 ### Apply the model to held-out observations
 
 A fit can reconstruct its training data well while generalizing poorly.
