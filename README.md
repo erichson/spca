@@ -479,7 +479,7 @@ searches reach their requested counts with converged fits. The error is
 the Frobenius norm of the reconstruction residual divided by the norm of
 the standardized input.
 
-| Measurements | Relative `alpha` | Relative error |
+| Count | Relative `alpha` | Relative error |
 | ---: | ---: | ---: |
 | 3 | 0.23714 | 0.56170 |
 | 2 | 0.27028 | 0.63015 |
