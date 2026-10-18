@@ -1,0 +1,228 @@
+           model                         metric pass
+        ordinary           orthogonal_transform TRUE
+        ordinary                 training_means TRUE
+        ordinary                training_scales TRUE
+        ordinary               nonzero_loadings TRUE
+        ordinary              active_components TRUE
+        ordinary              component_support TRUE
+        ordinary                component_norms TRUE
+        ordinary       largest_absolute_loading TRUE
+        ordinary    scores_from_processed_input TRUE
+        ordinary       full_data_relative_error TRUE
+        ordinary  complete_model_relative_error TRUE
+        ordinary                   sparse_count TRUE
+        ordinary                      sparse_l1 TRUE
+        ordinary                     sparse_sse TRUE
+        ordinary            full_data_objective TRUE
+          sparse           orthogonal_transform TRUE
+          sparse                 training_means TRUE
+          sparse                training_scales TRUE
+          sparse               nonzero_loadings TRUE
+          sparse              active_components TRUE
+          sparse              component_support TRUE
+          sparse                component_norms TRUE
+          sparse       largest_absolute_loading TRUE
+          sparse    scores_from_processed_input TRUE
+          sparse       full_data_relative_error TRUE
+          sparse  complete_model_relative_error TRUE
+          sparse                   sparse_count TRUE
+          sparse                      sparse_l1 TRUE
+          sparse                     sparse_sse TRUE
+          sparse            full_data_objective TRUE
+          sparse                iteration_count TRUE
+          sparse         stored_final_objective TRUE
+          sparse  solver_objective_from_factors TRUE
+          sparse relative_objective_improvement TRUE
+        stronger           orthogonal_transform TRUE
+        stronger                 training_means TRUE
+        stronger                training_scales TRUE
+        stronger               nonzero_loadings TRUE
+        stronger              active_components TRUE
+        stronger              component_support TRUE
+        stronger                component_norms TRUE
+        stronger       largest_absolute_loading TRUE
+        stronger    scores_from_processed_input TRUE
+        stronger       full_data_relative_error TRUE
+        stronger  complete_model_relative_error TRUE
+        stronger                   sparse_count TRUE
+        stronger                      sparse_l1 TRUE
+        stronger                     sparse_sse TRUE
+        stronger            full_data_objective TRUE
+        stronger                iteration_count TRUE
+        stronger         stored_final_objective TRUE
+        stronger  solver_objective_from_factors TRUE
+        stronger relative_objective_improvement TRUE
+          robust           orthogonal_transform TRUE
+          robust                 training_means TRUE
+          robust                training_scales TRUE
+          robust               nonzero_loadings TRUE
+          robust              active_components TRUE
+          robust              component_support TRUE
+          robust                component_norms TRUE
+          robust       largest_absolute_loading TRUE
+          robust         selected_sparse_errors TRUE
+          robust    scores_from_processed_input TRUE
+          robust       full_data_relative_error TRUE
+          robust  complete_model_relative_error TRUE
+          robust                   sparse_count TRUE
+          robust                      sparse_l1 TRUE
+          robust                     sparse_sse TRUE
+          robust            full_data_objective TRUE
+          robust                iteration_count TRUE
+          robust         stored_final_objective TRUE
+          robust  solver_objective_from_factors TRUE
+          robust relative_objective_improvement TRUE
+  robust_control           orthogonal_transform TRUE
+  robust_control                 training_means TRUE
+  robust_control                training_scales TRUE
+  robust_control               nonzero_loadings TRUE
+  robust_control              active_components TRUE
+  robust_control              component_support TRUE
+  robust_control                component_norms TRUE
+  robust_control       largest_absolute_loading TRUE
+  robust_control    scores_from_processed_input TRUE
+  robust_control       full_data_relative_error TRUE
+  robust_control  complete_model_relative_error TRUE
+  robust_control                   sparse_count TRUE
+  robust_control                      sparse_l1 TRUE
+  robust_control                     sparse_sse TRUE
+  robust_control            full_data_objective TRUE
+  robust_control                iteration_count TRUE
+  robust_control         stored_final_objective TRUE
+  robust_control  solver_objective_from_factors TRUE
+  robust_control relative_objective_improvement TRUE
+ stricter_sparse           orthogonal_transform TRUE
+ stricter_sparse                 training_means TRUE
+ stricter_sparse                training_scales TRUE
+ stricter_sparse               nonzero_loadings TRUE
+ stricter_sparse              active_components TRUE
+ stricter_sparse              component_support TRUE
+ stricter_sparse                component_norms TRUE
+ stricter_sparse       largest_absolute_loading TRUE
+ stricter_sparse    scores_from_processed_input TRUE
+ stricter_sparse       full_data_relative_error TRUE
+ stricter_sparse  complete_model_relative_error TRUE
+ stricter_sparse                   sparse_count TRUE
+ stricter_sparse                      sparse_l1 TRUE
+ stricter_sparse                     sparse_sse TRUE
+ stricter_sparse            full_data_objective TRUE
+ stricter_sparse                iteration_count TRUE
+ stricter_sparse         stored_final_objective TRUE
+ stricter_sparse  solver_objective_from_factors TRUE
+ stricter_sparse relative_objective_improvement TRUE
+ maximum_absolute_difference
+                1.353084e-15
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                1.465494e-14
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                3.108624e-15
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                7.105427e-15
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                9.313226e-10
+                0.000000e+00
+                3.996803e-15
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                1.421085e-14
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                3.725290e-09
+                0.000000e+00
+                2.997602e-15
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                1.421085e-14
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                1.396984e-09
+                0.000000e+00
+                0.000000e+00
+                1.071021e-08
+                0.000000e+00
+                2.775558e-15
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                2.131628e-14
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                1.396984e-09
+                0.000000e+00
+                0.000000e+00
+                3.725290e-09
+                0.000000e+00
+                1.887379e-15
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                1.065814e-14
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                0.000000e+00
+                7.450581e-09
+                0.000000e+00
+
+Verified 111 claims from saved factors and the checksum-verified input.
+R: R version 4.6.1 (2026-06-24) 
+rsvd: 1.0.5 
