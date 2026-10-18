@@ -12,7 +12,7 @@ locale:
  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
 [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
 
-time zone: Africa/Gaborone
+time zone: UTC
 tzcode source: system (glibc)
 
 attached base packages:
@@ -34,33 +34,16 @@ OMP_NUM_THREADS=1
 MKL_NUM_THREADS=1
 
 Source revision at generation:
-55942b52306c893bedcae9753eb1b158829a1f14
+f61bee233289972c91cf467278bc2b38f82dbc2f
 Working tree at generation:
- M DESCRIPTION
- M NAMESPACE
- M NEWS.md
- M R/documentation.R
  M README.md
- M man/sparsepca-package.Rd
- M man/spca.Rd
- M man/spca_path.Rd
  M tools/documentation/README.md
-?? R/spca_target.R
-?? man/figures/target-features-iris.png
-?? man/figures/target-features-iris.svg
-?? man/spca_target.Rd
-?? tests/testthat/test-target-features.R
-?? tools/documentation/results/target-features-iris.rds
-?? tools/documentation/results/target-features-loadings.csv
-?? tools/documentation/results/target-features-search.csv
-?? tools/documentation/results/target-features-session-info.txt
-?? tools/documentation/results/target-features-summary.csv
-?? tools/documentation/target-features.R
-?? tools/documentation/target-features.md
+ M tools/documentation/target-features.R
+ M tools/documentation/target-features.md
 
 Source MD5 checksums (identify the working-tree code):
 R/spca_target.R 1da01b211c054cb8a975678ed0047858
 R/solver.R 47643305322a90122a3ef892314422cc
 R/utils.R 8988859c310e33a1b186f924495f5f03
 R/preprocess.R e2e559c9c6a7c0046efded05d03cf564
-tools/documentation/target-features.R 588c6725312d282e27057670c15c2033
+tools/documentation/target-features.R 94cfc8686a876e9cf13d0cb551da2564

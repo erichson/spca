@@ -180,9 +180,10 @@ nonconvex path, or general support-recovery guarantees from one simulation.
 ## Iris, sensors, and face images
 
 The [feature-count example](target-features.md) uses `spca_target()` to
-search for a representation based on three of the four iris measurements.
-Its script saves every evaluated penalty, the chosen coefficients, and
-session information, then draws the figure from that saved snapshot.
+compare representations based on three and two of the four iris measurements.
+Its script saves both searches, the chosen coefficients, reconstruction
+errors, and session information. It draws the three-measurement search
+figure from the saved snapshot; the README table compares the two fits.
 
 The [application reproduction and provenance guide](application-examples.md)
 documents the iris and sensor examples and their retained data and numerical
