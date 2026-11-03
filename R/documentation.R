@@ -297,7 +297,8 @@
 #'   \code{\link{robspca}} for sparse additive errors,
 #'   \code{\link{spca_path}} for a penalty path,
 #'   \code{\link{predict.spca}} for new observations,
-#'   \code{\link[stats]{prcomp}} for ordinary PCA.
+#'   \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}
+#'   for ordinary PCA.
 #'
 #' @examples
 #' X <- as.matrix(iris[, 1:4])
@@ -435,7 +436,8 @@ NULL
 #' penalties, remembering that their effective penalties can differ
 #' slightly because the sketch estimates \code{d1}. For a pure PCA
 #' approximation check, set both penalties to zero and compare with
-#' \code{\link[stats]{prcomp}}. For a large problem, repeat a fit with
+#' \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}.
+#' For a large problem, repeat a fit with
 #' a larger sketch or more power iterations and compare the represented
 #' model and selected-variable patterns. Repeating selected seeds can
 #' reveal sketch sensitivity; signs or rotations within tied subspaces
@@ -1228,7 +1230,8 @@ NULL
 #' @seealso The repository
 #'   \url{https://github.com/erichson/spca#readme} provides a tutorial,
 #'   application illustrations, and reproducible performance experiments.
-#'   See \code{\link[stats]{prcomp}} for ordinary PCA.
+#'   See \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}
+#'   for ordinary PCA.
 #'
 #' @references
 #' Erichson, N. B., Zheng, P., Manohar, K., Brunton, S. L., Kutz, J. N.,

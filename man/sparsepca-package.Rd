@@ -112,7 +112,8 @@ Variable Projection. \emph{SIAM Journal on Applied Mathematics},
 The repository
   \url{https://github.com/erichson/spca#readme} provides a tutorial,
   application illustrations, and reproducible performance experiments.
-  See \code{\link[stats]{prcomp}} for ordinary PCA.
+  See \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}
+  for ordinary PCA.
 }
 \author{
 N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin.

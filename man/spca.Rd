@@ -370,5 +370,6 @@ Statistics}, 15(2), 265--286. \doi{10.1198/106186006X113430}.
   \code{\link{robspca}} for sparse additive errors,
   \code{\link{spca_path}} for a penalty path,
   \code{\link{predict.spca}} for new observations,
-  \code{\link[stats]{prcomp}} for ordinary PCA.
+  \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}
+  for ordinary PCA.
 }
