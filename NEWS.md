@@ -2,11 +2,16 @@
 
 ## Correctness and observable behavior
 
+- Reject nonzero processed data whose squared norm underflows to zero.
+  Extremely small measurements previously took the zero-data shortcut and
+  returned zero loadings and scores with `converged = TRUE`. Rescale such
+  inputs before fitting; genuine zero and constant centered inputs retain
+  their existing results.
 - Correct `robspca()`'s objective to use the complete residual
   `X - X %*% B %*% t(A) - S`. Previously the sparse error matrix was
   charged a penalty while omitted from the reconstruction loss, which
   could increase the recorded objective and terminate a fit prematurely.
-  Thanks to Maria Sans-Fuentes for the report and correction. Robust fits
+  Thanks to Maria A. Sans-Fuentes for the report and correction. Robust fits
   with nonzero sparse residuals can now run longer and produce different
   fitted values; the intended optimization model is unchanged.
 - Honor the `q` argument to `rspca()`; previous versions always used two
@@ -60,6 +65,9 @@
 
 ## Maintenance and documentation
 
+- Credit Maria A. Sans-Fuentes with her ORCID in the contributor metadata
+  and a README contributor section. Add a short quick-start example and
+  identify the source snapshot behind the retained performance tables.
 - Extend the independent numerical tests to cover genuinely compressed
   sparse sketches, finite-difference reduced-objective gradients, correlated
   loading optimality conditions, active robust Huber optima, changes of

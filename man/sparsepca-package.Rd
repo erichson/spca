@@ -6,9 +6,9 @@
 \alias{sparsepca}
 \title{Sparse principal component analysis via variable projection}
 \description{
-Deterministic, randomized, and robust sparse PCA with loading penalties,
-prediction, shared-factorization regularization paths, and searches for
-an approximate number of selected variables.
+Fit sparse principal components with deterministic, randomized, or robust
+algorithms. The package also supports prediction, regularization paths,
+and searches for an approximate number of selected variables.
 }
 \details{
 Principal components summarize many measured variables in a few score
@@ -116,4 +116,6 @@ The repository
 }
 \author{
 N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin.
+  Maria A. Sans-Fuentes (\href{https://orcid.org/0000-0002-6402-9211}{ORCID})
+  contributed the report and correction of the robust objective error.
 }

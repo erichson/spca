@@ -57,6 +57,16 @@
   if (!is.finite(energy)) {
     stop("The squared data norm is not finite; rescale X.", call. = FALSE)
   }
+  if (energy == 0) {
+    # Squaring tiny nonzero entries can underflow. Only genuine zero data
+    # may use the exact-zero fit; otherwise ask for a representable scale.
+    nonzero <- if (inherits(X, "sparseMatrix")) {
+      any(X@x != rep(offset, counts)) || any(offset[counts < n] != 0)
+    } else any(X != 0)
+    if (nonzero) {
+      stop("The squared data norm underflows to zero; rescale X.", call. = FALSE)
+    }
+  }
   list(data = data, n = n, p = p, energy = energy,
        center = stored_center, scale = stored_scale,
        forward = products$forward, adjoint = products$adjoint,

@@ -11,7 +11,7 @@ to investigate and share.
 ## Development setup
 
 ```r
-install.packages(c("Matrix", "testthat", "roxygen2"))
+install.packages(c("Matrix", "rsvd", "testthat", "roxygen2"))
 ```
 
 The repository is named `spca`; the installed R package is `sparsepca`.

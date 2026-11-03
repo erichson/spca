@@ -9,9 +9,14 @@ describe variation in standardized pixel intensity.
 
 The data preparation and the four displayed parameter settings follow
 the package's [original application](https://github.com/erichson/spca/blob/fa896289a68801a4798f53948ff6c2b8f7c54e1c/README.md).
-The figures are recomputed through the public APIs using the current
-implementation. An additional matched nonrobust fit makes the robust
-comparison easier to interpret.
+The retained figures were computed through the public APIs on October 18,
+2026, with R 4.6.1 and recorded Git HEAD
+[`ec9fc2bc47c6fa239bc8626361f68bd4dc460453`](https://github.com/erichson/spca/commit/ec9fc2bc47c6fa239bc8626361f68bd4dc460453).
+The saved fit metadata identify the working source with each implementation
+file's MD5, and also record settings and generation time. These results
+describe that snapshot; they are not fresh runs of a later release candidate.
+An additional matched nonrobust fit makes the robust comparison easier to
+interpret.
 
 ## Obtain the input and run the fits
 

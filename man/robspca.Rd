@@ -144,7 +144,7 @@ identification of outliers.
 }
 \note{
 Version 1.0.0 corrects an objective bookkeeping error reported by
-  Maria Sans-Fuentes. Earlier versions charged the penalty on \eqn{S}
+  Maria A. Sans-Fuentes. Earlier versions charged the penalty on \eqn{S}
   but omitted it from the squared reconstruction residual, which could
   make the recorded objective rise and terminate optimization too early.
   Robust fits with nonzero \code{sparse} can therefore run longer and
