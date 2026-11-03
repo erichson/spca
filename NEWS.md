@@ -111,5 +111,6 @@
 Require rsvd 2.0.0 or later, with R 4.4.0 or later and Matrix 1.7-0 or
 later to match its dependency requirements. Earlier versions of R and
 these dependencies are no longer supported. The minimum-version CI job
-tests exact R 4.4.0, Matrix 1.7-0, and rsvd 2.0.0. Matrix does not need
-to be attached by the user. The test suite requires testthat 3.0.0 or later.
+tests exact R 4.4.0, Matrix 1.7-0, rsvd 2.0.0, and testthat 3.3.2.
+Matrix does not need to be attached by the user. Suggest testthat 3.3.2
+or later for running the tests; it is not a runtime dependency.

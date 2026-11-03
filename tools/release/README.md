@@ -92,11 +92,11 @@ complete Bioconductor dependency ecosystem.
 
 `R-CMD-check.yaml` covers Linux at the minimum supported R 4.4.0, current R
 release, and R-devel, as well as current R on Windows and macOS. The R 4.4.0
-job pins Matrix 1.7-0 and rsvd 2.0.0 and verifies those exact versions before
-checking the package. All jobs use the same dependency setup to select current
-compatible test tools, including testthat. Other jobs use current compatible
-runtime dependencies. These routine checks explicitly omit the PDF manual
-and preserve all remaining diagnostics.
+job pins Matrix 1.7-0, rsvd 2.0.0, and the suggested testthat 3.3.2 and verifies
+those exact versions before checking the package. Other jobs select current
+compatible dependencies. These routine checks explicitly omit the PDF manual;
+incoming, remote URL, required-suggests, and system-clock checks remain enabled.
+All diagnostics are preserved.
 
 `CRAN-source-check.yaml` builds one archive under current R release, records its
 SHA-256 and source identity, and checks the identical archive under release and

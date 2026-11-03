@@ -2,7 +2,7 @@ target_test_matrix <- function() {
   rbind(diag(c(4, 3, 2)), -diag(c(4, 3, 2)))
 }
 
-# Base tracing keeps this instrumentation compatible with testthat 3.0.0.
+# Trace shared work without replacing the numerical implementation.
 # Always restore the namespace, including when the evaluated call fails.
 target_count_calls <- function(code) {
   calls <- new.env(parent = emptyenv())
