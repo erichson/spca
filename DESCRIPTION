@@ -7,8 +7,9 @@ Authors@R: c(
            email = "erichson@icsi.berkeley.edu"),
     person("Peng", "Zheng", role = "aut"),
     person("Sasha", "Aravkin", role = "aut"),
-    person("Maria", "Sans-Fuentes", role = "ctb",
-           comment = "Reported the robust objective error"))
+    person("Maria A.", "Sans-Fuentes", role = "ctb",
+           comment = c(ORCID = "0000-0002-6402-9211",
+                       "Reported the robust objective error")))
 Description: Fits principal components with sparse loading vectors for
     interpretable dimension reduction. Variable projection combines an
     orthogonal reconstruction factor with elastic net or cardinality
@@ -22,11 +23,11 @@ Description: Fits principal components with sparse loading vectors for
     The methods are described in
     Erichson et al. (2020) <doi:10.1137/18M1211350>.
 License: GPL (>= 3)
-Depends: R (>= 4.0.0)
+Depends: R (>= 4.4.0)
 Imports:
-    Matrix (>= 1.3-0),
+    Matrix (>= 1.7-0),
     methods,
-    rsvd (>= 1.0.5)
+    rsvd (>= 2.0.0)
 Suggests:
     testthat (>= 3.0.0)
 Encoding: UTF-8

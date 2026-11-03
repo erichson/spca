@@ -256,6 +256,12 @@ Hard thresholding can give abrupt support changes; the same numeric
 \code{alpha} should not be interpreted as equivalent to soft thresholding.
 Zero processed data return zero loadings and scores with a single zero
 objective value and \code{converged = TRUE}.
+Finite inputs can still exceed floating-point limits when squared.
+If the squared norm overflows, or underflows to zero for nonzero
+processed data, fitting stops with an error asking for rescaling.
+Bring measurements to a moderate scale before fitting. Automatic column
+scaling cannot resolve every extreme input because its own scale
+calculation uses squared values and retains the \code{1e-8} cutoff.
 }
 
 \section{Sparse coefficients and sparse storage}{
@@ -280,6 +286,9 @@ project each score column onto the span of preceding columns, subtract
 that projection, and divide the squared residual norm by \eqn{n-1}.
 This is equivalent to squared diagonal entries in an unpivoted QR
 decomposition of the scores, with dependent columns assigned zero.
+Rank is determined using base R's default QR tolerance, so numerically
+dependent score columns can also receive zero adjusted energy. This
+tolerance is separate from the optimizer's \code{tol}.
 The adjustment follows Zou, Hastie and Tibshirani (2006), applied to
 the returned, unnormalized loading coefficients. It depends on component
 order and loading scale; values are not necessarily decreasing.
@@ -361,5 +370,6 @@ Statistics}, 15(2), 265--286. \doi{10.1198/106186006X113430}.
   \code{\link{robspca}} for sparse additive errors,
   \code{\link{spca_path}} for a penalty path,
   \code{\link{predict.spca}} for new observations,
-  \code{\link[stats]{prcomp}} for ordinary PCA.
+  \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}
+  for ordinary PCA.
 }

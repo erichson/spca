@@ -10,8 +10,10 @@ to investigate and share.
 
 ## Development setup
 
+Use R 4.4.0 or later, Matrix 1.7-0 or later, and rsvd 2.0.0 or later.
+
 ```r
-install.packages(c("Matrix", "testthat", "roxygen2"))
+install.packages(c("Matrix", "rsvd", "testthat", "roxygen2"))
 ```
 
 The repository is named `spca`; the installed R package is `sparsepca`.

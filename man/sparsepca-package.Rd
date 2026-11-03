@@ -6,9 +6,9 @@
 \alias{sparsepca}
 \title{Sparse principal component analysis via variable projection}
 \description{
-Deterministic, randomized, and robust sparse PCA with loading penalties,
-prediction, shared-factorization regularization paths, and searches for
-an approximate number of selected variables.
+Fit sparse principal components with deterministic, randomized, or robust
+algorithms. The package also supports prediction, regularization paths,
+and searches for an approximate number of selected variables.
 }
 \details{
 Principal components summarize many measured variables in a few score
@@ -33,6 +33,13 @@ The \code{\link{spca}} topic develops the mathematical model,
 preprocessing, parameter scaling, output definitions, and these
 interpretation conventions in detail.
 }
+\section{Requirements}{
+
+The package requires R 4.4.0 or later, \pkg{Matrix} 1.7-0 or later,
+and \pkg{rsvd} 2.0.0 or later. The R and Matrix requirements match
+those of rsvd 2.0.0. Earlier versions are no longer supported.
+}
+
 \section{Choosing a routine}{
 
 \describe{
@@ -112,8 +119,11 @@ Variable Projection. \emph{SIAM Journal on Applied Mathematics},
 The repository
   \url{https://github.com/erichson/spca#readme} provides a tutorial,
   application illustrations, and reproducible performance experiments.
-  See \code{\link[stats]{prcomp}} for ordinary PCA.
+  See \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}
+  for ordinary PCA.
 }
 \author{
 N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin.
+  Maria A. Sans-Fuentes (\href{https://orcid.org/0000-0002-6402-9211}{ORCID})
+  contributed the report and correction of the robust objective error.
 }

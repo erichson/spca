@@ -172,8 +172,8 @@ and tied subspaces rather than relying on signed elementwise equality.
 
 \section{Computation and storage}{
 
-All members share one training transformation and one deterministic
-factorization or random sketch. Their effective penalties use the same
+The fits share preprocessing and one factorization or randomized
+sketch. Their effective penalties use the same
 spectral scale, which makes the supplied \code{alpha} sequence easy
 to interpret. The function still returns a complete fit for every
 member, including an \eqn{n} by \eqn{k} dense score matrix and two

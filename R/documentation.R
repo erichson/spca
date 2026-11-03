@@ -176,6 +176,12 @@
 #' \code{alpha} should not be interpreted as equivalent to soft thresholding.
 #' Zero processed data return zero loadings and scores with a single zero
 #' objective value and \code{converged = TRUE}.
+#' Finite inputs can still exceed floating-point limits when squared.
+#' If the squared norm overflows, or underflows to zero for nonzero
+#' processed data, fitting stops with an error asking for rescaling.
+#' Bring measurements to a moderate scale before fitting. Automatic column
+#' scaling cannot resolve every extreme input because its own scale
+#' calculation uses squared values and retains the \code{1e-8} cutoff.
 #'
 #' @section Sparse coefficients and sparse storage:
 #' A sparse loading matrix has many zero coefficients. A sparse input
@@ -196,6 +202,9 @@
 #' that projection, and divide the squared residual norm by \eqn{n-1}.
 #' This is equivalent to squared diagonal entries in an unpivoted QR
 #' decomposition of the scores, with dependent columns assigned zero.
+#' Rank is determined using base R's default QR tolerance, so numerically
+#' dependent score columns can also receive zero adjusted energy. This
+#' tolerance is separate from the optimizer's \code{tol}.
 #' The adjustment follows Zou, Hastie and Tibshirani (2006), applied to
 #' the returned, unnormalized loading coefficients. It depends on component
 #' order and loading scale; values are not necessarily decreasing.
@@ -288,7 +297,8 @@
 #'   \code{\link{robspca}} for sparse additive errors,
 #'   \code{\link{spca_path}} for a penalty path,
 #'   \code{\link{predict.spca}} for new observations,
-#'   \code{\link[stats]{prcomp}} for ordinary PCA.
+#'   \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}
+#'   for ordinary PCA.
 #'
 #' @examples
 #' X <- as.matrix(iris[, 1:4])
@@ -426,7 +436,8 @@ NULL
 #' penalties, remembering that their effective penalties can differ
 #' slightly because the sketch estimates \code{d1}. For a pure PCA
 #' approximation check, set both penalties to zero and compare with
-#' \code{\link[stats]{prcomp}}. For a large problem, repeat a fit with
+#' \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}.
+#' For a large problem, repeat a fit with
 #' a larger sketch or more power iterations and compare the represented
 #' model and selected-variable patterns. Repeating selected seeds can
 #' reveal sketch sensitivity; signs or rotations within tied subspaces
@@ -619,7 +630,7 @@ NULL
 #'   the corresponding \code{spca} methods.
 #'
 #' @note Version 1.0.0 corrects an objective bookkeeping error reported by
-#'   Maria Sans-Fuentes. Earlier versions charged the penalty on \eqn{S}
+#'   Maria A. Sans-Fuentes. Earlier versions charged the penalty on \eqn{S}
 #'   but omitted it from the squared reconstruction residual, which could
 #'   make the recorded objective rise and terminate optimization too early.
 #'   Robust fits with nonzero \code{sparse} can therefore run longer and
@@ -910,8 +921,8 @@ NULL
 #' and tied subspaces rather than relying on signed elementwise equality.
 #'
 #' @section Computation and storage:
-#' All members share one training transformation and one deterministic
-#' factorization or random sketch. Their effective penalties use the same
+#' The fits share preprocessing and one factorization or randomized
+#' sketch. Their effective penalties use the same
 #' spectral scale, which makes the supplied \code{alpha} sequence easy
 #' to interpret. The function still returns a complete fit for every
 #' member, including an \eqn{n} by \eqn{k} dense score matrix and two
@@ -1123,9 +1134,9 @@ NULL
 
 #' Sparse principal component analysis via variable projection
 #'
-#' Deterministic, randomized, and robust sparse PCA with loading penalties,
-#' prediction, shared-factorization regularization paths, and searches for
-#' an approximate number of selected variables.
+#' Fit sparse principal components with deterministic, randomized, or robust
+#' algorithms. The package also supports prediction, regularization paths,
+#' and searches for an approximate number of selected variables.
 #'
 #' @name sparsepca-package
 #' @aliases sparsepca
@@ -1151,6 +1162,11 @@ NULL
 #' The \code{\link{spca}} topic develops the mathematical model,
 #' preprocessing, parameter scaling, output definitions, and these
 #' interpretation conventions in detail.
+#'
+#' @section Requirements:
+#' The package requires R 4.4.0 or later, \pkg{Matrix} 1.7-0 or later,
+#' and \pkg{rsvd} 2.0.0 or later. The R and Matrix requirements match
+#' those of rsvd 2.0.0. Earlier versions are no longer supported.
 #'
 #' @section Choosing a routine:
 #' \describe{
@@ -1219,7 +1235,8 @@ NULL
 #' @seealso The repository
 #'   \url{https://github.com/erichson/spca#readme} provides a tutorial,
 #'   application illustrations, and reproducible performance experiments.
-#'   See \code{\link[stats]{prcomp}} for ordinary PCA.
+#'   See \ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}
+#'   for ordinary PCA.
 #'
 #' @references
 #' Erichson, N. B., Zheng, P., Manohar, K., Brunton, S. L., Kutz, J. N.,
@@ -1227,4 +1244,6 @@ NULL
 #' Variable Projection. \emph{SIAM Journal on Applied Mathematics},
 #' 80(2), 977--1002. \doi{10.1137/18M1211350}.
 #' @author N. Benjamin Erichson, Peng Zheng, and Sasha Aravkin.
+#'   Maria A. Sans-Fuentes (\href{https://orcid.org/0000-0002-6402-9211}{ORCID})
+#'   contributed the report and correction of the robust objective error.
 "_PACKAGE"

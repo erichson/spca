@@ -29,6 +29,21 @@ for large matrices. Sparse loadings help interpret a component; sparse
 input storage helps manage memory. The two can be used together, as the
 [performance experiments](#measured-performance) illustrate.
 
+For a first fit with sparsepca 1.0.0 installed:
+
+<!-- example: quick-start -->
+```r
+library(sparsepca)
+quick_fit <- spca(iris[, 1:4], k = 2, alpha = 0.01,
+                  scale = TRUE, verbose = FALSE)
+colSums(quick_fit$loadings != 0)  # Measurements used by each component
+predict(quick_fit, iris[1:3, 1:4])
+```
+
+The loadings define each score as a weighted combination of measurements.
+`predict()` applies the same fitted means, scales, and coefficients to new
+rows. The tutorial below explains how to choose the method and penalties.
+
 [Getting started](#getting-started) ·
 [the model](#two-factors-with-different-jobs) ·
 [choosing sparsity](#choosing-the-number-of-components-and-the-sparsity) ·
@@ -55,8 +70,10 @@ remotes::install_github("erichson/spca")
 
 For the version published on CRAN, use `install.packages("sparsepca")`.
 Some examples require features added in 1.0.0. Runtime requirements are
-R 4.0.0 or later, Matrix 1.3-0 or later, and rsvd 1.0.5 or later. Matrix
-functions are available to the package without attaching `library(Matrix)`.
+R 4.4.0 or later, Matrix 1.7-0 or later, and rsvd 2.0.0 or later. These
+requirements follow rsvd 2.0.0's dependency requirements; earlier versions
+of R and these dependencies are no longer supported. Matrix functions are
+available to the package without attaching `library(Matrix)`.
 
 <!-- example: load-package -->
 ```r
@@ -155,6 +172,12 @@ separately. Training omits rows containing `NA` or `NaN` with a warning;
 infinite values are unsupported. Score rows correspond to the retained
 complete observations, so keep their identifiers when joining scores to
 other data. Prediction requires complete, finite new observations.
+
+Finite measurements can still be too large or too small to square safely.
+Fitting rejects an overflowing squared norm, or a norm that underflows to
+zero despite nonzero processed data. Rescale those measurements before
+fitting. `scale = TRUE` also calculates squared values and keeps the
+historical small-scale cutoff, so it cannot repair every extreme input.
 
 ## Two factors with different jobs
 
@@ -794,7 +817,7 @@ include matrices with the full input dimensions.
 
 ### The robust objective correction in 1.0.0
 
-Maria Sans-Fuentes identified an error in the recorded objective of earlier
+Maria A. Sans-Fuentes identified an error in the recorded objective of earlier
 code. The squared reconstruction loss omitted S even though the objective
 included its penalty. When S became active, that inconsistent objective
 could rise and stop optimization prematurely.
@@ -956,7 +979,7 @@ sensor examples above provide complete workflows using built-in or
 simulated data.
 
 
-## What does “variance explained” mean here?
+## What does "variance explained" mean here?
 
 The applications compare fits through reconstruction error. The summary
 also reports score energies, whose interpretation needs care when
@@ -1005,6 +1028,11 @@ gives a different quantity, which matters when choosing arrows or labels
 for a biplot.
 
 ## Measured performance
+
+These are retained measurements from the October 2026 development snapshot
+identified in the [source manifest](tools/benchmarks/results/source-manifest.json).
+The tables describe that snapshot, its workloads, and its recorded machine;
+they are not a fresh benchmark of subsequent release candidates.
 
 <!-- BEGIN BENCHMARK RESULTS -->
 The following experiments use ten components and identical centering, with
@@ -1144,6 +1172,13 @@ The iris example uses R's
 The grouped measurements and sensor signals are simulated with recorded
 seeds. The face images have the research provenance described in their
 application section.
+
+## Contributors
+
+Maria A. Sans-Fuentes ([ORCID: 0000-0002-6402-9211](https://orcid.org/0000-0002-6402-9211))
+reported and helped correct the robust objective error in `robspca()`.
+The correction includes the sparse error matrix in the reconstruction loss;
+[NEWS](NEWS.md) explains how this changes affected fits.
 
 ## References and citation
 

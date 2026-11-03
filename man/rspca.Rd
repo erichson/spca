@@ -169,7 +169,8 @@ On a manageable problem, compare full-data reconstruction error with
 penalties, remembering that their effective penalties can differ
 slightly because the sketch estimates \code{d1}. For a pure PCA
 approximation check, set both penalties to zero and compare with
-\code{\link[stats]{prcomp}}. For a large problem, repeat a fit with
+\ifelse{latex}{\code{stats::prcomp}}{\code{\link[stats]{prcomp}}}.
+For a large problem, repeat a fit with
 a larger sketch or more power iterations and compare the represented
 model and selected-variable patterns. Repeating selected seeds can
 reveal sketch sensitivity; signs or rotations within tied subspaces

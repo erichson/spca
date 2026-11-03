@@ -4,6 +4,10 @@ Review date: 2026-10-17. This document records implementation decisions;
 the release evidence report records the final source/archive identities and
 which checks actually ran.
 
+The dependency requirements recorded below are historical. For the current
+1.0.0 candidate, `DESCRIPTION` requires R 4.4.0, Matrix 1.7-0, and rsvd
+2.0.0 or later, as requested during the November 2026 release review.
+
 ## Starting point and scope
 
 The GitHub baseline is `fa896289a68801a4798f53948ff6c2b8f7c54e1c`
