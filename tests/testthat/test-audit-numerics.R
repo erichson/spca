@@ -17,9 +17,10 @@ test_that("underflow cannot turn nonzero data into a converged zero fit", {
 })
 
 test_that("zero-energy validation preserves genuine centered constants", {
-  # Large constants become exactly zero after centering. The guard must
-  # examine processed entries, not the original nonzero values.
-  X <- matrix(1e170, 5, 2)
+  # Use a binary-exact constant whose five-value mean is exact even with
+  # binary64 accumulation. The guard must inspect centered entries rather
+  # than reject the original nonzero values.
+  X <- matrix(2^600, 5, 2)
   for (input in list(X, Matrix::Matrix(X, sparse = TRUE))) {
     fit <- rspca(input, 1, scale = TRUE, verbose = FALSE)
     expect_true(fit$converged)
