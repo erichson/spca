@@ -90,14 +90,13 @@ complete Bioconductor dependency ecosystem.
 
 ## Continuous integration
 
-`R-CMD-check.yaml` covers Linux at R 4.0.0, R 4.4.0, current R release, and R-devel,
-as well as current R on Windows and macOS. Its R 4.0.0 job uses Matrix 1.3-0,
-rsvd 1.0.5, and testthat 3.0.0, with other compatible test tools from a dated
-CRAN snapshot. The archived testthat uses old Catch headers; the job disables
-Catch's POSIX signal handler only while compiling that test tool on modern
-glibc. All R assertions and package checks remain enabled. Other jobs use
-current compatible dependencies. These routine checks explicitly omit the PDF
-manual and preserve all remaining diagnostics.
+`R-CMD-check.yaml` covers Linux at the minimum supported R 4.4.0, current R
+release, and R-devel, as well as current R on Windows and macOS. The R 4.4.0
+job pins Matrix 1.7-0 and rsvd 2.0.0 and verifies those exact versions before
+checking the package. All jobs use the same dependency setup to select current
+compatible test tools, including testthat. Other jobs use current compatible
+runtime dependencies. These routine checks explicitly omit the PDF manual
+and preserve all remaining diagnostics.
 
 `CRAN-source-check.yaml` builds one archive under current R release, records its
 SHA-256 and source identity, and checks the identical archive under release and

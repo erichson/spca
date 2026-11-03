@@ -10,6 +10,8 @@ to investigate and share.
 
 ## Development setup
 
+Use R 4.4.0 or later, Matrix 1.7-0 or later, and rsvd 2.0.0 or later.
+
 ```r
 install.packages(c("Matrix", "rsvd", "testthat", "roxygen2"))
 ```

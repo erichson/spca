@@ -1163,6 +1163,11 @@ NULL
 #' preprocessing, parameter scaling, output definitions, and these
 #' interpretation conventions in detail.
 #'
+#' @section Requirements:
+#' The package requires R 4.4.0 or later, \pkg{Matrix} 1.7-0 or later,
+#' and \pkg{rsvd} 2.0.0 or later. The R and Matrix requirements match
+#' those of rsvd 2.0.0. Earlier versions are no longer supported.
+#'
 #' @section Choosing a routine:
 #' \describe{
 #'   \item{\code{\link{spca}}}{A deterministic fit using the full

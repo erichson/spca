@@ -108,9 +108,8 @@
 
 ## Dependency policy
 
-Runtime code uses Matrix's established sparse-matrix interfaces, base R
-linear algebra, and rsvd's randomized range finder. Minimum versions are
-R 4.0.0, Matrix 1.3-0, and rsvd 1.0.5. The R floor accommodates the
-dependency toolchain without requiring the newest R release. Matrix does
-not need to be attached by the user. The test suite requires testthat
-3.0.0 or later.
+Require rsvd 2.0.0 or later, with R 4.4.0 or later and Matrix 1.7-0 or
+later to match its dependency requirements. Earlier versions of R and
+these dependencies are no longer supported. The minimum-version CI job
+tests exact R 4.4.0, Matrix 1.7-0, and rsvd 2.0.0. Matrix does not need
+to be attached by the user. The test suite requires testthat 3.0.0 or later.

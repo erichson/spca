@@ -70,8 +70,10 @@ remotes::install_github("erichson/spca")
 
 For the version published on CRAN, use `install.packages("sparsepca")`.
 Some examples require features added in 1.0.0. Runtime requirements are
-R 4.0.0 or later, Matrix 1.3-0 or later, and rsvd 1.0.5 or later. Matrix
-functions are available to the package without attaching `library(Matrix)`.
+R 4.4.0 or later, Matrix 1.7-0 or later, and rsvd 2.0.0 or later. These
+requirements follow rsvd 2.0.0's dependency requirements; earlier versions
+of R and these dependencies are no longer supported. Matrix functions are
+available to the package without attaching `library(Matrix)`.
 
 <!-- example: load-package -->
 ```r
