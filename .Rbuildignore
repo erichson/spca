@@ -1,7 +1,6 @@
 ^\.git$
 ^\.github$
 ^\.gitignore$
-^\.travis\.yml$
 ^\.Rbuildignore$
 ^README\.md$
 ^CONTRIBUTING\.md$

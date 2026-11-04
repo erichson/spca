@@ -48,7 +48,7 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
-            ${{ matrix.config.minimum && 'Matrix@1.7-0, rsvd@2.0.0' || '' }}
+            ${{ matrix.config.minimum && 'Matrix@1.7-0, rsvd@2.0.0, testthat@3.3.2' || '' }}
           needs: check
       - name: Verify the minimum supported dependency combination
         if: ${{ matrix.config.minimum }}
@@ -57,7 +57,7 @@ jobs:
           stopifnot(getRversion() == package_version("4.4.0"),
                     packageVersion("Matrix") == package_version("1.7-0"),
                     packageVersion("rsvd") == package_version("2.0.0"),
-                    requireNamespace("testthat", quietly = TRUE),
+                    packageVersion("testthat") == package_version("3.3.2"),
                     requireNamespace("rcmdcheck", quietly = TRUE))
       - name: Record the tested environment
         shell: Rscript {0}
@@ -68,6 +68,8 @@ jobs:
                       "check-results/package-versions.tsv", sep = "\t",
                       quote = FALSE, row.names = FALSE)
       - uses: r-lib/actions/check-r-package@v2
+        env:
+          _R_CHECK_SYSTEM_CLOCK_: 'true'
         with:
           args: 'c("--no-manual", "--as-cran")'
           error-on: '"warning"'
